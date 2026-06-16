@@ -1,0 +1,49 @@
+---
+description: "Pull Request and commit message conventions for this repo. Enforces Conventional Commits format (type(scope): imperative summary, ≤72 chars, English) for PR titles and squash commits. Mandates 8-section PR description (Why / What / Impact with color level / How to test / Spec links / Checklist / Rollback plan / Review focus) shipped in 3 languages (EN canonical, VI, JP) with collapsible blocks. Provides PR size guidance (<200 ideal, >500 split). Flags anti-patterns: generic titles ('Update code', 'WIP'), one-line descriptions, mixed unrelated changes, missing rollback for 🟠/🔴 impact."
+globs:
+  - "**/*"
+alwaysApply: false
+---
+
+# PR Conventions
+
+## Commit / PR Title — Conventional Commits
+
+Format: `<type>(<scope>): <imperative summary>`
+
+| type | When to use |
+|---|---|
+| feat | New feature |
+| fix | Bug fix |
+| refactor | Refactor without behavior change |
+| perf | Performance improvement |
+| test | Add/modify tests |
+| docs | Docs only |
+| build | Build system, dependencies |
+| ci | CI/CD |
+| chore | Other chores |
+
+Rules:
+- Imperative mood: "add", "remove", "update" (NOT "added", "adding").
+- ≤ 72 chars.
+- DO NOT end with a period.
+- English only (commit history searchability).
+
+## PR Description — required sections
+
+1. **Why** — link spec + 1–2 sentences on business goal.
+2. **What** — bullet list of main changes.
+3. **Impact** — 🟢/🟡/🟠/🔴 + affected modules.
+4. **How to test** — concrete steps.
+5. **Spec** — BD + DDD links.
+6. **Checklist** — spec FINAL, tests, review-staged, recheck-release, docs, feature flag, telemetry.
+7. **Rollback plan** — required for 🟠/🔴 impact.
+8. **Review focus** — guide reviewer to risky areas.
+
+## Tri-lingual delivery
+PR description ships in 3 languages: EN (canonical) + VI + JP, using collapsible `<details>` blocks. Title and commit body remain English only.
+
+## PR size
+- < 200 lines diff: ideal.
+- 200–500: acceptable.
+- > 500: needs strong justification.

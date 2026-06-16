@@ -1,0 +1,39 @@
+---
+description: "Architecture and layering rules applied repo-wide. Enforces clean-architecture style layering (UI → Application → Domain → Infrastructure) with one-way interface-based dependencies; framework/HTTP/DB-agnostic domain; constructor-based DI; side effects at edges; correlation-ID logging; metrics on every external call. Flags 🟠+ violations: domain importing infra, fat controllers, mutable global singletons."
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Architecture Rules
+
+## Layering
+```
+UI/Controller → Application/Use Case → Domain → Infrastructure
+```
+- Each layer depends ONLY on the one below, via interfaces.
+- Domain knows nothing about DB, HTTP, framework.
+
+## Module boundaries
+- Public API explicit (`index.ts`, `__init__.py`).
+- NO circular dependencies.
+
+## Dependency Injection
+- Inject via constructor / params; DO NOT `new` infrastructure inside domain.
+
+## Side effects
+- I/O, network, time, randomness at the edges.
+- Domain logic pure when possible.
+
+## Configuration
+- From env vars; validate at startup; fail fast.
+
+## Logging & observability
+- Correlation ID end-to-end.
+- Log entry/exit of use cases + on errors.
+- Metrics on every external call.
+
+## Violations to flag 🟠+
+- Domain importing HTTP / SQL / framework.
+- Fat controller with complex business logic.
+- Mutable global state via singletons.

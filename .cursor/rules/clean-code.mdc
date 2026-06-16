@@ -1,0 +1,42 @@
+---
+description: "Clean code rules auto-applied to every source file (TS/JS, Python, Go, Java/Kotlin, Ruby, Rust, PHP, C#). Enforces meaningful naming with intent-revealing prefixes, short single-responsibility functions, why-not-what comments, explicit error types, no magic literals or dead code, bounded file size, and ordered imports without circular dependencies."
+globs:
+  - "**/*.{ts,tsx,js,jsx,py,go,java,kt,rb,rs,php,cs}"
+alwaysApply: true
+---
+
+# Clean Code Rules
+
+## Naming
+- Names self-explanatory, readable as English. NO single-letter except loop counters.
+- Booleans: prefix `is`, `has`, `should`, `can`.
+- Functions: start with a verb.
+- Class / Type: PascalCase, noun.
+- Constants: UPPER_SNAKE_CASE.
+
+## Functions
+- ≤ 20 lines (target).
+- ≤ 3 parameters (target).
+- Single Responsibility.
+- NO hidden side effects.
+
+## Comments
+- Code self-documents first. Comments explain **why**, not **what**.
+- DO NOT comment-out code.
+
+## Error handling
+- Catch at boundaries. Each error has a concrete code/type.
+- NEVER `throw new Error("something went wrong")`.
+
+## Magic values
+- Extract into named constants instead of magic numbers/strings.
+
+## Dead code
+- Remove unused imports / variables / functions.
+
+## File size
+- ≤ 300 lines (target).
+
+## Imports
+- Group: stdlib → third-party → internal absolute → relative.
+- NO circular imports.
