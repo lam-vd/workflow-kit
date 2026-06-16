@@ -8,6 +8,8 @@ You are at **Stage 4: Recheck Spec**.
 ## Task
 Read the BD and DDD files produced in Stage 3. Put on the **critic hat**, find issues, and **score** using the 10-item rubric.
 
+Before scoring, load and reuse the shared checklist at `common/checklists/recheck-spec-scorecard.md` to keep scoring consistent across tasks.
+
 ## 🎯 Pass criteria
 - **Score ≥ 8.0 / 10** → can proceed to `/check-spec`.
 - **Score < 8.0** → spec **NOT YET MEETING BAR**, recommend back to `/write-spec`.

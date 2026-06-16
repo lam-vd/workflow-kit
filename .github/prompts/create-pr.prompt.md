@@ -23,7 +23,8 @@ Produce **3 copy-ready blocks**:
    ```
 2. Read relevant FINAL spec in `docs/specs/` and `docs/ddd/`.
 3. Read `.agents/skills/pr-conventions/SKILL.md` for project conventions.
-4. Generate the three blocks below.
+4. Load the shared snippet `common/snippets/pr-description.trilingual.md` and use it as the base skeleton.
+5. Generate the three blocks below.
 
 ## 1. PR Title
 

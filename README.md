@@ -23,6 +23,13 @@ Works in parallel with **VS Code Copilot** (`.github/prompts`, `.github/instruct
 senior-workflow-kit/
 ├── AGENTS.md                          # Master orchestrator (read first)
 ├── README.md
+├── common/
+│   ├── README.md                      # Shared reusable assets
+│   ├── snippets/
+│   │   ├── pr-description.trilingual.md
+│   │   └── spec-section.trilingual.md
+│   └── checklists/
+│       └── recheck-spec-scorecard.md
 ├── .github/
 │   ├── copilot-instructions.md
 │   ├── prompts/                       # 9 slash commands
@@ -53,6 +60,42 @@ senior-workflow-kit/
 | 7 | Implement | (code) | Code + tests |
 | 8 | Self-review | `/review-staged` | Level-based report |
 | 9 | Release + PR | `/recheck-release` → `/create-pr` | PR (VI/EN/JP) |
+
+---
+
+## How To Use (Rules + Skills)
+
+### 1) Daily operational flow
+
+1. Start every task with `/analyze-task` and `/grooming`.
+2. Write BD + DDD via `/write-spec` using tri-lingual structure.
+3. Recheck quality by `/recheck-spec` (score gate >= 8.0).
+4. Lock by `/check-spec`, then implement by sub-task.
+5. Before PR: `/review-staged` -> `/recheck-release` -> `/create-pr`.
+
+### 2) How rules are applied
+
+- Copilot rules auto-load from `.github/instructions/` by `applyTo` glob.
+- Cursor rules auto-load from `.cursor/rules/` by `globs`.
+- In practice:
+  - Writing code -> clean-code + architecture rules are active.
+  - Writing tests -> testing rules are active.
+  - Preparing PR -> pr-conventions are active.
+
+### 3) How skills are applied
+
+- Skills are domain playbooks in `.agents/skills/` and are consulted at the right stages:
+  - Stage 3: `writing-bd`, `writing-ddd`
+  - Stage 7: `design-patterns`
+  - Stage 8: `code-review`
+  - Stage 9: `pr-conventions`
+
+### 4) How to use the common folder
+
+- Use `common/snippets/spec-section.trilingual.md` when drafting BD/DDD sections.
+- Use `common/checklists/recheck-spec-scorecard.md` when scoring Stage 4.
+- Use `common/snippets/pr-description.trilingual.md` when drafting PR body.
+- See usage notes in `common/README.md`.
 
 ---
 
