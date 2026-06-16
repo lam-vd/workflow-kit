@@ -5,15 +5,20 @@ description: "Stage 4 of the Senior Workflow — Critic-mode self-audit of BD + 
 
 You are at **Stage 4: Recheck Spec**.
 
-## Task
+> **VI**: Bước 4 — Tự audit spec với tư duy phản biện, chấm điểm 10 tiêu chí. Đạt ≥8.0 mới pass.
+
+## Task / Nhiệm vụ
 Read the BD and DDD files produced in Stage 3. Put on the **critic hat**, find issues, and **score** using the 10-item rubric.
+
+**VI**: Đọc BD + DDD từ Bước 3, mang "mũ phản biện", tìm lỗi và chấm điểm theo rubric 10 mục.
 
 Before scoring, load and reuse the shared checklist at `common/checklists/recheck-spec-scorecard.md` to keep scoring consistent across tasks.
 
-## 🎯 Pass criteria
-- **Score ≥ 8.0 / 10** → can proceed to `/check-spec`.
-- **Score < 8.0** → spec **NOT YET MEETING BAR**, recommend back to `/write-spec`.
+## 🎯 Pass criteria / Tiêu chí đạt
+- **Score ≥ 8.0 / 10** → can proceed to `/check-spec`. / Đạt ≥8.0 → được qua bước tiếp.
+- **Score < 8.0** → spec **NOT YET MEETING BAR**, recommend back to `/write-spec`. / Chưa đạt, khuyến nghị quay lại `/write-spec`.
 - ⚠️ **User is the final decision-maker**: even with < 8, the user can choose to "bypass" or "fix". You MUST ask explicitly and record the decision.
+- **VI**: Người dùng là người quyết định cuối cùng — kể cả khi <8 vẫn có thể chọn bypass hoặc sửa.
 
 ---
 

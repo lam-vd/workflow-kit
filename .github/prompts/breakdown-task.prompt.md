@@ -5,15 +5,19 @@ description: "Stage 6 of the Senior Workflow — Decompose a FINAL-locked spec i
 
 You are at **Stage 6: Task Breakdown**.
 
-## Precondition
-- Spec is `FINAL` (verify in file header).
-- If not → STOP, ask user to run `/check-spec`.
+> **VI**: Bước 6 — Chia nhỏ task thành các sub-task (≤4h mỗi cái), có Definition of Done rõ ràng.
 
-## Task
+## Precondition / Điều kiện
+- Spec is `FINAL` (verify in file header). / Spec đã là FINAL.
+- If not → STOP, ask user to run `/check-spec`. / Nếu chưa → yêu cầu chạy `/check-spec`.
+
+## Task / Nhiệm vụ
 
 Read the DDD and decompose into sub-tasks following the rules below.
 
-### Decomposition rules
+**VI**: Đọc DDD và chia thành các sub-task theo quy tắc bên dưới.
+
+### Decomposition rules / Quy tắc chia task
 1. **Each sub-task ≤ 4h work.** Larger → split further.
 2. **Each sub-task has a measurable Definition of Done.**
 3. **Priority order**:
@@ -50,10 +54,12 @@ Read the DDD and decompose into sub-tasks following the rules below.
 Sub-task #1 is 🟠 — recommend doing it first and verifying rollback immediately after merging the migration.
 ```
 
-## ⚠️ Hard rules
-- Sub-task without measurable DoD → reject, rewrite.
-- Every 🟠/🔴 sub-task MUST include "rollback strategy" in its DoD.
-- If total estimate > 5 days → warn user "consider splitting into multiple PRs".
+## ⚠️ Hard rules / Quy tắc bắt buộc
+- Sub-task without measurable DoD → reject, rewrite. / Sub-task không có DoD đo được → viết lại.
+- Every 🟠/🔴 sub-task MUST include "rollback strategy" in its DoD. / Mọi sub-task 🟠/🔴 phải có rollback strategy trong DoD.
+- If total estimate > 5 days → warn user "consider splitting into multiple PRs". / Nếu tổng >5 ngày → cảnh báo cân nhắc chia nhiều PR.
 
-## ➡️ Next step
-Move to **Stage 7: Implement**. After each completed sub-task → run `/review-staged`.
+## ➡️ Next step / Bước tiếp theo
+Move to **Stage 7: Implement** — run `/start-coding`. After each completed sub-task → run `/review-staged`.
+
+**VI**: Chuyển sang Bước 7 — chạy `/start-coding`. Sau mỗi sub-task xong → chạy `/review-staged`.

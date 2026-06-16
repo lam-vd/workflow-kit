@@ -5,43 +5,47 @@ description: "Stage 9a of the Senior Workflow — Release readiness gate before 
 
 You are at **Stage 9a: Release Readiness Check**.
 
-## Task
+> **VI**: Bước 9a — Kiểm tra sẵn sàng release. Nếu bất kỳ mục nào FAIL → kết quả là BLOCKED.
+
+## Task / Nhiệm vụ
 Verify each item in the gate checklist. If ANY item fails → result is `BLOCKED ❌`.
 
-## Gate checklist
+**VI**: Kiểm tra từng mục trong checklist. Bất kỳ mục nào fail → BLOCKED.
 
-### A. Code quality
-- [ ] `/review-staged` ran and has no remaining 🟠 or 🔴.
-- [ ] No `TODO` / `FIXME` / `XXX` in staged code.
-- [ ] No `console.log` / `print` / debugger statements.
-- [ ] No commented-out code.
+## Gate checklist / Danh sách kiểm tra
 
-### B. Tests
-- [ ] Unit tests pass locally: `<project-specific command>`.
-- [ ] Integration tests pass.
-- [ ] CI green on the current branch.
-- [ ] Coverage not regressed vs base branch.
+### A. Code quality / Chất lượng code
+- [ ] `/review-staged` ran and has no remaining 🟠 or 🔴. / Đã chạy và không còn 🟠/🔴.
+- [ ] No `TODO` / `FIXME` / `XXX` in staged code. / Không có TODO/FIXME/XXX.
+- [ ] No `console.log` / `print` / debugger statements. / Không có console.log/print/debugger.
+- [ ] No commented-out code. / Không có code bị comment.
 
-### C. Spec compliance
-- [ ] All sub-tasks from `/breakdown-task` reach DoD.
-- [ ] All changes are within FINAL spec scope.
-- [ ] No out-of-scope changes; if any → spec updated or PR split.
+### B. Tests / Kiểm thử
+- [ ] Unit tests pass locally: `<project-specific command>`. / Unit test pass local.
+- [ ] Integration tests pass. / Integration test pass.
+- [ ] CI green on the current branch. / CI xanh trên branch hiện tại.
+- [ ] Coverage not regressed vs base branch. / Coverage không giảm so với base branch.
 
-### D. Operational safety
-- [ ] Migration has a tested rollback plan.
-- [ ] Feature flag configured (if impact 🟠 / 🔴).
-- [ ] Telemetry / logs / metrics added for new flows.
-- [ ] User-facing error messages reviewed.
+### C. Spec compliance / Tuân thủ spec
+- [ ] All sub-tasks from `/breakdown-task` reach DoD. / Tất cả sub-task đạt DoD.
+- [ ] All changes are within FINAL spec scope. / Mọi thay đổi nằm trong scope FINAL spec.
+- [ ] No out-of-scope changes; if any → spec updated or PR split. / Không có thay đổi ngoài scope; nếu có → update spec hoặc tách PR.
 
-### E. Documentation
-- [ ] README / CHANGELOG updated for user-facing changes.
-- [ ] API docs (OpenAPI / Swagger) updated if API changed.
-- [ ] Spec changelog updated if spec changed after FINAL.
+### D. Operational safety / An toàn vận hành
+- [ ] Migration has a tested rollback plan. / Migration có rollback plan đã test.
+- [ ] Feature flag configured (if impact 🟠 / 🔴). / Feature flag (nếu 🟠/🔴).
+- [ ] Telemetry / logs / metrics added for new flows. / Đã thêm telemetry/logs/metrics.
+- [ ] User-facing error messages reviewed. / Đã review message lỗi user-facing.
 
-### F. Security
-- [ ] No secrets / keys / tokens in code or git history.
-- [ ] Input validation at system boundaries.
-- [ ] Authz check on every new endpoint.
+### E. Documentation / Tài liệu
+- [ ] README / CHANGELOG updated for user-facing changes. / README/CHANGELOG đã update.
+- [ ] API docs (OpenAPI / Swagger) updated if API changed. / API docs update nếu đổi API.
+- [ ] Spec changelog updated if spec changed after FINAL. / Spec changelog update nếu spec thay đổi sau FINAL.
+
+### F. Security / Bảo mật
+- [ ] No secrets / keys / tokens in code or git history. / Không có secret/key/token trong code.
+- [ ] Input validation at system boundaries. / Validate input tại biên hệ thống.
+- [ ] Authz check on every new endpoint. / Kiểm tra authz trên mọi endpoint mới.
 
 ## Steps to execute
 

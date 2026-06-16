@@ -5,9 +5,13 @@ description: "Stage 8 of the Senior Workflow — Self-review of staged changes O
 
 You are at **Stage 8: Review Staged Changes**.
 
-## Task
+> **VI**: Bạn đang ở Bước 8 — Tự review code đã staged trước khi merge.
+
+## Task / Nhiệm vụ
 
 Review ONLY the **staged** files in git, against 8 dimensions, with 4 severity levels.
+
+**VI**: Chỉ review các file đã staged (`git diff --cached`), đánh giá theo 8 chiều chất lượng, phân loại lỗi theo 4 mức độ nghiêm trọng.
 
 ## Steps
 
@@ -27,25 +31,25 @@ Review ONLY the **staged** files in git, against 8 dimensions, with 4 severity l
 5. **Review against the 8 dimensions** below.
 6. **Emit report** in the format below.
 
-## 8 Review Dimensions
+## 8 Review Dimensions / 8 Chiều đánh giá
 
-| # | Dimension | Look for |
-|---|---|---|
-| 1 | Spec compliance | Matches DDD? Any missed requirement? |
-| 2 | Clean code | Naming, function size, single responsibility, dead code |
-| 3 | Architecture | Layer boundaries, dependency direction, coupling |
-| 4 | Error handling | Try/catch placement, error propagation, user-facing messages |
-| 5 | Security | Input validation, secrets, OWASP top 10, authz checks |
-| 6 | Performance | N+1, big-O, allocations, blocking I/O |
-| 7 | Tests | Coverage for happy + edge + error paths; brittleness |
-| 8 | Backward compat | Schema changes, API breaking, deprecation |
+| # | Dimension | Look for | VI — Tìm gì? |
+|---|---|---|---|
+| 1 | Spec compliance | Matches DDD? Any missed requirement? | Khớp DDD không? Thiếu yêu cầu nào? |
+| 2 | Clean code | Naming, function size, single responsibility, dead code | Tên biến rõ ràng? Hàm ngắn? Dead code? |
+| 3 | Architecture | Layer boundaries, dependency direction, coupling | Tầng đúng hướng? Coupling thấp? |
+| 4 | Error handling | Try/catch placement, error propagation, user-facing messages | Xử lý lỗi đúng chỗ? Message user-facing OK? |
+| 5 | Security | Input validation, secrets, OWASP top 10, authz checks | Validate input? Không hardcode secret? Authz? |
+| 6 | Performance | N+1, big-O, allocations, blocking I/O | N+1 query? Big-O hợp lý? Blocking I/O? |
+| 7 | Tests | Coverage for happy + edge + error paths; brittleness | Cover đủ happy + edge + error? Test giòn? |
+| 8 | Backward compat | Schema changes, API breaking, deprecation | Schema change có migration? API breaking? |
 
-## Severity levels
+## Severity levels / Mức độ nghiêm trọng
 
-- 🔴 **Critical** — block release. e.g. SQL injection, data loss, broken contract.
-- 🟠 **High** — must-fix before merge. e.g. missing error handling, O(n²) on hot path.
-- 🟡 **Medium** — should-fix, can be follow-up. e.g. unclear naming, missing minor edge-case test.
-- 🟢 **Low / nitpick** — nice to have. e.g. missing comment, formatting.
+- 🔴 **Critical / Nghiêm trọng** — block release. VD: SQL injection, mất dữ liệu, phá contract.
+- 🟠 **High / Cao** — phải sửa trước khi merge. VD: thiếu error handling, O(n²) trên hot path.
+- 🟡 **Medium / Trung bình** — nên sửa, có thể follow-up. VD: tên biến không rõ, thiếu test edge-case phụ.
+- 🟢 **Low / Thấp (nitpick)** — tùy chọn. VD: thiếu comment, formatting.
 
 ## 📤 Output template
 

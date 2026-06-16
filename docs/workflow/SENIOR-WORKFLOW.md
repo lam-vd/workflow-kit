@@ -29,7 +29,7 @@ flowchart TD
     H2 -->|Bypass| I[5. /check-spec<br/>FINAL LOCK<br/>+ Decision Log]
     H -->|Yes| I
     I --> J[6. /breakdown-task<br/>Sub-tasks]
-    J --> K[7. Implement<br/>Code per skills/rules]
+    J --> K[7. /start-coding<br/>Code per spec + DDD]
     K --> L[8. /review-staged<br/>Self-review]
     L --> M{Has 🟠/🔴?}
     M -->|Yes| K
@@ -145,18 +145,37 @@ flowchart TD
 
 ---
 
-## 7. Implement — Triển khai
+## 7. `/start-coding` — Implement per spec + DDD plan
 
-Before typing line 1:
-- [ ] Re-read FINAL spec.
+**EN purpose**: Code the next sub-task following the FINAL spec exactly.
+**VI**: Code sub-task tiếp theo theo đúng spec FINAL.
+
+**Command**: `/start-coding` — run once per sub-task.
+
+### Before typing line 1:
+- [ ] Re-read FINAL spec (BD + DDD).
+- [ ] Identify which sub-task is next (from Stage 6 breakdown).
 - [ ] Read `.cursor/rules/clean-code.mdc` (or `.github/instructions/clean-code.instructions.md`).
 - [ ] Read `.cursor/rules/architecture.mdc`.
-- [ ] Read relevant `.agents/skills/`.
+- [ ] Read relevant `.agents/skills/` (e.g. `design-patterns`).
 
-While coding:
-- Small commits, Conventional Commits messages.
-- Tests alongside code (TDD when possible).
-- After each sub-task → run `/review-staged` locally.
+### For each sub-task:
+1. Print sub-task info (title, priority, risk, DoD).
+2. Create a brief implementation plan (files, layers, decisions, test approach).
+3. Write production code + tests.
+4. Verify Definition of Done.
+5. Commit with Conventional Commits message.
+6. → Run `/review-staged`.
+
+### Repeat cycle:
+```
+/start-coding → code → /review-staged → fix if needed → next sub-task
+```
+
+### Hard rules:
+- NEVER deviate from FINAL spec — if change needed, STOP and return to Stage 3.
+- NEVER skip tests — every sub-task must have tests matching its DoD.
+- Commit after each logical unit, not one giant diff.
 
 ---
 
@@ -201,16 +220,17 @@ Scope: only staged files (`git diff --cached`).
 
 ---
 
-## 📎 Slash command index
+## 📎 Slash command index (ordered by workflow)
 
-| Command | Stage | File |
-|---|---|---|
-| `/analyze-task` | 1 | `.github/prompts/analyze-task.prompt.md` |
-| `/grooming` | 2 | `.github/prompts/grooming.prompt.md` |
-| `/write-spec` | 3 | `.github/prompts/write-spec.prompt.md` |
-| `/recheck-spec` | 4 | `.github/prompts/recheck-spec.prompt.md` |
-| `/check-spec` | 5 | `.github/prompts/check-spec.prompt.md` |
-| `/breakdown-task` | 6 | `.github/prompts/breakdown-task.prompt.md` |
-| `/review-staged` | 8 | `.github/prompts/review-staged.prompt.md` |
-| `/recheck-release` | 9 | `.github/prompts/recheck-release.prompt.md` |
-| `/create-pr` | 9 | `.github/prompts/create-pr.prompt.md` |
+| # | Command | Stage | When to use | File |
+|---|---|---|---|---|
+| 1 | `/analyze-task` | 1 | Nhận task mới, phân tích sơ bộ | `.github/prompts/analyze-task.prompt.md` |
+| 2 | `/grooming` | 2 | Đào sâu 5W, risk, dependencies | `.github/prompts/grooming.prompt.md` |
+| 3 | `/write-spec` | 3 | Viết BD + DDD (tri-lingual) | `.github/prompts/write-spec.prompt.md` |
+| 4 | `/recheck-spec` | 4 | Audit spec, chấm điểm /10 | `.github/prompts/recheck-spec.prompt.md` |
+| 5 | `/check-spec` | 5 | Lock spec → FINAL | `.github/prompts/check-spec.prompt.md` |
+| 6 | `/breakdown-task` | 6 | Chia sub-tasks ≤4h | `.github/prompts/breakdown-task.prompt.md` |
+| 7 | `/start-coding` | 7 | Code sub-task theo spec + DDD | `.github/prompts/start-coding.prompt.md` |
+| 8 | `/review-staged` | 8 | Self-review staged changes | `.github/prompts/review-staged.prompt.md` |
+| 9 | `/recheck-release` | 9a | Kiểm tra release readiness | `.github/prompts/recheck-release.prompt.md` |
+| 10 | `/create-pr` | 9b | Tạo PR tri-lingual | `.github/prompts/create-pr.prompt.md` |

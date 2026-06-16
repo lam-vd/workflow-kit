@@ -5,23 +5,28 @@ description: "Stage 3 of the Senior Workflow — Author Basic Design (BD) and De
 
 You are at **Stage 3: Write Spec**.
 
-## Preconditions
+> **VI**: Bước 3 — Viết spec (Basic Design + Detail Design Document), xuất ra 2 file Markdown song ngữ EN/VI/JP.
+
+## Preconditions / Điều kiện tiên quyết
 - `/analyze-task` (Stage 1) and `/grooming` (Stage 2) outputs exist.
-- All Open Questions are resolved.
+- All Open Questions are resolved. / Tất cả câu hỏi mở đã được giải quyết.
 - If not → STOP, ask user to complete the previous stages.
 
-## Task
+## Task / Nhiệm vụ
 
 Generate **two files** from templates:
 
-1. **Basic Design** → `docs/specs/<YYYY-MM-DD>-<kebab-slug>.md`
+**VI**: Tạo 2 file từ template:
+
+1. **Basic Design (Thiết kế cơ bản)** → `docs/specs/<YYYY-MM-DD>-<kebab-slug>.md`
    - Use `docs/specs/_TEMPLATE.md`.
-   - Focus on *what* and *why*.
-2. **Detail Design Document** → `docs/ddd/<YYYY-MM-DD>-<kebab-slug>.md`
+   - Focus on *what* and *why*. / Tập trung vào *cái gì* và *tại sao*.
+2. **Detail Design Document (Thiết kế chi tiết)** → `docs/ddd/<YYYY-MM-DD>-<kebab-slug>.md`
    - Use `docs/ddd/_TEMPLATE.md`.
    - Focus on *how*: API contract, data model, flow + sequence diagrams, algorithms, error handling, test plan, rollout plan.
+   - **VI**: Tập trung vào *làm thế nào*: API, data model, flow diagram, thuật toán, xử lý lỗi, test plan.
 
-## 🌐 Tri-lingual rule (MANDATORY)
+## 🌐 Tri-lingual rule / Quy tắc 3 ngôn ngữ (MANDATORY / BẮt buộc)
 
 Every textual section in both files MUST appear in **3 languages**, in this order with collapsible blocks:
 
@@ -45,16 +50,18 @@ JP translation here.
 - Code blocks, tables, diagrams are NOT duplicated (they are language-neutral).
 - API field names, error codes, type names stay in English everywhere.
 
-## 🎨 Diagrams (MANDATORY)
+## 🎨 Diagrams / Sơ đồ (MANDATORY / BẮt buộc)
 
-### Basic Design must include
+### Basic Design must include / BD phải có
 - **1 high-level flowchart** (Mermaid `flowchart TD` or `flowchart LR`) showing the end-to-end processing flow at component/actor level.
+- **VI**: 1 flowchart tổng quan hiển thị luồng xử lý end-to-end.
 
-### Detail Design Document must include
+### Detail Design Document must include / DDD phải có
 - **1 logical flowchart** (Mermaid `flowchart`) showing the algorithm / decision branches.
 - **≥1 sequence diagram for the happy path** (Mermaid `sequenceDiagram`).
 - **≥1 sequence diagram for an error/edge path**.
 - **1 ERD** (Mermaid `erDiagram`) IF data model changes.
+- **VI**: 1 flowchart logic, ≥1 sequence happy path, ≥1 sequence error path, 1 ERD (nếu đổi schema).
 
 ## Must read first
 - `.agents/skills/writing-bd/SKILL.md`

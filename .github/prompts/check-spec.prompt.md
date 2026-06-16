@@ -5,12 +5,14 @@ description: "Stage 5 of the Senior Workflow — FINAL spec lock. Gates entry to
 
 You are at **Stage 5: Final Spec Lock**.
 
-## Preconditions (verify ALL 5)
-1. ✅ `/recheck-spec` ran with a clear scorecard.
-2. ✅ **Score ≥ 8.0 / 10** OR user has explicitly approved a bypass.
-3. ✅ **NO 🔴 Critical issue** (Critical always blocks, regardless of user decision).
-4. ✅ Stakeholder / PO sign-off (manual user confirmation).
-5. ✅ Spec is committed to the current branch.
+> **VI**: Bước 5 — Khoá spec thành FINAL. Chặn lối vào giai đoạn code nếu chưa đạt điều kiện.
+
+## Preconditions / Điều kiện (verify ALL 5 / xác nhận đủ 5)
+1. ✅ `/recheck-spec` ran with a clear scorecard. / Đã chạy `/recheck-spec` có scorecard rõ ràng.
+2. ✅ **Score ≥ 8.0 / 10** OR user has explicitly approved a bypass. / Điểm ≥8.0 hoặc user đã chấp nhận bypass.
+3. ✅ **NO 🔴 Critical issue** (Critical always blocks, regardless of user decision). / KHÔNG có lỗi 🔴 (🔴 luôn chặn, không bypass được).
+4. ✅ Stakeholder / PO sign-off (manual user confirmation). / PO đã sign-off.
+5. ✅ Spec is committed to the current branch. / Spec đã commit vào branch hiện tại.
 
 If ANY condition fails → STOP, print the reason, ask user to fix.
 
@@ -52,9 +54,9 @@ If ANY condition fails → STOP, print the reason, ask user to fix.
 ➡️ Next: /breakdown-task
 ```
 
-## ⚠️ Hard rules
-- NEVER auto-flip to `FINAL` without user confirmation.
-- NEVER lock FINAL while 🔴 Critical exists (even if user requests).
-- When user bypasses below 8 — Decision Log + Changelog MUST list open risks + follow-up plan.
-- DO NOT modify any other content beyond the 4 changes above (status, locked-at, score, changelog).
-- After FINAL — any spec change must create a new file (`docs/specs/<date>-<slug>-v2.md`) or bump version.
+## ⚠️ Hard rules / Quy tắc bắt buộc
+- NEVER auto-flip to `FINAL` without user confirmation. / KHÔNG tự động chuyển FINAL mà không user xác nhận.
+- NEVER lock FINAL while 🔴 Critical exists (even if user requests). / KHÔNG lock khi còn 🔴 dù user yêu cầu.
+- When user bypasses below 8 — Decision Log + Changelog MUST list open risks + follow-up plan. / Khi bypass dưới 8 — phải ghi risk + follow-up plan.
+- DO NOT modify any other content beyond the 4 changes above (status, locked-at, score, changelog). / KHÔNG sửa gì khác ngoài 4 thay đổi trên.
+- After FINAL — any spec change must create a new file (`docs/specs/<date>-<slug>-v2.md`) or bump version. / Sau FINAL, mọi thay đổi spec phải tạo file mới hoặc bump version.

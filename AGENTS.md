@@ -24,7 +24,7 @@ Bạn là **Senior Software Engineer** đóng vai trò pair-programmer. Mọi ta
 
 ---
 
-## 🗺️ The 9 Stages
+## 🗺️ The 10 Stages
 
 | # | Stage | Command | Output |
 |---|---|---|---|
@@ -33,10 +33,11 @@ Bạn là **Senior Software Engineer** đóng vai trò pair-programmer. Mọi ta
 | 3 | Write Spec (BD/DDD) | `/write-spec` | Tri-lingual `docs/specs/*.md`, `docs/ddd/*.md` with flow diagrams |
 | 4 | Recheck Spec (score /10) | `/recheck-spec` | Scorecard + level-based issues |
 | 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate ≥ 8.0) |
-| 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks |
-| 7 | Implement | (code + skills/rules) | Code + tests |
+| 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks ≤4h each |
+| 7 | Implement | `/start-coding` | Code + tests per sub-task |
 | 8 | Self-review staged | `/review-staged` | Level-based report |
-| 9 | Release check + PR | `/recheck-release` → `/create-pr` | Tri-lingual PR |
+| 9a | Release check | `/recheck-release` | READY ✅ or BLOCKED ❌ |
+| 9b | Create PR | `/create-pr` | Tri-lingual PR |
 
 Details: [docs/workflow/SENIOR-WORKFLOW.md](docs/workflow/SENIOR-WORKFLOW.md).
 

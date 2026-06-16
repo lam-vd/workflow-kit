@@ -5,14 +5,20 @@ description: "Stage 2 of the Senior Workflow — Deep grooming after initial ana
 
 You are at **Stage 2: Grooming** of the workflow.
 
-**Precondition**: `/analyze-task` (Stage 1) output exists. If not — ask the user to run `/analyze-task` first.
+> **VI**: Bước 2 — Đào sâu (Grooming) để tìm vấn đề ẩn trước khi viết spec.
 
-## Task
+**Precondition / Điều kiện**: `/analyze-task` (Stage 1) output exists. If not — ask the user to run `/analyze-task` first.
+
+## Task / Nhiệm vụ
 
 Dig deeper to find hidden problems BEFORE writing the spec. Output MUST contain all 6 sections below.
 
-### 1. 5 Whys
+**VI**: Đào sâu tìm vấn đề ẩn TRƯỚC khi viết spec. Output phải có đủ 6 phần bên dưới.
+
+### 1. 5 Whys / 5 Lần Hỏi Tại Sao
 Drill to root cause / root goal. Don't stop at Why 2 or 3.
+
+**VI**: Đào đến nguyên nhân gốc. Không dừng ở Why 2–3.
 
 ```
 Why 1: <question> → <answer>
@@ -23,7 +29,7 @@ Why 5: ...
 => Root: <what really needs solving>
 ```
 
-### 2. Risk Matrix
+### 2. Risk Matrix / Ma trận rủi ro
 | # | Risk | Type (Tech/Biz/Ops) | Likelihood | Impact | Mitigation |
 |---|---|---|---|---|---|
 | 1 | ... | Tech | High | 🔴 | ... |
@@ -31,33 +37,37 @@ Why 5: ...
 Likelihood: High / Medium / Low.
 Impact: 🔴 / 🟠 / 🟡 / 🟢.
 
-### 3. Dependencies
+### 3. Dependencies / Phụ thuộc
 - **Blocked by** / Bị block bởi: which team / system / API?
 - **Blocks** / Block ai: who is waiting on this?
-- **External**: third-party, vendor, cloud quota?
+- **External** / Bên ngoài: third-party, vendor, cloud quota?
 
-### 4. Edge cases (≥5)
+### 4. Edge cases / Trường hợp biên (≥5)
 Each case with expected behavior.
+
+**VI**: Liệt kê ít nhất 5 trường hợp biên, mỗi case có hành vi mong đợi.
 
 | # | Edge case | Expected behavior |
 |---|---|---|
 | 1 | Empty input | Return 400 with code `EMPTY_INPUT` |
 
-### 5. Non-functional requirements
-- **Performance**: concrete SLA (latency p99, throughput)?
-- **Security**: PII / auth / authz / encryption?
-- **Scalability**: current data volume + 12-month projection?
-- **Observability**: which logs / metrics / traces to add?
-- **Accessibility / i18n**: required?
-- **Compliance**: GDPR / SOC2 / etc.?
+### 5. Non-functional requirements / Yêu cầu phi chức năng
+- **Performance / Hiệu năng**: concrete SLA (latency p99, throughput)?
+- **Security / Bảo mật**: PII / auth / authz / encryption?
+- **Scalability / Mở rộng**: current data volume + 12-month projection?
+- **Observability / Quan sát**: which logs / metrics / traces to add?
+- **Accessibility / i18n / Đa ngôn ngữ**: required?
+- **Compliance / Tuân thủ**: GDPR / SOC2 / etc.?
 
-### 6. Ask-back questions
+### 6. Ask-back questions / Câu hỏi cần PO trả lời
 Numbered list of unresolved questions. If none → write "All clear, ready for Stage 3".
 
-## ⚠️ Hard rules
-- If Risk Matrix has any 🔴 row — mitigation must be concrete, not "TBD".
-- If you cannot list ≥5 edge cases — drill more or flag "needs PO input".
-- DO NOT skip 5 Whys even for simple tasks.
+**VI**: Danh sách câu hỏi chưa giải quyết cần PO xác nhận. Nếu không có → ghi "All clear, ready for Stage 3".
+
+## ⚠️ Hard rules / Quy tắc bắt buộc
+- If Risk Matrix has any 🔴 row — mitigation must be concrete, not "TBD". / Nếu có risk 🔴, mitigation phải cụ thể, không được ghi "TBD".
+- If you cannot list ≥5 edge cases — drill more or flag "needs PO input". / Nếu không liệt kê được ≥5 edge case — hỏi thêm hoặc flag cần PO.
+- DO NOT skip 5 Whys even for simple tasks. / KHÔNG được bỏ 5 Whys kể cả task đơn giản.
 
 ## ➡️ Next step
 After PO answers all Ask-backs → run `/write-spec`.

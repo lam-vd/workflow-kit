@@ -5,8 +5,11 @@ description: "Stage 9b of the Senior Workflow — Generate TRI-LINGUAL Pull Requ
 
 You are at **Stage 9b: Create PR**.
 
-## Precondition
+> **VI**: Bước 9b — Tạo Pull Request 3 ngôn ngữ (EN/VI/JP). Chỉ chạy khi `/recheck-release` đã READY.
+
+## Precondition / Điều kiện
 - `/recheck-release` returned `READY ✅`. If not → STOP, ask user to run it.
+- **VI**: `/recheck-release` phải trả về READY. Nếu chưa → yêu cầu chạy lại.
 
 ## Task
 

@@ -12,7 +12,7 @@ Works in parallel with **VS Code Copilot** (`.github/prompts`, `.github/instruct
 
 1. Open Copilot Chat in VS Code (`chat.promptFiles` enabled).
 2. Type `/analyze-task` and paste the task description.
-3. Walk through the **9 stages** in [SENIOR-WORKFLOW.md](docs/workflow/SENIOR-WORKFLOW.md).
+3. Walk through the **10 stages** in [SENIOR-WORKFLOW.md](docs/workflow/SENIOR-WORKFLOW.md).
 4. When done → `/create-pr`.
 
 ---
@@ -32,7 +32,7 @@ senior-workflow-kit/
 │       └── recheck-spec-scorecard.md
 ├── .github/
 │   ├── copilot-instructions.md
-│   ├── prompts/                       # 9 slash commands
+│   ├── prompts/                       # 10 slash commands
 │   └── instructions/                  # Auto-applied rules (by glob)
 ├── .cursor/
 │   └── rules/                         # Cursor rules (.mdc)
@@ -47,7 +47,7 @@ senior-workflow-kit/
 
 ---
 
-## 🎯 9 Stages Summary
+## 🎯 10 Stages Summary
 
 | # | Stage | Command | Output |
 |---|---|---|---|
@@ -56,10 +56,11 @@ senior-workflow-kit/
 | 3 | Write Spec | `/write-spec` | `docs/specs/*.md`, `docs/ddd/*.md` (VI/EN/JP) |
 | 4 | Recheck Spec (score) | `/recheck-spec` | Audit scorecard /10 |
 | 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate ≥8) |
-| 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks |
-| 7 | Implement | (code) | Code + tests |
+| 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks ≤4h |
+| 7 | Implement | `/start-coding` | Code + tests per sub-task |
 | 8 | Self-review | `/review-staged` | Level-based report |
-| 9 | Release + PR | `/recheck-release` → `/create-pr` | PR (VI/EN/JP) |
+| 9a | Release check | `/recheck-release` | READY ✅ or BLOCKED ❌ |
+| 9b | Create PR | `/create-pr` | PR (VI/EN/JP) |
 
 ---
 
