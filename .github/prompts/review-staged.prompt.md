@@ -23,13 +23,36 @@ Review ONLY the **staged** files in git, against 8 dimensions, with 4 severity l
    ```sh
    git diff --cached
    ```
-3. **Read relevant FINAL spec** in `docs/specs/` and `docs/ddd/`.
-4. **Read rules**:
+3. **Run linters & formatters** (auto-detect by file type — see table below):
+   ```sh
+   # Example: run only on staged files
+   git diff --cached --name-only --diff-filter=ACM | xargs <linter command>
+   ```
+4. **Read relevant FINAL spec** in `docs/specs/` and `docs/ddd/`.
+5. **Read rules**:
    - `.cursor/rules/clean-code.mdc` (or `.github/instructions/clean-code.instructions.md`)
    - `.cursor/rules/architecture.mdc`
    - `.agents/skills/code-review/SKILL.md`
-5. **Review against the 8 dimensions** below.
-6. **Emit report** in the format below.
+6. **Review against the 8 dimensions** below.
+7. **Emit report** in the format below.
+
+### Linter / Formatter reference / Bảng linter theo ngôn ngữ
+
+| Language / Framework | Linter | Formatter | Run command (staged only) |
+|---|---|---|---|
+| Ruby / Rails | `rubocop` | `rubocop -a` | `rubocop $(git diff --cached --name-only '*.rb')` |
+| JavaScript / TypeScript | `eslint` | `prettier` | `eslint $(git diff --cached --name-only '*.{js,ts,jsx,tsx}')` |
+| Python | `ruff` / `flake8` | `black` / `ruff format` | `ruff check $(git diff --cached --name-only '*.py')` |
+| Go | `golangci-lint` | `gofmt` | `golangci-lint run --new-from-rev=HEAD~1` |
+| Rust | `clippy` | `rustfmt` | `cargo clippy` |
+| Java / Kotlin | `checkstyle` / `ktlint` | `google-java-format` / `ktlint -F` | `ktlint $(git diff --cached --name-only '*.kt')` |
+| PHP | `phpstan` / `phpcs` | `php-cs-fixer` | `phpstan analyse $(git diff --cached --name-only '*.php')` |
+| C# | `dotnet format` | `dotnet format` | `dotnet format --include $(git diff --cached --name-only '*.cs')` |
+| CSS / SCSS | `stylelint` | `prettier` | `stylelint $(git diff --cached --name-only '*.{css,scss}')` |
+
+> **VI**: Chạy linter/formatter tương ứng với ngôn ngữ của project. Nếu project chưa cài linter → flag 🟡 "Missing linter setup" trong report.
+>
+> **Hard rule**: Linter errors (severity: error) → 🟠 High. Linter warnings → 🟡 Medium. Formatter-only issues → 🟢 Low.
 
 ## 8 Review Dimensions / 8 Chiều đánh giá
 
