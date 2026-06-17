@@ -1,6 +1,6 @@
 ---
 applyTo: "**/*.{ts,tsx,js,jsx,py,go,java,kt,rb,rs,php,cs}"
-description: "Clean code rules auto-applied to every source file across mainstream languages (TS/JS, Python, Go, Java/Kotlin, Ruby, Rust, PHP, C#). Enforces: meaningful names with intent-revealing prefixes (is/has/should/can for booleans, verbs for functions, PascalCase nouns for classes, UPPER_SNAKE_CASE for constants); short single-responsibility functions (≤20 lines, ≤3 params target); comments explain WHY not WHAT, no commented-out code; explicit error types with context-rich logs (no secrets); zero magic literals; zero dead code; bounded file size (≤300 lines target); ordered import groups (stdlib → third-party → internal absolute → relative) with no circular deps."
+description: "Clean code rules auto-applied to every source file across mainstream languages (TS/JS, Python, Go, Java/Kotlin, Ruby, Rust, PHP, C#). Enforces: meaningful names with intent-revealing prefixes (is/has/should/can for booleans, verbs for functions, PascalCase nouns for classes, UPPER_SNAKE_CASE for constants); short single-responsibility functions (≤20 lines, ≤3 params target); comments explain WHY not WHAT, no commented-out code; explicit error types with context-rich logs (no secrets); zero magic literals; zero dead code; bounded file size (≤300 lines target); ordered import groups (stdlib → third-party → internal absolute → relative) with no circular deps; DOM defaultValue vs .val() awareness for server-rendered vs JS-mutated fields; factory functions should create only what the caller uses."
 ---
 
 # Clean Code Rules
@@ -47,3 +47,13 @@ description: "Clean code rules auto-applied to every source file across mainstre
 ## Imports
 - Group order: stdlib → third-party → internal absolute → relative.
 - NO circular imports.
+
+## DOM / hidden-field reads
+- When reading a value from a form field, distinguish **server-rendered** (`defaultValue`) from **JS-mutated** (`.value` / `.val()`).
+- If the intent is "what the server sent", always read `element.defaultValue`, falling back to `.val()` only when `defaultValue` is unavailable (dynamically created fields).
+- Document in a comment which source (server vs client) is intended.
+
+## Factory functions — minimal creation
+- A factory/helper should only create the objects the caller actually uses.
+- If the caller only needs one product (e.g. `DirectionsRenderer`), do NOT also create an unused sibling (e.g. `DirectionsService`) just because the factory bundles them.
+- Prefer direct instantiation over calling a factory when only one object is needed.

@@ -18,6 +18,21 @@ Produce **3 copy-ready blocks**:
 2. **Squash commit message** — English with body
 3. **PR Description** — 3 collapsible blocks: 🇬🇧 EN (canonical) / 🇻🇳 VI / 🇯🇵 JP
 
+### Legacy format override (user preference)
+- If the requester explicitly asks to keep their old PR description format,
+   use that legacy structure instead of the tri-lingual collapsible template.
+- In this case, still output blocks (1) Title and (2) Squash commit message,
+   and output block (3) as a single legacy PR description.
+- Legacy section order:
+   - Summary
+   - Background (Current behavior / Expected behavior)
+   - Solution
+   - Impact Analysis (Affected / Not affected)
+   - Risks
+   - Testing (Manual / Regression)
+   - Main Files
+- Keep Conventional Commit title rules unchanged.
+
 ## Steps
 
 1. Get commit summary:
@@ -184,6 +199,8 @@ Use this structure exactly. Each language block is collapsible. EN is open by de
 - For impact 🟠 / 🔴 — Rollback plan MUST have concrete steps, NOT just "revert PR".
 - If PR > 500 lines diff → warn "consider splitting" but still output the PR.
 - VI and JP blocks must mirror the EN content; do not omit sections.
+- Exception: if legacy format override is explicitly requested by the user,
+  skip tri-lingual block requirements and use the requester-preferred structure.
 
 ## 📤 Output format
 3 separate blocks with code fences (```), with headers `### 1. Title`, `### 2. Commit msg`, `### 3. Description` so the user can copy each quickly.

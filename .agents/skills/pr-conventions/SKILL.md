@@ -52,6 +52,21 @@ Refs: <task-id or spec link>
 Ship in 3 languages: EN (canonical, expanded by default) + VI + JP (collapsed `<details>`).
 Each language block contains the same 8 sections below.
 
+### Legacy format override (explicit user preference)
+- If the requester explicitly asks to keep an existing PR description style (e.g. "use old format"),
+	the agent MAY use a single-language legacy structure instead of tri-lingual collapsible blocks.
+- Keep PR title and squash message rules unchanged (Conventional Commits, imperative, <= 72 chars).
+- Legacy structure should follow this order:
+	1. Summary
+	2. Background (Current behavior / Expected behavior)
+	3. Solution
+	4. Impact Analysis (Affected / Not affected)
+	5. Risks (table + mitigation)
+	6. Testing (Manual / Regression)
+	7. Main Files
+- When legacy mode is used, include a short note in the description: "Format follows requester-preferred legacy template."
+- Do not force tri-lingual conversion when it conflicts with explicit user preference.
+
 ### 1. 🎯 Why
 Link spec + 1–2 sentences on business goal.
 

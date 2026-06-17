@@ -47,8 +47,21 @@ UI / Controller / Handler
 - Every request carries a correlation ID end-to-end.
 - Metrics: counter (events) + histogram (latency) for every external call.
 
+## Record lookup & authorization (IDOR prevention)
+- NEVER load records by untrusted user-supplied ID (e.g. `Model.find(params[:id])`).
+- Always scope lookups through the owning association or context (e.g. `@reservation.reservation_route` instead of `ReservationRoute.find(params[:id])`).
+- Validate authorization / status guards BEFORE touching the database, not after loading.
+- This applies equally to service objects, not just controllers.
+
+## Resource cleanup (UI overlays & map objects)
+- Any object placed on a shared canvas/map/DOM MUST store its reference for later cleanup.
+- Factory/helper functions should only create what the caller needs — do NOT silently create extra objects that get discarded.
+- When resetting UI state, tear down ALL created objects (renderers, polylines, markers, listeners).
+
 ## Violations to flag (severity 🟠+)
 - Domain layer importing HTTP / SQL / framework code.
 - Controller containing complex business logic (>10 lines of if/else).
 - Multiple entry points hitting the DB directly without going through repositories.
 - Mutable global state via singletons.
+- `Model.find(params[:id])` without scoping through owning association (IDOR 🔴).
+- UI overlay objects (markers, polylines, renderers) created without storing cleanup references.
