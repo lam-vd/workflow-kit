@@ -32,7 +32,7 @@ senior-workflow-kit/
 │       └── recheck-spec-scorecard.md
 ├── .github/
 │   ├── copilot-instructions.md
-│   ├── prompts/                       # 10 slash commands
+│   ├── prompts/                       # 11 slash commands
 │   └── instructions/                  # Auto-applied rules (by glob)
 ├── .cursor/
 │   └── rules/                         # Cursor rules (.mdc)
@@ -62,6 +62,12 @@ senior-workflow-kit/
 | 9a | Release check | `/recheck-release` | READY ✅ or BLOCKED ❌ |
 | 9b | Create PR | `/create-pr` | PR (VI/EN/JP) |
 
+### Utility command (post-PR / pre-deploy)
+
+| Command | Purpose | Output |
+|---|---|---|
+| `/create-release` | Generate deploy handoff release summary | `Summary` + `No 1..N requirement` + `Command` |
+
 ---
 
 ## How To Use (Rules + Skills)
@@ -86,10 +92,12 @@ senior-workflow-kit/
 ### 3) How skills are applied
 
 - Skills are domain playbooks in `.agents/skills/` and are consulted at the right stages:
+  - Stage 1: `field-impact-analysis` (khi task có khả năng thêm/sửa field)
   - Stage 3: `writing-bd`, `writing-ddd`
   - Stage 7: `design-patterns`
   - Stage 8: `code-review`
   - Stage 9: `pr-conventions`
+  - Deploy handoff: `create-release`
 
 ### 4) How to use the common folder
 

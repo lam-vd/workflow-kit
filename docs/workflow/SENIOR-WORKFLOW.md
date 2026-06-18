@@ -207,6 +207,11 @@ Scope: only staged files (`git diff --cached`).
 - **Squash commit body**: English.
 - **PR Description**: 3 collapsible blocks `EN / VI / JP`, all with Why / What / Impact / How to test / Spec / Checklist / Rollback.
 
+### 9c. `/create-release` — Release Summary for Deploy Handoff
+- Output format: `Summary` + `No 1..N requirement` + `Command` blocks (when needed).
+- Supports language mode: `/create-release (vi)` or `/create-release (en)`.
+- Keep section keywords in English for scanability; explanation follows selected mode.
+
 ---
 
 ## 🔁 When to revert
@@ -234,3 +239,4 @@ Scope: only staged files (`git diff --cached`).
 | 8 | `/review-staged` | 8 | Self-review staged changes | `.github/prompts/review-staged.prompt.md` |
 | 9 | `/recheck-release` | 9a | Kiểm tra release readiness | `.github/prompts/recheck-release.prompt.md` |
 | 10 | `/create-pr` | 9b | Tạo PR tri-lingual | `.github/prompts/create-pr.prompt.md` |
+| 11 | `/create-release` | 9c (utility) | Tạo release summary cho deploy handoff | `.github/prompts/create-release.prompt.md` |

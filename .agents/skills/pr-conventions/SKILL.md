@@ -125,3 +125,10 @@ Guide the reviewer to risky areas.
 - Mixing unrelated changes in one PR.
 - Missing rollback plan for 🟠/🔴 impact.
 - Force push after review (unless announced first).
+
+## Handling unresolved 🟡 Medium findings
+- If `/review-staged` has unresolved `🟡 Medium` findings, PR description MUST include a short section:
+	- `Deferred Medium Findings`
+	- each item includes: file/scope, risk summary, ticket ID, owner, target milestone.
+- Do not defer `🟡` if it touches auth/authz, tenant scoping, payment, migration safety, or potential data corruption.
+- Keep reviewer expectation explicit: "Not blocking release, tracked follow-up".

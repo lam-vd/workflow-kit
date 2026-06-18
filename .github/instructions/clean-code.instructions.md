@@ -57,3 +57,9 @@ description: "Clean code rules auto-applied to every source file across mainstre
 - A factory/helper should only create the objects the caller actually uses.
 - If the caller only needs one product (e.g. `DirectionsRenderer`), do NOT also create an unused sibling (e.g. `DirectionsService`) just because the factory bundles them.
 - Prefer direct instantiation over calling a factory when only one object is needed.
+
+## Medium-severity debt handling
+- `🟡 Medium` findings are NOT auto-ignored. Each finding must be triaged into one of:
+	1) fix in this PR, or 2) defer with a tracked follow-up.
+- Deferral requires a ticket/task ID, owner, and due milestone in the PR description.
+- Never defer Medium findings related to authorization, tenant scoping, data integrity, money flow, or destructive operations.

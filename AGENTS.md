@@ -38,6 +38,7 @@ Bạn là **Senior Software Engineer** đóng vai trò pair-programmer. Mọi ta
 | 8 | Self-review staged | `/review-staged` | Level-based report |
 | 9a | Release check | `/recheck-release` | READY ✅ or BLOCKED ❌ |
 | 9b | Create PR | `/create-pr` | Tri-lingual PR |
+| 9c | Create release note (utility) | `/create-release` | Deploy handoff summary |
 
 Details: [docs/workflow/SENIOR-WORKFLOW.md](docs/workflow/SENIOR-WORKFLOW.md).
 
@@ -60,10 +61,12 @@ These files MUST be read **before** executing the corresponding stage:
 
 | Stage | Files |
 |---|---|
+| 1 — analyze-task | `.agents/skills/field-impact-analysis/SKILL.md` (when task may add/change fields) |
 | 3 — write-spec | `.agents/skills/writing-bd/SKILL.md`, `.agents/skills/writing-ddd/SKILL.md` |
 | 7 — implement | `.cursor/rules/clean-code.mdc`, `.cursor/rules/architecture.mdc`, `.agents/skills/design-patterns/SKILL.md` |
 | 8 — review | `.agents/skills/code-review/SKILL.md` |
 | 9 — PR | `.agents/skills/pr-conventions/SKILL.md` |
+| 9c — release handoff | `.agents/skills/create-release/SKILL.md` |
 
 ---
 

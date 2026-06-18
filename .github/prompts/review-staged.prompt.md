@@ -145,39 +145,111 @@ i += 1 # Tăng i lên 1
 - 🟡 **Medium / Trung bình** — nên sửa, có thể follow-up. VD: tên biến không rõ, thiếu test edge-case phụ.
 - 🟢 **Low / Thấp (nitpick)** — tùy chọn. VD: thiếu comment, formatting.
 
-## 📤 Output template
+## 📤 Output template / Mẫu báo cáo
+
+Output report PHẢI theo đúng cấu trúc dưới đây (dựa trên mẫu PR review thực tế):
 
 ```markdown
-# 🔍 Review Report — <task name / commit>
-**Files reviewed**: 7
-**Spec ref**: docs/ddd/<file>.md
-**Reviewed at**: <timestamp>
+# 🔍 Code Review: <PR title hoặc commit summary>
 
-## 🔴 Critical (block release)
-- [ ] `path/file.ts:42` — SQL query uses string concatenation, exposed to injection.
-  - **Fix**: switch to parameterized query.
+| Key | Value |
+|-----|-------|
+| Date | <YYYY-MM-DD> |
+| Branch | <branch name> |
+| Base | <base branch> |
+| Files reviewed | <N> |
+| Spec ref | docs/ddd/<file>.md |
 
-## 🟠 High (must-fix before merge)
-- [ ] `path/file.ts:88` — Does not catch error from external API; user gets 500.
-  - **Fix**: wrap try/catch, return 502 with code `UPSTREAM_FAILED`.
+---
 
-## 🟡 Medium (should-fix, can follow up)
-- [ ] `path/file.ts:120` — `doStuff` is 80 lines, violates SRP.
+## 1. Findings / Phát hiện (theo mức độ nghiêm trọng)
 
-## 🟢 Low / nitpick
-- [ ] `path/file.ts:5` — Missing JSDoc for public function.
+### 1.1 <Tóm tắt vấn đề> — **Nghiêm trọng (P0)** 🔴
 
-## ✅ Clean (no issues)
-- src/utils/format.ts
-- src/types/user.ts
+- **Hiện tượng:** <Mô tả cụ thể: function/file nào, behavior sai thế nào>
+- **Likelihood:** **Cao** — <kịch bản trigger>
+- **Ảnh hưởng:** <Hậu quả: user thấy gì? Data sai? Contract phá?>
+- **Cách tái hiện:**
+  1. <Step>
+  2. <Step>
+  3. Quan sát: <kết quả lỗi>
+- **Gợi ý:** <Fix cụ thể, actionable>
 
-## 🚦 Verdict
-- [ ] READY for `/recheck-release`
-- [x] BLOCKED — fix 🔴 and 🟠 first
+### 1.2 <Tóm tắt> — **Cao (P1)** 🟠
+
+- **Hiện tượng:** ...
+- **Likelihood:** ...
+- **Ảnh hưởng:** ...
+- **Gợi ý:** ...
+
+### 1.3 <Tóm tắt> — **Trung bình (P2)** 🟡
+
+- **Hiện tượng:** ...
+- **Likelihood:** ...
+- **Ảnh hưởng:** ...
+- **Gợi ý:** ...
+
+### 1.4 <Tóm tắt> — **Nhẹ (P3)** 🟢
+
+- **Hiện tượng:** ...
+- **Gợi ý:** ...
+
+---
+
+## 2. Intent & Coverage / Đối chiếu yêu cầu ↔ code
+
+### Nguồn intent
+- <Tóm tắt mục tiêu từ spec / PR description>
+
+### Ánh xạ yêu cầu → code
+
+| Yêu cầu | Đánh giá | Ghi chú |
+|----------|----------|---------|
+| <requirement 1> | **Khớp** | <đúng và đủ> |
+| <requirement 2> | **Một phần** | <đúng hướng nhưng thiếu luồng X> |
+| <requirement 3> | **Chưa đủ** | <luồng chính bị sót> |
+
+---
+
+## 3. Specialist follow-up / Cần review chuyên sâu?
+
+- Security audit: <cần/không — lý do>
+- Performance audit: <cần/không — lý do>
+- UX review: <cần/không — lý do>
+- DBA review: <cần/không — lý do>
+- Manual QA scope: <các luồng cần test thủ công>
+
+---
+
+## 4. Positive observations / Điểm tốt
+
+- <Điểm tích cực 1 — hướng giải quyết đúng gốc rễ?>
+- <Điểm tích cực 2 — pattern tốt?>
+- <Điểm tích cực 3 — an toàn hơn trước?>
+
+---
+
+## 5. Tóm tắt merge / Verdict
+
+**<Nên merge ✅ / Chưa nên merge ❌>** cho đến khi xử lý:
+- **P0 🔴**: <list blocking items>
+- **P1 🟠**: <list must-fix items>
+
+Các mục P2/P3 nên làm cùng hoặc follow-up ngắn trước release.
 ```
 
-## ⚠️ Hard rules
-- DO NOT auto-fix code — only report.
-- Every issue MUST have: `file:line`, brief description, concrete suggested fix.
-- If no 🔴 or 🟠 → verdict `READY`. Otherwise → `BLOCKED`.
-- If a staged file is outside the spec's scope → flag as 🟠 "out-of-scope change".
+> **VI**: Mỗi finding BẮT BUỘC có: Hiện tượng + Likelihood + Ảnh hưởng + Gợi ý (P0/P1 thêm Cách tái hiện).
+> PHẢI có phần Positive observations — review không chỉ tìm lỗi.
+> PHẢI có Intent & Coverage — đảm bảo code đáp ứng đúng yêu cầu.
+
+## ⚠️ Hard rules / Quy tắc bắt buộc
+
+- DO NOT auto-fix code — only report. / KHÔNG tự sửa code — chỉ báo cáo.
+- Every finding MUST have: Hiện tượng + Likelihood + Ảnh hưởng + Gợi ý. / Mọi phát hiện phải đủ 4 phần.
+- P0/P1 findings MUST include reproduction steps (Cách tái hiện). / P0/P1 phải có bước tái hiện.
+- MUST include Positive observations (≥2 items). / PHẢI có điểm tốt (≥2 mục).
+- MUST include Intent & Coverage table. / PHẢI có bảng đối chiếu yêu cầu.
+- If no 🔴 or 🟠 → verdict `Nên merge ✅`. Otherwise → `Chưa nên merge ❌`.
+- If a staged file is outside the spec's scope → flag as 🟠 "out-of-scope change". / File ngoài scope → 🟠.
+- DO NOT say "LGTM" without detail. / KHÔNG nói "LGTM" không chi tiết.
+- DO NOT block for personal preference without justification. / KHÔNG block vì sở thích cá nhân.

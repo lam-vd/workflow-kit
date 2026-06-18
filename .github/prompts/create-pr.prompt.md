@@ -106,6 +106,12 @@ Use this structure exactly. Each language block is collapsible. EN is open by de
 - [ ] Feature flag configured (if applicable)
 - [ ] Telemetry / metrics added
 
+## 🗂 Deferred Medium Findings (if any)
+- <file/scope> — <risk summary>
+   - Ticket: <id>
+   - Owner: <name>
+   - Target: <milestone/date>
+
 ## ↩️ Rollback plan
 <concrete steps if regression: revert PR? toggle flag? db down migration?>
 
@@ -201,6 +207,8 @@ Use this structure exactly. Each language block is collapsible. EN is open by de
 - VI and JP blocks must mirror the EN content; do not omit sections.
 - Exception: if legacy format override is explicitly requested by the user,
   skip tri-lingual block requirements and use the requester-preferred structure.
+- If unresolved `🟡 Medium` findings exist, include `Deferred Medium Findings` with ticket/owner/target.
+- Never allow deferred `🟡` for auth/authz, tenant scoping, payment, migration safety, or data integrity risks.
 
 ## 📤 Output format
 3 separate blocks with code fences (```), with headers `### 1. Title`, `### 2. Commit msg`, `### 3. Description` so the user can copy each quickly.

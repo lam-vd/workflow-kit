@@ -16,6 +16,7 @@ Verify each item in the gate checklist. If ANY item fails → result is `BLOCKED
 
 ### A. Code quality / Chất lượng code
 - [ ] `/review-staged` ran and has no remaining 🟠 or 🔴. / Đã chạy và không còn 🟠/🔴.
+- [ ] Any unresolved 🟡 Medium findings are triaged and tracked (ticket + owner + target). / Mọi 🟡 chưa sửa phải được triage và có tracking.
 - [ ] No `TODO` / `FIXME` / `XXX` in staged code. / Không có TODO/FIXME/XXX.
 - [ ] No `console.log` / `print` / debugger statements. / Không có console.log/print/debugger.
 - [ ] No commented-out code. / Không có code bị comment.
@@ -92,3 +93,7 @@ All gates passed:
 ## ⚠️ Hard rules
 - DO NOT output `READY` if ANY item is uncertain — must verify concretely.
 - DO NOT skip the "Security" gate even if the task seems unrelated.
+
+## Medium handling gate
+- `READY` is allowed with unresolved `🟡 Medium` only when all are tracked with ticket + owner + target date/milestone.
+- Any unresolved `🟡` touching auth/authz, tenant scoping, payment, migration safety, or data integrity => treat as `🟠` and return `BLOCKED`.
