@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: "Stage 8 of the Senior Workflow — Self-review of staged changes ONLY (git diff --cached). Reviews against 8 dimensions (spec compliance, clean code, architecture, error handling, security/OWASP, performance, tests, backward compat) with 4-level severity (🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low). Reads the FINAL spec before reviewing. Outputs a level-grouped report with file:line references and concrete suggested fixes. Does NOT auto-fix code — only reports. Verdict: READY (no 🔴/🟠) or BLOCKED."
+description: "Stage 8 of the Senior Workflow — Self-review of staged changes ONLY (git diff --cached). Reviews against 8 dimensions plus explicit spot-checks for typos, naming conventions, syntax, security issues, and code anti-patterns. 4-level severity (🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low). Reads the FINAL spec before reviewing. Outputs a level-grouped report with file:line references and concrete suggested fixes. Does NOT auto-fix code — only reports. Verdict: READY (no 🔴/🟠) or BLOCKED."
 ---
 
 You are at **Stage 8: Review Staged Changes**.
@@ -9,9 +9,9 @@ You are at **Stage 8: Review Staged Changes**.
 
 ## Task / Nhiệm vụ
 
-Review ONLY the **staged** files in git, against 8 dimensions, with 4 severity levels.
+Review ONLY the **staged** files in git, against 8 dimensions **plus explicit spot-checks** (typos, naming, syntax, security, anti-patterns), with 4 severity levels.
 
-**VI**: Chỉ review các file đã staged (`git diff --cached`), đánh giá theo 8 chiều chất lượng, phân loại lỗi theo 4 mức độ nghiêm trọng.
+**VI**: Chỉ review các file đã staged (`git diff --cached`), đánh giá theo 8 chiều chất lượng **và checklist phát hiện typo / quy tắc đặt tên / cú pháp / bảo mật / anti-pattern**, phân loại lỗi theo 4 mức độ nghiêm trọng.
 
 ## Steps
 
@@ -34,7 +34,8 @@ Review ONLY the **staged** files in git, against 8 dimensions, with 4 severity l
    - `.cursor/rules/architecture.mdc`
    - `.agents/skills/code-review/SKILL.md`
 6. **Review against the 8 dimensions** below.
-7. **Emit report** in the format below.
+7. **Run the Code Quality Spot Checks** below (typos, naming, syntax, security, anti-patterns).
+8. **Emit report** in the format below.
 
 ### Linter / Formatter reference / Bảng linter theo ngôn ngữ
 
@@ -66,6 +67,109 @@ Review ONLY the **staged** files in git, against 8 dimensions, with 4 severity l
 | 6 | Performance | N+1, big-O, allocations, blocking I/O | N+1 query? Big-O hợp lý? Blocking I/O? |
 | 7 | Tests | Coverage for happy + edge + error paths; brittleness | Cover đủ happy + edge + error? Test giòn? |
 | 8 | Backward compat | Schema changes, API breaking, deprecation | Schema change có migration? API breaking? |
+
+---
+
+## 🔎 Code Quality Spot Checks / Phát hiện typo, naming, syntax, security, anti-pattern
+
+> **VI**: Ngoài 8 chiều trên, review **BẮT BUỘC** quét staged diff theo 5 nhóm dưới đây. Mỗi phát hiện phải ghi `file:line` và gợi ý sửa cụ thể.
+
+### 1. Typos / Lỗi chính tả (🟢 Low → 🟡 Medium nếu user-facing)
+
+- Sai chính tả trong **identifier** (tên biến, hàm, class, file, route, constant) — khó refactor sau.
+- Sai trong **comment**, **docstring**, **commit message** trong diff.
+- Sai trong **user-facing text** (UI label, flash, API error message, i18n key/value) — 🟡 Medium.
+- Sai **tên key i18n** hoặc copy-paste key nhầm locale.
+- Typo gây **nhầm domain term** (vd: `custmer`, `proposol`, `tenent`) → 🟡 Medium.
+
+**Check**:
+```sh
+git diff --cached --name-only
+# Đọc từng dòng added/changed; đối chiếu glossary trong spec nếu có
+```
+
+### 2. Naming conventions / Quy tắc đặt tên (🟡 Medium → 🟠 High nếu public API)
+
+Đối chiếu `.cursor/rules/clean-code.mdc` và convention của project:
+
+- [ ] Tên **tự giải thích** — không viết tắt mơ hồ (`tmp`, `data`, `obj`, `fn`).
+- [ ] **Boolean** prefix `is` / `has` / `should` / `can`.
+- [ ] **Hàm** bắt đầu bằng động từ (`fetch`, `build`, `validate`); **class/type** danh từ PascalCase.
+- [ ] **Constant** UPPER_SNAKE_CASE; không magic string/number — extract named constant.
+- [ ] Tên **khớp domain** trong spec/DDD (ubiquitous language).
+- [ ] Không trùng nghĩa khác nhau cùng tên (`status` vs `state` lẫn lộn trong cùng module).
+- [ ] File/path đặt tên theo convention repo (Rails: `snake_case.rb`, React: `PascalCase.tsx`).
+
+> Vi phạm trên **public API** (route, serializer field, DB column mới) → 🟠 High.
+
+### 3. Syntax & static issues / Cú pháp & lỗi tĩnh (🟠 High)
+
+- Lỗi **cú pháp** linter/formatter bắt được → map theo bảng linter (error = 🟠, warning = 🟡).
+- **Import/require** thừa, sai path, circular dependency mới.
+- **Type mismatch** (TS/typed language): `any` che lỗi, cast không an toàn.
+- Template/view: tag đóng sai, ERB/JSX nesting lỗi, helper gọi sai arity.
+- Config (YAML/JSON/env): key sai, type sai, thiếu required key.
+- **Unreachable** hoặc **dead branch** sau refactor (if false, switch case thừa).
+
+**Check**:
+```sh
+git diff --cached --name-only --diff-filter=ACM | xargs <linter>  # theo bảng linter ở trên
+```
+
+### 4. Security issues / Vấn đề bảo mật (🔴 Critical → 🟠 High)
+
+Bổ sung cho Dimension #5 — **phải chủ động flag**, không chỉ khi linter báo:
+
+- [ ] **Secrets** hardcoded (API key, password, token, private key) trong code/config committed.
+- [ ] **Injection**: SQL string concat, `eval`, unescaped HTML (`html_safe`, `dangerouslySetInnerHTML`).
+- [ ] **Authz**: endpoint/action mới thiếu `authorize` / policy check / tenant scope.
+- [ ] **IDOR**: truy cập record theo `params[:id]` không qua `policy_scope`.
+- [ ] **Mass assignment**: `permit` quá rộng, cho phép sửa field nhạy cảm (`role`, `tenant_id`).
+- [ ] **SSRF**: URL từ user input fetch server-side không validate.
+- [ ] **Sensitive data** log ra console/logger (PII, token, password).
+- [ ] **Crypto**: hash/password không dùng library chuẩn; so sánh timing-unsafe.
+- [ ] **Dependency**: gem/package mới có CVE known (nếu detect được).
+
+**OWASP quick pass** (tick mental checklist):
+Broken Access Control · Injection · Cryptographic Failures · Insecure Design · Security Misconfiguration · ID & Auth Failures · SSRF
+
+> SQLi / secret leak / missing authz trên data nhạy cảm → 🔴 Critical.
+
+### 5. Code anti-patterns / Anti-pattern trong code (🟡 Medium → 🟠 High)
+
+| Anti-pattern | EN | VI | Severity |
+|---|---|---|---|
+| Fat controller / component | Business logic in UI layer | Logic nghiệp vụ nằm trong controller/component | 🟠 |
+| God object / god service | One class does everything | Một class làm quá nhiều việc | 🟠 |
+| Domain imports infra | HTTP/DB/framework in domain | Domain import HTTP/SQL/framework | 🟠 |
+| Swallowed exception | Empty `rescue` / catch without action | Nuốt exception, không log/re-raise | 🟠 |
+| N+1 query | Loop + query inside | Query trong vòng lặp | 🟠 |
+| Shotgun surgery | One change touches many unrelated files | Một thay đổi lan sang file không liên quan | 🟡 |
+| Primitive obsession | Pass many scalars instead of object | Truyền quá nhiều primitive thay vì object | 🟡 |
+| Copy-paste logic | Same block ≥2 times, not extracted | Copy-paste logic (xem Gate 3 DRY) | 🟡 |
+| Speculative generality | Abstract/factory "for future" | Abstraction chưa cần (YAGNI — xem Gate 2) | 🟠 |
+| Mutable global state | Singleton mutable shared state | Singleton/state toàn cục mutable | 🟠 |
+| Boolean trap | `doThing(true, false)` | Tham số boolean khó đọc | 🟡 |
+| Leaky abstraction | Implementation detail exposed | Lộ chi tiết implementation ra API | 🟡 |
+
+> **VI**: Anti-pattern trên **hot path** hoặc **data/auth boundary** → nâng 1 mức severity.
+
+### Spot-check summary in report / Tóm tắt trong báo cáo
+
+Trong phần **Findings**, gom nhãn theo loại khi phù hợp: `[typo]`, `[naming]`, `[syntax]`, `[security]`, `[anti-pattern]`.
+
+Thêm subsection ngắn (có thể "Không phát hiện" nếu sạch):
+
+```markdown
+### Spot-check sweep / Quét nhanh
+| Category | Count | Worst severity |
+|----------|-------|----------------|
+| Typos | 0 | — |
+| Naming | 1 | 🟡 |
+| Syntax | 0 | — |
+| Security | 0 | — |
+| Anti-patterns | 2 | 🟠 |
+```
 
 ---
 
@@ -164,7 +268,17 @@ Output report PHẢI theo đúng cấu trúc dưới đây (dựa trên mẫu PR
 
 ## 1. Findings / Phát hiện (theo mức độ nghiêm trọng)
 
-### 1.1 <Tóm tắt vấn đề> — **Nghiêm trọng (P0)** 🔴
+### Spot-check sweep / Quét nhanh
+
+| Category | Count | Worst severity |
+|----------|-------|----------------|
+| Typos | <n> | <🔴/🟠/🟡/🟢/—> |
+| Naming | <n> | ... |
+| Syntax | <n> | ... |
+| Security | <n> | ... |
+| Anti-patterns | <n> | ... |
+
+### 1.1 <Tóm tắt vấn đề> — **Nghiêm trọng (P0)** 🔴 `[security]`
 
 - **Hiện tượng:** <Mô tả cụ thể: function/file nào, behavior sai thế nào>
 - **Likelihood:** **Cao** — <kịch bản trigger>
@@ -253,3 +367,5 @@ Các mục P2/P3 nên làm cùng hoặc follow-up ngắn trước release.
 - If a staged file is outside the spec's scope → flag as 🟠 "out-of-scope change". / File ngoài scope → 🟠.
 - DO NOT say "LGTM" without detail. / KHÔNG nói "LGTM" không chi tiết.
 - DO NOT block for personal preference without justification. / KHÔNG block vì sở thích cá nhân.
+- MUST run Code Quality Spot Checks (typos, naming, syntax, security, anti-patterns) and include the sweep table. / PHẢI chạy spot-check và có bảng tóm tắt.
+- Tag findings with `[typo]` / `[naming]` / `[syntax]` / `[security]` / `[anti-pattern]` when applicable. / Gắn nhãn loại phát hiện khi phù hợp.
