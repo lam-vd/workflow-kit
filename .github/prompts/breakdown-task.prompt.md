@@ -60,6 +60,6 @@ Sub-task #1 is 🟠 — recommend doing it first and verifying rollback immediat
 - If total estimate > 5 days → warn user "consider splitting into multiple PRs". / Nếu tổng >5 ngày → cảnh báo cân nhắc chia nhiều PR.
 
 ## ➡️ Next step / Bước tiếp theo
-Move to **Stage 7: Implement** — run `/start-coding`. After each completed sub-task → run `/review-staged`.
+Move to **Stage 7: Implement** — run `/start-coding`. After each sub-task: stage → `/review-staged` → commit if READY.
 
-**VI**: Chuyển sang Bước 7 — chạy `/start-coding`. Sau mỗi sub-task xong → chạy `/review-staged`.
+**VI**: Chuyển sang Bước 7 — chạy `/start-coding`. Sau mỗi sub-task: stage → `/review-staged` → commit nếu READY.

@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: "Stage 7 of the Senior Workflow — Start coding a sub-task according to the FINAL spec and DDD plan. Use AFTER /breakdown-task when you are ready to implement the next sub-task. Reads the FINAL BD + DDD + sub-task list, identifies which sub-task to work on next (by priority or user request), loads relevant rules (clean-code, architecture) and skills (design-patterns), then generates production code + tests following the spec exactly. Commits with Conventional Commits messages. After each sub-task completes, reminds user to run /review-staged before moving to the next one."
+description: "Stage 7 of the Senior Workflow — Start coding a sub-task according to the FINAL spec and DDD plan. Use AFTER /breakdown-task when you are ready to implement the next sub-task. Reads the FINAL BD + DDD + sub-task list, identifies which sub-task to work on next (by priority or user request), loads relevant rules (clean-code, architecture) and skills (design-patterns), then generates production code + tests following the spec exactly. Stages changes with git add (no commit). After each sub-task completes, reminds user to run /review-staged to review and commit."
 ---
 
 You are at **Stage 7: Start Coding** of the workflow.
@@ -60,12 +60,18 @@ Ask user: "Plan looks good? Proceed?" — wait for confirmation.
   - Unit tests for business logic.
   - Integration tests if sub-task involves DB/external.
   - Cover happy path + edge cases listed in DDD.
-- Commit with Conventional Commits:
+
+### 5. Stage for review (do NOT commit here)
+```sh
+git add <files changed for this sub-task only>
+```
+- Print a **suggested commit message** (for `/review-staged` when READY):
   ```
   <type>(<scope>): <imperative summary>
   ```
+- **DO NOT run `git commit`** — see `.cursor/rules/git-commit-policy.mdc`.
 
-### 5. Verify DoD
+### 6. Verify DoD
 After coding, check the sub-task's Definition of Done:
 ```markdown
 ## ✅ Sub-task #N DoD Check
@@ -76,8 +82,8 @@ After coding, check the sub-task's Definition of Done:
 
 If all pass → print:
 ```
-✅ Sub-task #N complete. DoD met.
-➡️ Next: run /review-staged to self-review before moving on.
+✅ Sub-task #N complete. DoD met. Changes staged.
+➡️ Next: run /review-staged — review staged diff, then commit if READY.
 ```
 
 If any DoD item fails → continue fixing until met.
@@ -97,7 +103,7 @@ If any DoD item fails → continue fixing until met.
 - **NEVER deviate from FINAL spec** — if you discover a needed change, STOP and ask: "Spec may need update. Return to Stage 3 or continue with assumption?" / KHÔNG lệch khỏi FINAL spec — nếu cần thay đổi, DẮNG và hỏi user.
 - **NEVER skip tests** — every sub-task must have tests matching its DoD. / KHÔNG bỏ qua test — mọi sub-task phải có test khớp DoD.
 - **NEVER ignore sub-task dependencies** — if sub-task #3 depends on #2, verify #2 is done first. / KHÔNG bỏ qua dependency giữa các sub-task.
-- **Commit after each logical unit** — don't accumulate a giant uncommitted diff. / Commit sau mỗi đơn vị logic, không để diff khổng lồ.
+- **NEVER run `git commit` in this stage** — stage only (`git add`); commit happens in `/review-staged` after READY. / KHÔNG commit ở bước này.
 - **After completing a sub-task** → always remind: "Run `/review-staged` now." / Sau khi xong sub-task → nhắc chạy `/review-staged`.
 - **NEVER touch unrelated code** — only modify files/functions directly required by the current sub-task's DoD. / KHÔNG đụng vào code không liên quan — chỉ sửa file/function trực tiếp cần cho DoD của sub-task hiện tại.
 
@@ -118,7 +124,7 @@ If any DoD item fails → continue fixing until met.
 ### Tests
 <actual test code>
 
-### Commit
+### Suggested commit message (for /review-staged when READY)
 ```
 feat(xxx): <imperative summary>
 ```
@@ -128,12 +134,12 @@ feat(xxx): <imperative summary>
 - [x] ...
 
 ### ➡️ Next
-Run `/review-staged` to self-review staged changes.
+Run `/review-staged` on staged changes. Commit only if verdict is READY.
 ```
 
 ## 🔁 Multiple sub-tasks in sequence
 
-After `/review-staged` passes for sub-task #N:
+After `/review-staged` passes for sub-task #N (committed):
 - User can run `/start-coding` again for sub-task #N+1.
 - Repeat until all sub-tasks from Stage 6 are complete.
 - Then → `/recheck-release` → `/create-pr`.

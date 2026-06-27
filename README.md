@@ -35,7 +35,7 @@ senior-workflow-kit/
 │   ├── prompts/                       # 11 slash commands
 │   └── instructions/                  # Auto-applied rules (by glob)
 ├── .cursor/
-│   └── rules/                         # Cursor rules (.mdc)
+│   └── rules/                         # Cursor rules (.mdc) incl. git-commit-policy
 ├── .agents/
 │   └── skills/                        # Domain knowledge SKILL.md
 └── docs/
@@ -53,12 +53,12 @@ senior-workflow-kit/
 |---|---|---|---|
 | 1 | Intake & Analyze | `/analyze-task` | Initial analysis |
 | 2 | Grooming (5W + risk) | `/grooming` | Risk matrix + open questions |
-| 3 | Write Spec | `/write-spec` | `docs/specs/*.md`, `docs/ddd/*.md` (VI/EN/JP) |
+| 3 | Write Spec | `/write-spec` or `/write-spec-ai-housemaker` | `docs/specs/*.md`, `docs/ddd/*.md` (+ `.vi.md` for ai-housemaker) |
 | 4 | Recheck Spec (score) | `/recheck-spec` | Audit scorecard /10 |
 | 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate ≥8) |
 | 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks ≤4h |
-| 7 | Implement | `/start-coding` | Code + tests per sub-task |
-| 8 | Self-review | `/review-staged` | Level-based report |
+| 7 | Implement | `/start-coding` | Code + tests; stage only |
+| 8 | Self-review | `/review-staged` | Level-based report + **commit if READY** |
 | 9a | Release check | `/recheck-release` | READY ✅ or BLOCKED ❌ |
 | 9b | Create PR | `/create-pr` | PR (VI/EN/JP) |
 
@@ -75,10 +75,18 @@ senior-workflow-kit/
 ### 1) Daily operational flow
 
 1. Start every task with `/analyze-task` and `/grooming`.
-2. Write BD + DDD via `/write-spec` using tri-lingual structure.
+2. Write BD + DDD via `/write-spec` (tri-lingual) or `/write-spec-ai-housemaker` (ai-housemaker: BD tri-lingual + DDD EN + `.vi.md`).
 3. Recheck quality by `/recheck-spec` (score gate >= 8.0).
-4. Lock by `/check-spec`, then implement by sub-task.
-5. Before PR: `/review-staged` -> `/recheck-release` -> `/create-pr`.
+4. Lock by `/check-spec` (no git commit — spec stays in working tree), then implement by sub-task.
+5. Per sub-task: `/start-coding` → stage → `/review-staged` → commit if READY → `/recheck-release` → `/create-pr`.
+
+### Git commit policy
+
+- **Stages 1–6**: never `git commit` (including `docs: lock spec FINAL`).
+- **`/start-coding`**: `git add` only.
+- **`/review-staged`**: `git commit` when verdict is READY.
+
+Detail: [.cursor/rules/git-commit-policy.mdc](.cursor/rules/git-commit-policy.mdc).
 
 ### 2) How rules are applied
 

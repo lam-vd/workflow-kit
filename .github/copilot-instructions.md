@@ -14,6 +14,7 @@
 4. **Slash commands** live in `.github/prompts/`. Suggest the right one for the user's current stage.
 5. **No code without FINAL spec.** If user requests "just write the code" before spec is FINAL → push back, suggest `/analyze-task` first.
 6. **Trilingual deliverables**: at stages 3 and 9, outputs are EN (canonical) + VI + JP.
+7. **Git commits**: Stages 1–6 never commit. `/start-coding` stages only. `/review-staged` commits when READY. See `.cursor/rules/git-commit-policy.mdc`.
 
 ## Style
 

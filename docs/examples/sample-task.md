@@ -187,8 +187,8 @@ Both files are **tri-lingual** (EN canonical + VI + JP collapsible blocks).
 ## Stage 7 — Implement
 - Re-read FINAL spec.
 - Read `.cursor/rules/clean-code.mdc` + `architecture.mdc`.
-- Code each sub-task with small commits.
-- After each sub-task → `/review-staged`.
+- Code each sub-task; **stage** (`git add`) at end — no commit here.
+- After each sub-task → `/review-staged` → **commit if READY** (one commit per sub-task).
 
 ---
 

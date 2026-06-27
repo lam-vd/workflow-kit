@@ -1,0 +1,48 @@
+---
+description: "Git commit policy for the Senior Workflow. Stages 1–6 (analyze through breakdown) and spec amend loops must NEVER create commits. Only /review-staged may run git commit — after a sub-task is implemented via /start-coding and review verdict is READY (no 🔴/🟠). One commit per sub-task."
+alwaysApply: true
+---
+
+# Git Commit Policy
+
+## When commits are allowed
+
+| Stage | Commands | `git commit` |
+|---|---|---|
+| 1–2 | `/analyze-task`, `/grooming` | ❌ Never |
+| 3–5 | `/write-spec`, `/recheck-spec`, `/check-spec` | ❌ Never |
+| 6 | `/breakdown-task` | ❌ Never |
+| 7 | `/start-coding` | ❌ Never — stage only (`git add`) |
+| 8 | `/review-staged` | ✅ Yes — **only** when verdict is READY (no 🔴/🟠) |
+| 9 | `/recheck-release`, `/create-pr` | ❌ Never (artifacts only) |
+
+## Implementation loop (Stages 7–8)
+
+```
+/start-coding → implement sub-task → git add (stage) → /review-staged
+  → if BLOCKED: fix → re-stage → /review-staged again
+  → if READY: git commit (one sub-task = one commit)
+  → next sub-task
+```
+
+## Spec phase (Stages 3–5)
+
+- Edit BD/DDD files in the **working tree only**.
+- `Status: FINAL` from `/check-spec` does **not** require a commit.
+- Revisions after `/recheck-spec` (amend, bypass, re-audit) stay uncommitted until the first implementation commit bundles spec + code **only if** the team chooses — default: **keep spec uncommitted** on the branch until PR squash, or let the **first** `/review-staged` READY commit include spec files if they are still unstaged.
+
+Preferred default: spec files remain uncommitted through Stage 6; first code commit does not need to include spec docs unless the user asks.
+
+## Agent hard rules
+
+1. **NEVER** run `git commit` during `/write-spec`, `/recheck-spec`, or `/check-spec` — even for "docs: lock spec FINAL".
+2. **NEVER** commit unless the user explicitly requests a commit outside Stages 7–8 policy.
+3. **`/start-coding`**: stage changes with `git add`; print suggested Conventional Commit message for `/review-staged`.
+4. **`/review-staged`**: commit only after READY verdict; use the suggested message from Stage 7 or derive from sub-task + diff.
+5. **One sub-task → one commit** after review passes (no extra commits for fix-up nits — amend or fold into the same commit before push if hooks allow and user approves).
+
+## Commit message format
+
+Follow `.cursor/rules/pr-conventions.mdc` — Conventional Commits, English, imperative, ≤72 chars.
+
+Typical types in implementation loop: `feat`, `fix`, `refactor`, `test`, `style` — **not** `docs` for spec-only work during Stages 3–5 (because those stages must not commit).

@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: "Stage 5 of the Senior Workflow — FINAL spec lock. Gates entry to coding (Stage 7). Verifies 5 conditions: scorecard exists, score ≥ 8.0 OR explicit user bypass, NO 🔴 Critical (never bypassable), stakeholder sign-off, spec committed. On pass: flips Status DRAFT → FINAL, adds Locked-at timestamp + Audit-score, appends changelog. If bypass: changelog must list open risks + follow-up plan. Refuses to lock when 🔴 exists regardless of user request."
+description: "Stage 5 of the Senior Workflow — FINAL spec lock. Gates entry to coding (Stage 7). Verifies 5 conditions: scorecard exists, score ≥ 8.0 OR explicit user bypass, NO 🔴 Critical (never bypassable), stakeholder sign-off, spec files saved on disk. On pass: flips Status DRAFT → FINAL, adds Locked-at timestamp + Audit-score, appends changelog. Does NOT git commit — see git-commit-policy. If bypass: changelog must list open risks + follow-up plan. Refuses to lock when 🔴 exists regardless of user request."
 ---
 
 You are at **Stage 5: Final Spec Lock**.
@@ -12,7 +12,7 @@ You are at **Stage 5: Final Spec Lock**.
 2. ✅ **Score ≥ 8.0 / 10** OR user has explicitly approved a bypass. / Điểm ≥8.0 hoặc user đã chấp nhận bypass.
 3. ✅ **NO 🔴 Critical issue** (Critical always blocks, regardless of user decision). / KHÔNG có lỗi 🔴 (🔴 luôn chặn, không bypass được).
 4. ✅ Stakeholder / PO sign-off (manual user confirmation). / PO đã sign-off.
-5. ✅ Spec is committed to the current branch. / Spec đã commit vào branch hiện tại.
+5. ✅ Spec files are saved on disk (BD + DDD). Uncommitted working-tree changes are OK. / File spec đã lưu trên disk; **không** cần `git commit`.
 
 If ANY condition fails → STOP, print the reason, ask user to fix.
 
@@ -42,8 +42,8 @@ If ANY condition fails → STOP, print the reason, ask user to fix.
   - [If bypassed] ⚠️ Bypassed at score X.X with user approval. Open risks: <list>. Follow-up: <task/PR>.
 ```
 
-6. Ask the user: "Have you verified all 5 preconditions? (score ≥ 8 or intentional bypass, no 🔴, sign-off received)" — wait for `yes` before committing the changes.
-7. After commit, print:
+6. Ask the user: "Have you verified all 5 preconditions? (score ≥ 8 or intentional bypass, no 🔴, sign-off received)" — wait for `yes` before saving FINAL metadata to the files.
+7. **DO NOT run `git commit`** — see `.cursor/rules/git-commit-policy.mdc`. After saving files, print:
 
 ```
 ✅ Spec FINAL locked.
@@ -55,6 +55,7 @@ If ANY condition fails → STOP, print the reason, ask user to fix.
 ```
 
 ## ⚠️ Hard rules / Quy tắc bắt buộc
+- **NEVER run `git commit`** in this stage — no `docs: lock spec FINAL` commits. / KHÔNG commit ở bước này.
 - NEVER auto-flip to `FINAL` without user confirmation. / KHÔNG tự động chuyển FINAL mà không user xác nhận.
 - NEVER lock FINAL while 🔴 Critical exists (even if user requests). / KHÔNG lock khi còn 🔴 dù user yêu cầu.
 - When user bypasses below 8 — Decision Log + Changelog MUST list open risks + follow-up plan. / Khi bypass dưới 8 — phải ghi risk + follow-up plan.

@@ -14,6 +14,13 @@ Read the BD and DDD files produced in Stage 3. Put on the **critic hat**, find i
 
 Before scoring, load and reuse the shared checklist at `common/checklists/recheck-spec-scorecard.md` to keep scoring consistent across tasks.
 
+### Pre-scoring checks (run before rubric)
+
+1. **BD tri-lingual sync** — EN canonical Goals / Solution / User stories must match VI and JP collapsible blocks (same scope, no contradictions e.g. avatar in EN but out-of-scope in VI/JP).
+2. **DDD diagrams inline** — EN canonical DDD must contain Mermaid in the Diagrams section (flowchart + ≥1 happy sequence + ≥1 error sequence). Flag 🟠 if diagrams are deferred to another file that is empty or missing.
+3. **Amendment drift** — If BD/DDD has `Amended` / `vN` changelog, verify Decision log + EN body + VI `.vi.md` (ai-housemaker) reflect the same version. Outdated audit score on metadata → 🟢 note only.
+4. **ai-housemaker** (when repo is ai-housemaker): also read `write-spec-ai-housemaker.prompt.md` §DDD mandatory sections; DDD `.vi.md` technical content must match EN (diagrams may be subset but not contradictory).
+
 ## 🎯 Pass criteria / Tiêu chí đạt
 - **Score ≥ 8.0 / 10** → can proceed to `/check-spec`. / Đạt ≥8.0 → được qua bước tiếp.
 - **Score < 8.0** → spec **NOT YET MEETING BAR**, recommend back to `/write-spec`. / Chưa đạt, khuyến nghị quay lại `/write-spec`.
@@ -40,7 +47,7 @@ Each item scored as one of three levels:
 | 7 | **Observability plan** | Metrics + logs + traces + alert thresholds | Listed generally only | Missing |
 | 8 | **Security considerations** | AuthZ + input validation + relevant OWASP + PII handling | 1–2 items | Not addressed |
 | 9 | **Performance budget** | p50 / p95 / p99 + concrete throughput | Qualitative only ("fast") | Missing |
-| 10 | **Consistency & clarity** | BD ↔ DDD consistent, no "TBD", new dev can read & implement | A few unclear spots | Contradictions / many TBD |
+| 10 | **Consistency & clarity** | BD ↔ DDD consistent, no "TBD", new dev can read & implement; **BD EN = VI = JP** for scope | A few unclear spots OR VI/JP collapsible drift from EN | Contradictions / many TBD / tri-lingual mismatch |
 
 > **Total**: sum of 10 items → max 10.0.
 > Some tasks may not need item 5 (no schema change) or item 9 (no perf concern). Items can be marked **N/A with justification**, then final score = (sum of applied items) / (count of applied items) × 10.
@@ -53,7 +60,7 @@ Each item scored as one of three levels:
 | Severity | When | Effect on score |
 |---|---|---|
 | 🔴 Critical | Spec has core logic error, missing main requirement, security hole | Related item = 0.0 + auto-block |
-| 🟠 High | Missing error sequence path, missing rollback, missing authz | Related item = 0.0 |
+| 🟠 High | Missing error sequence path, missing rollback, missing authz, **BD VI/JP contradicts EN**, **DDD diagrams deferred/missing** | Related item = 0.0 |
 | 🟡 Medium | Unclear naming, missing minor example | Related item = 0.5 |
 | 🟢 Low | Typo, formatting | No deduction |
 
@@ -92,8 +99,9 @@ Each item scored as one of three levels:
 
 ## ✅ Passed checks
 - API contract: schema + examples + error codes complete
-- Sequence diagrams: happy + error
-- Performance budget quantified
+- Sequence diagrams: happy + error (inline in EN DDD, not deferred)
+- BD tri-lingual: EN / VI / JP collapsibles aligned on scope
+- Performance budget quantified (when applicable)
 - Security: authz + input validation present
 
 ## 🚦 Verdict
@@ -124,11 +132,12 @@ Each item scored as one of three levels:
 ## ⚠️ Hard rules
 
 1. **DO NOT modify the spec** — only report issues and suggest fixes.
-2. **Score MUST be computed by summing the rubric**, not "by feel". Show every item in the scorecard.
-3. **N/A items** require a 1-line justification (e.g. "no schema change → item 5 N/A") and trigger pro-rating.
-4. **If any 🔴 Critical exists** → regardless of score, verdict is automatically `BLOCKED — fix 🔴 first`. **User CANNOT bypass** this.
-5. **If any 🟠 High exists** → related item is automatically 0.0, cannot be 0.5.
-6. **When user chooses bypass (only valid for score < 8 AND no 🔴)** → record in BD/DDD Decision Log:
+2. **DO NOT run `git commit`** — audit is read-only; fixes belong in `/write-spec` without commits.
+3. **Score MUST be computed by summing the rubric**, not "by feel". Show every item in the scorecard.
+4. **N/A items** require a 1-line justification (e.g. "no schema change → item 5 N/A") and trigger pro-rating.
+5. **If any 🔴 Critical exists** → regardless of score, verdict is automatically `BLOCKED — fix 🔴 first`. **User CANNOT bypass** this.
+6. **If any 🟠 High exists** → related item is automatically 0.0, cannot be 0.5.
+7. **When user chooses bypass (only valid for score < 8 AND no 🔴)** → record in BD/DDD Decision Log:
    ```markdown
    | <date> | Bypass audit at score X.X | User approved despite N 🟠 issues. Risks: <list>. Mitigation deferred to <stage/PR>. | <user> |
    ```
@@ -140,3 +149,14 @@ After user fixes → re-run `/recheck-spec`. The new report MUST reference the p
 - Issues fixed → mark ✅ + raise score on related items.
 - Issues remaining → keep as-is.
 - New issues → flag 🆕.
+- Include **delta**: `Previous score → New score` in Verdict section.
+
+### Common regression patterns (flag in Issues table)
+
+| Pattern | Severity | Rubric item |
+|---|---|---|
+| BD VI/JP says feature out-of-scope but EN says in-scope | 🟠 | #10 |
+| DDD §12 says "see other file" but no Mermaid in repo | 🟠 | #3 |
+| Amendment vN without updated user stories / flowchart | 🟡 | #10 |
+| Service `error_key` list incomplete vs controller mapping | 🟡 | #4 |
+| Display/helper algorithm mentioned but not specified | 🟡 | #4 or #10 |

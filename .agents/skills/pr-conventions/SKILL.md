@@ -5,6 +5,17 @@ description: "Skill for crafting PR titles, commit messages, and PR descriptions
 
 # Skill: PR Conventions
 
+## When commits happen in the workflow
+
+| Phase | Commit? |
+|---|---|
+| Stages 1–6 (spec, audit, FINAL lock, breakdown) | ❌ Never |
+| `/start-coding` | ❌ Stage only |
+| `/review-staged` READY | ✅ One commit per sub-task |
+| `/create-pr` | ❌ Artifacts only |
+
+Do **not** use `docs(spec): lock FINAL` commits — spec stays in working tree until implementation. See `.cursor/rules/git-commit-policy.mdc`.
+
 ## PR / Commit Title
 
 Format: `<type>(<scope>): <imperative summary>`
@@ -51,6 +62,11 @@ Refs: <task-id or spec link>
 
 Ship in 3 languages: EN (canonical, expanded by default) + VI + JP (collapsed `<details>`).
 Each language block contains the same 8 sections below.
+
+### ai-housemaker format override
+- For repo **ai-housemaker**, use `.agents/skills/ai-housemaker-pr-description/SKILL.md` and prompt `/create-pr-ai-housemaker`.
+- PR body: **Japanese** with `概要` (Before/After), `仕様`, `対応内容`, `レビュワー確認項目`, `タスクリンク`, `備考`.
+- PR title and squash commit remain English Conventional Commits (this skill).
 
 ### Legacy format override (explicit user preference)
 - If the requester explicitly asks to keep an existing PR description style (e.g. "use old format"),

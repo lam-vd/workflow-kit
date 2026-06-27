@@ -81,6 +81,8 @@ JP translation here.
 - DO NOT copy task description verbatim — synthesize.
 - DO NOT assume — record assumptions explicitly in `Assumptions`.
 - If information is missing → return to Stage 2, do not guess.
+- **DO NOT run `git commit`** — write/edit spec files only (working tree). See `.cursor/rules/git-commit-policy.mdc`.
+- **DO NOT** suggest or run `git add` + `git commit` for BD/DDD output. Commits start only after `/start-coding` + `/review-staged` READY.
 
 ## ➡️ Next step
 Run `/recheck-spec` to self-audit and score.

@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: "Stage 8 of the Senior Workflow — Self-review of staged changes ONLY (git diff --cached). Reviews against 8 dimensions plus explicit spot-checks for typos, naming conventions, syntax, security issues, and code anti-patterns. 4-level severity (🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low). Reads the FINAL spec before reviewing. Outputs a level-grouped report with file:line references and concrete suggested fixes. Does NOT auto-fix code — only reports. Verdict: READY (no 🔴/🟠) or BLOCKED."
+description: "Stage 8 of the Senior Workflow — Self-review of staged changes ONLY (git diff --cached). Reviews against 8 dimensions plus explicit spot-checks for typos, naming conventions, syntax, security issues, and code anti-patterns. 4-level severity (🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low). Reads the FINAL spec before reviewing. Outputs a level-grouped report with file:line references and concrete suggested fixes. On READY verdict (no 🔴/🟠): runs git commit per git-commit-policy. On BLOCKED: reports only, no commit."
 ---
 
 You are at **Stage 8: Review Staged Changes**.
@@ -36,6 +36,19 @@ Review ONLY the **staged** files in git, against 8 dimensions **plus explicit sp
 6. **Review against the 8 dimensions** below.
 7. **Run the Code Quality Spot Checks** below (typos, naming, syntax, security, anti-patterns).
 8. **Emit report** in the format below.
+9. **Commit gate** (only if verdict is READY — no 🔴/🟠):
+   - Use the suggested message from `/start-coding` or derive from sub-task title + staged diff.
+   - Run:
+     ```sh
+     git commit -m "$(cat <<'EOF'
+     <type>(<scope>): <imperative summary>
+
+     EOF
+     )"
+     ```
+   - Print: `✅ Committed sub-task #N — <hash short>`
+   - If verdict is BLOCKED → **DO NOT commit**; user fixes and re-runs `/review-staged`.
+   - See `.cursor/rules/git-commit-policy.mdc`.
 
 ### Linter / Formatter reference / Bảng linter theo ngôn ngữ
 
@@ -358,7 +371,9 @@ Các mục P2/P3 nên làm cùng hoặc follow-up ngắn trước release.
 
 ## ⚠️ Hard rules / Quy tắc bắt buộc
 
-- DO NOT auto-fix code — only report. / KHÔNG tự sửa code — chỉ báo cáo.
+- DO NOT auto-fix code — only report (user or `/start-coding` fixes, then re-stage). / KHÔNG tự sửa code — chỉ báo cáo.
+- **ONLY this stage may run `git commit`** in the implementation loop — and only when verdict is READY. / Chỉ commit khi READY.
+- **NEVER commit** if 🔴 or 🟠 findings remain open. / Không commit khi còn 🔴/🟠.
 - Every finding MUST have: Hiện tượng + Likelihood + Ảnh hưởng + Gợi ý. / Mọi phát hiện phải đủ 4 phần.
 - P0/P1 findings MUST include reproduction steps (Cách tái hiện). / P0/P1 phải có bước tái hiện.
 - MUST include Positive observations (≥2 items). / PHẢI có điểm tốt (≥2 mục).

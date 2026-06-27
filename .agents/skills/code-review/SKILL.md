@@ -5,6 +5,11 @@ description: "Skill for performing self or peer code/PR review at Stage 8 of the
 
 # Skill: Code Review / PR Review
 
+## When to commit / Khi nào commit
+
+- **`/review-staged` only** — after READY verdict (no 🔴/🟠). See `.cursor/rules/git-commit-policy.mdc`.
+- Never commit during spec phases or inside `/start-coding` (stage there, commit here).
+
 ## Mindset / Tư duy
 
 - **Critic hat on** — không phải approval-stamp.

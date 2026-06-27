@@ -1,0 +1,40 @@
+---
+description: "ai-housemaker PR description format: Japanese body with 概要 (Before/After), 仕様, 対応内容, レビュワー確認項目, タスクリンク, 備考. English Conventional Commits title only. Apply when creating PRs or docs/pr/*.md for ai-housemaker."
+globs:
+  - "**/ai-housemaker/docs/pr/**"
+alwaysApply: false
+---
+
+# ai-housemaker PR Description
+
+## Scope
+
+Repo: **ai-housemaker** (`Documents/workspaces/ai-housemaker`).
+
+PR **title** and **squash commit**: English — see `pr-conventions.mdc`.
+
+PR **description body**: **Japanese** — section order below.
+
+Full skill: `.agents/skills/ai-housemaker-pr-description/SKILL.md`
+Agent prompt: `.github/prompts/create-pr-ai-housemaker.prompt.md`
+
+## Section order (mandatory)
+
+1. `### 概要` — `Before:` / `After:` bullets only (no intro paragraph)
+2. Screenshots (optional) — between After and 仕様
+3. `仕様：` — acceptance criteria bullets
+4. `### 対応内容` — 実装 / 単体テスト / featureテスト / 動作確認 (flat checkboxes)
+5. `### レビュワー確認項目` — 動作確認 / コードレビュー (flat checkboxes)
+6. `### タスクリンク` — Notion + spec + Figma
+7. `### 備考` — tests, diff stats, out-of-scope, follow-ups, rollback
+
+## Draft path
+
+`docs/pr/<type>-<scope>-no<NN>.md` before `gh pr create`.
+
+## Hard rules
+
+- Before = problems; After = outcomes (not file lists).
+- No nested bullets under 対応内容 checkboxes.
+- Do not mark 動作確認 done if designer QA is pending.
+- Verify spec/Figma/Notion links exist before linking.
