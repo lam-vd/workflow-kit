@@ -62,7 +62,7 @@ These files MUST be read **before** executing the corresponding stage:
 
 | Stage | Files |
 |---|---|
-| 1 — analyze-task | `.agents/skills/field-impact-analysis/SKILL.md` (when task may add/change fields) |
+| 1 — analyze-task | `.agents/skills/field-impact-analysis/SKILL.md` (when task may add/change fields); ai-housemaker: `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc` |
 | 3 — write-spec | `.agents/skills/writing-bd/SKILL.md`, `.agents/skills/writing-ddd/SKILL.md` |
 | 3 — write-spec (ai-housemaker) | Above + `.github/prompts/write-spec-ai-housemaker.prompt.md`, `docs/ddd/_TEMPLATE-ai-housemaker.vi.md`, `.agents/skills/rails-ui-layouts/SKILL.md` |
 | 7 — implement | `.cursor/rules/clean-code.mdc`, `.cursor/rules/architecture.mdc`, `.cursor/rules/git-commit-policy.mdc`, `.agents/skills/design-patterns/SKILL.md`, `.agents/skills/rails-ui-layouts/SKILL.md` (Rails auth/dashboard layouts) |

@@ -15,11 +15,12 @@ You are at **Stage 9b: Create PR — ai-housemaker**.
 
 ## Read first
 
-1. `.agents/skills/ai-housemaker-pr-description/SKILL.md` — **PR body format**
-2. `.agents/skills/pr-conventions/SKILL.md` — title + squash commit only
-3. `common/snippets/pr-description.ai-housemaker.ja.md` — skeleton
-4. FINAL DDD: `docs/ddd/<slug>.md`
-5. Reference: `docs/pr/feat-profile-ui-no92.md` if present
+1. `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc` — workflow context
+2. `.agents/skills/ai-housemaker-pr-description/SKILL.md` — **PR body format**
+3. `ai-housemaker/.agents/skills/pr-conventions/SKILL.md` — title + squash commit only
+4. `common/snippets/pr-description.ai-housemaker.ja.md` — skeleton
+5. FINAL DDD: `docs/ddd/<slug>.md`
+6. Reference: `docs/pr/feat-profile-ui-no92.md` if present
 
 ## Steps
 

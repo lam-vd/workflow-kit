@@ -28,6 +28,16 @@ Language behavior:
 
 If the task may add/change fields, this skill is mandatory and must be reflected in output.
 
+## Must read first (ai-housemaker)
+
+When target repo is **ai-housemaker** (`Documents/workspaces/ai-housemaker`):
+
+- `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc` — GitHub Flow, review layers (Copilot → PM), quality gates (lefthook + CI), Conventional Commits/Comments, Release Please deploy constraints
+
+Use this to sanity-check **Scope OUT** (e.g. skip deploy/CI changes unless task requires), **Impact** (auth/tenant → 🟠/🔴), and **Estimate** (lint + RSpec + Copilot review overhead).
+
+Variant prompt: `.github/prompts/analyze-task-ai-housemaker.prompt.md`
+
 The user will paste a task description. Execute ALL the steps below in order — do not skip any:
 
 1. **Summary** — 1–2 sentences in your own words (follow language mode).

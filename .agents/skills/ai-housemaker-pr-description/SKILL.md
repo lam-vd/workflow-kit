@@ -5,6 +5,8 @@ description: "Skill for writing ai-housemaker Pull Request descriptions in the t
 
 # Skill: ai-housemaker PR Description
 
+> **Canonical workflow:** `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc` — PR title EN (Conventional Commits), body JA (this skill).
+
 ## When to use
 
 - Creating PR description for **ai-housemaker** (`/Users/lamship/Documents/workspaces/ai-housemaker`)
@@ -161,6 +163,7 @@ After:
 
 ## Related files
 
+- `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc` — canonical dev workflow
 - `.github/prompts/create-pr-ai-housemaker.prompt.md` — agent prompt for Stage 9b variant
 - `.cursor/rules/ai-housemaker-pr-description.mdc` — rule summary
 - `common/snippets/pr-description.ai-housemaker.ja.md` — copy-paste skeleton

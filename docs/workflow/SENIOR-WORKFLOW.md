@@ -246,6 +246,7 @@ Scope: only staged files (`git diff --cached`).
 | # | Command | Stage | When to use | File |
 |---|---|---|---|---|
 | 1 | `/analyze-task` | 1 | Nhận task mới, phân tích sơ bộ | `.github/prompts/analyze-task.prompt.md` |
+| 1b | `/analyze-task-ai-housemaker` | 1 | ai-housemaker — + `development-guideline.mdc` | `.github/prompts/analyze-task-ai-housemaker.prompt.md` |
 | 2 | `/grooming` | 2 | Đào sâu 5W, risk, dependencies | `.github/prompts/grooming.prompt.md` |
 | 3 | `/write-spec` | 3 | Viết BD + DDD (tri-lingual) | `.github/prompts/write-spec.prompt.md` |
 | 3b | `/write-spec-ai-housemaker` | 3 | ai-housemaker: BD tri-lingual + DDD EN + `.vi.md` | `.github/prompts/write-spec-ai-housemaker.prompt.md` |

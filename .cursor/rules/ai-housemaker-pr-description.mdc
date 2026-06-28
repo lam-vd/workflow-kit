@@ -7,6 +7,8 @@ alwaysApply: false
 
 # ai-housemaker PR Description
 
+> **Canonical workflow:** `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc`
+
 ## Scope
 
 Repo: **ai-housemaker** (`Documents/workspaces/ai-housemaker`).

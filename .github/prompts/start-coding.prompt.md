@@ -29,6 +29,8 @@ Read these files in order:
 4. .cursor/rules/clean-code.mdc  (or .github/instructions/clean-code.instructions.md)
 5. .cursor/rules/architecture.mdc (or .github/instructions/architecture.instructions.md)
 6. .agents/skills/design-patterns/SKILL.md (if patterns needed)
+7. **Project lint skill** (if exists) — e.g. ai-housemaker: `.agents/skills/static-analysis-lint/SKILL.md`
+   Or run variant prompt: `/start-coding-ai-housemaker` when working in ai-housemaker repo.
 ```
 
 ### 2. Identify current sub-task
@@ -78,7 +80,10 @@ After coding, check the sub-task's Definition of Done:
 - [x/] <DoD criterion 1>
 - [x/] <DoD criterion 2>
 - [x/] <DoD criterion 3>
+- [x/] **Lint clean** (project skill: RuboCop + ERBLint on touched `.rb` / `.html.erb`)
 ```
+
+If project has `static-analysis-lint` skill → run scoped lint before staging (see skill for commands).
 
 If all pass → print:
 ```
