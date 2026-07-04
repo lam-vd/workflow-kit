@@ -1,8 +1,8 @@
 ---
 description: "Architecture and layering rules applied repo-wide. Enforces clean-architecture style layering (UI → Application → Domain → Infrastructure) with one-way interface-based dependencies; framework/HTTP/DB-agnostic domain; constructor-based DI; side effects at edges; correlation-ID logging; metrics on every external call. Flags 🟠+ violations: domain importing infra, fat controllers, mutable global singletons."
 globs:
-  - "**/*"
-alwaysApply: true
+  - "**/*.{ts,tsx,js,jsx,py,go,java,kt,rb,rs,php,cs}"
+alwaysApply: false
 ---
 
 # Architecture Rules

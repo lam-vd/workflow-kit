@@ -11,6 +11,10 @@ You are at **Stage 9b: Create PR**.
 - `/recheck-release` returned `READY ✅`. If not → STOP, ask user to run it.
 - **VI**: `/recheck-release` phải trả về READY. Nếu chưa → yêu cầu chạy lại.
 
+## Project profile
+
+If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → follow `common/profiles/ai-housemaker.md` §9b for **Japanese PR body** + draft path. Title and squash commit remain English.
+
 ## Task
 
 Produce **3 copy-ready blocks**:
@@ -35,169 +39,13 @@ Produce **3 copy-ready blocks**:
 
 ## Steps
 
-1. Get commit summary:
-   ```sh
-   git log <base>..HEAD --oneline
-   ```
-2. Read relevant FINAL spec in `docs/specs/` and `docs/ddd/`.
-3. Read `.agents/skills/pr-conventions/SKILL.md` for project conventions.
-4. Load the shared snippet `common/snippets/pr-description.trilingual.md` and use it as the base skeleton.
-5. Generate the three blocks below.
+1. Get commit summary: `git log <base>..HEAD --oneline` and `git diff --stat <base>...HEAD`
+2. Read FINAL spec in `docs/specs/` and `docs/ddd/`.
+3. **If ai-housemaker profile** → follow `common/profiles/ai-housemaker.md` §9b + `ai-housemaker-pr-description` skill + `common/snippets/pr-description.ai-housemaker.ja.md`. **Stop** — do not use tri-lingual template below.
+4. **Default (tri-lingual):** Read `.agents/skills/pr-conventions/SKILL.md` and fill `common/snippets/pr-description.trilingual.md`.
+5. Output three copy-ready blocks: `### 1. Title`, `### 2. Commit msg`, `### 3. Description`.
 
-## 1. PR Title
-
-Format: `<type>(<scope>): <imperative summary, ≤72 chars>`
-
-- types ∈ { feat, fix, refactor, perf, test, docs, build, ci, chore }
-- imperative mood: "add", "remove", "update" (NOT "added", "adding")
-- DO NOT end with a period
-- DO NOT translate title to VI/JP — keep English (commit history searchability)
-
-Example:
-```
-feat(scheduler): add per-platform field validation
-```
-
-## 2. Squash commit message
-
-```
-<PR title>
-
-<body — 1 paragraph WHY + bullet list WHAT (English)>
-
-Refs: <task-id or spec link>
-```
-
-## 3. PR Description (tri-lingual)
-
-Use this structure exactly. Each language block is collapsible. EN is open by default; VI and JP are collapsed.
-
-```markdown
-<!-- 🇬🇧 ENGLISH (canonical) -->
-## 🎯 Why
-<link spec + 1–2 sentences on business goal>
-
-## 🛠️ What
-- <change 1>
-- <change 2>
-- <change 3>
-
-## 🚦 Impact
-🟡 Medium — affects <modules>
-
-## 🧪 How to test
-1. <step 1>
-2. <step 2>
-3. <expected result>
-
-## 📸 Screenshots / Demo
-<if UI>
-
-## 📐 Spec
-- BD: [docs/specs/...](../docs/specs/...)
-- DDD: [docs/ddd/...](../docs/ddd/...)
-
-## ✅ Checklist
-- [x] Spec FINAL
-- [x] Tests added (unit / integration / e2e)
-- [x] `/review-staged` passed (no 🔴/🟠)
-- [x] `/recheck-release` = READY
-- [x] Docs updated (README / CHANGELOG / OpenAPI)
-- [ ] Feature flag configured (if applicable)
-- [ ] Telemetry / metrics added
-
-## 🗂 Deferred Medium Findings (if any)
-- <file/scope> — <risk summary>
-   - Ticket: <id>
-   - Owner: <name>
-   - Target: <milestone/date>
-
-## ↩️ Rollback plan
-<concrete steps if regression: revert PR? toggle flag? db down migration?>
-
-## 👀 Review focus
-- <area reviewer should focus on>
-
----
-
-<details>
-<summary>🇻🇳 Tiếng Việt</summary>
-
-## 🎯 Vì sao
-<link spec + 1–2 câu mục tiêu kinh doanh>
-
-## 🛠️ Thay đổi gì
-- <thay đổi 1>
-- <thay đổi 2>
-
-## 🚦 Mức ảnh hưởng
-🟡 Medium — ảnh hưởng <modules>
-
-## 🧪 Cách test
-1. <bước 1>
-2. <bước 2>
-3. <kết quả mong đợi>
-
-## 📐 Spec
-- BD: docs/specs/...
-- DDD: docs/ddd/...
-
-## ✅ Checklist
-- [x] Spec FINAL
-- [x] Tests đã thêm
-- [x] `/review-staged` PASS (không còn 🔴/🟠)
-- [x] `/recheck-release` = READY
-- [x] Docs đã update
-- [ ] Feature flag (nếu cần)
-- [ ] Telemetry / metrics
-
-## ↩️ Kế hoạch rollback
-<các bước cụ thể>
-
-## 👀 Reviewer chú ý
-- <phần cần soi kỹ>
-
-</details>
-
-<details>
-<summary>🇯🇵 日本語</summary>
-
-## 🎯 なぜ (Why)
-<spec へのリンク + ビジネス目的 1〜2 文>
-
-## 🛠️ 変更内容 (What)
-- <変更 1>
-- <変更 2>
-
-## 🚦 影響度 (Impact)
-🟡 Medium — 影響範囲: <modules>
-
-## 🧪 テスト手順 (How to test)
-1. <手順 1>
-2. <手順 2>
-3. <期待される結果>
-
-## 📐 仕様書 (Spec)
-- BD: docs/specs/...
-- DDD: docs/ddd/...
-
-## ✅ チェックリスト
-- [x] Spec FINAL
-- [x] テスト追加 (unit / integration / e2e)
-- [x] `/review-staged` 合格
-- [x] `/recheck-release` = READY
-- [x] ドキュメント更新
-- [ ] フィーチャーフラグ設定 (該当時)
-- [ ] テレメトリ / メトリクス追加
-
-## ↩️ ロールバック計画 (Rollback plan)
-<具体的な手順>
-
-## 👀 レビュー重点 (Review focus)
-- <レビュアーに確認してほしい箇所>
-
-</details>
-```
+Title and squash commit rules: **pr-conventions skill** (English Conventional Commits, ≤72 chars).
 
 ## ⚠️ Hard rules
 - DO NOT fabricate spec links — verify they exist before linking.

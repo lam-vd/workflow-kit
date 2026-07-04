@@ -1,0 +1,76 @@
+---
+description: "Hotwire/Turbo integration regression patterns — catalog from real bugs (house series, profile). Load at Stage 8 when staged touches views, Stimulus, locales, or feature CSS. Used by integration-regression-review skill and common/profiles/ai-housemaker.md §8."
+alwaysApply: false
+globs:
+  - "**/app/views/**"
+  - "**/app/javascript/controllers/**"
+  - "**/config/locales/**"
+  - "**/*house-series*.css"
+  - "**/list-table.css"
+---
+
+# Hotwire / Turbo Integration Patterns
+
+> Canonical methodology: `.agents/skills/integration-regression-review/SKILL.md`  
+> Functional runs: `.agents/skills/functional-verification-review/SKILL.md`  
+> **Search + pagination / page overflow:** `.cursor/rules/paginated-list-patterns.mdc`
+
+Use this table during `/review-staged` **regression sweep**. Each row: trace code → mark PASS / FAIL / N/A.
+
+---
+
+## Pattern catalog
+
+| ID | Trigger in diff | What breaks | Repro (short) | Sev |
+|----|-----------------|-------------|---------------|-----|
+| **TURBO-URL-01** | `turbo_action: advance` on list frame + row opens modal via `Turbo.visit(member_path)` | Pagination/filter links keep `:id` → wrong path | Open detail → click page 2 → check URL is index path | 🟠 |
+| **TURBO-SYNC-01** | `turbo_frame` updates list; counter/header **outside** frame | Total count / summary stale after filter/search | Search keyword → header count unchanged | 🟠 |
+| **TURBO-HIST-01** | Modal create/update via `turbo_stream` without `history.replaceState` | URL stuck on `/new` or POST path; F5 breaks | Create via modal → check address bar → refresh | 🟠 |
+| **TURBO-FORM-01** | `form_with` in modal; edit has explicit `method:` but new does not | Wrong HTTP verb when URL is member path | Open detail → open new modal → submit → Network tab | 🟡 |
+| **TURBO-FORM-02** | Multipart PATCH in modal without `html: { method: "post" }` | Edit save fails or wrong verb (Rails spoofing) | Edit series with image upload → Network tab | 🟡 |
+| **TURBO-FRAME-02** | Nested turbo frame form submits inside wrong frame | Link-houses picker submit trapped in modal frame | Submit link houses from edit modal | 🟠 |
+| **TURBO-PAGE-01** | `paginate()` without `params: { controller:, action:, id: nil }` on custom index route | Kaminari generates member URLs | Same as TURBO-URL-01 | 🟠 |
+| **I18N-TEMPLATE-01** | `*_template` locale with `__COUNT__` for Stimulus replace | Dynamic label ≠ static `*_with_selected_count` | Tick checkboxes in picker → compare JA copy | 🟡 |
+| **CSS-LINEHEIGHT-01** | `min-height: calc(var(--font-size) + …)` but `line-height: tight` or different token | Text clipped / misaligned in table or hero | Long name in list row or detail hero | 🟡 |
+| **STIMULUS-REG-01** | New controller in `index.js` without import/register | Controller never connects — silent no-op | Feature appears in HTML `data-controller` but no behavior | 🟠 |
+
+> Pagination overflow, search+page param bugs → use **`paginated-list-patterns.mdc`** (PAGE-*, PAGE-SEARCH-*), not duplicated here.
+
+---
+
+## Fix patterns (reference)
+
+| ID | Typical fix |
+|----|-------------|
+| TURBO-URL-01 / TURBO-PAGE-01 | `pagination_nav(..., params: { controller:, action: "index", id: nil })` |
+| TURBO-SYNC-01 | Hidden `data-total-count-text` in frame + `total-count-sync` on frame `turbo:frame-load` |
+| TURBO-HIST-01 | Append ephemeral `history-replace` Stimulus node in `turbo_stream` success |
+| TURBO-FORM-01 | Explicit `method: :post` on new `form_with` |
+| TURBO-FORM-02 | Edit multipart: `html: { method: "post" }` + `method: :patch` |
+| TURBO-FRAME-02 | `data: { turbo_frame: "_top" }` on forms that must escape modal frame |
+| I18N-TEMPLATE-01 | Align template string with `*_with_selected_count` key |
+| CSS-LINEHEIGHT-01 | Single `--*-line-height` token for both `min-height` calc and `line-height` |
+| STIMULUS-REG-01 | Register in `app/javascript/controllers/index.js` |
+
+---
+
+## Sweep output (paste into review report)
+
+```markdown
+### Regression sweep (Hotwire)
+
+| Pattern | Result | Evidence |
+|---------|--------|----------|
+| TURBO-URL-01 | PASS / FAIL / N/A | … |
+| TURBO-SYNC-01 | … | … |
+```
+
+Any **FAIL** on 🟠 row → open finding with full reproduction (integration-regression-review Phase D).
+
+---
+
+## Accumulate new patterns
+
+After each production bug fix: add one row (ID, trigger, repro, severity). Keep IDs stable for team reference.
+
+**Source examples:** house series — `b08b690` (bugs) → `d8319dd` (turbo sync/locale) → `25da272` (pagination + delete context).

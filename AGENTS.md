@@ -31,17 +31,27 @@ Details: `.cursor/rules/git-commit-policy.mdc`.
 |---|---|---|---|
 | 1 | Intake & Analyze | `/analyze-task` | Initial analysis (EN+VI) |
 | 2 | Grooming (5W + risk) | `/grooming` | Risk matrix + open questions |
-| 3 | Write Spec (BD/DDD) | `/write-spec` or `/write-spec-ai-housemaker` | Tri-lingual `docs/specs/*.md`; DDD EN + optional `.vi.md` (ai-housemaker) |
+| 3 | Write Spec (BD/DDD) | `/write-spec` | Tri-lingual `docs/specs/*.md`; DDD EN (+ `.vi.md` via ai-housemaker profile) |
 | 4 | Recheck Spec (score /10) | `/recheck-spec` | Scorecard + level-based issues |
 | 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate ≥ 8.0) |
 | 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks ≤4h each |
 | 7 | Implement | `/start-coding` | Code + tests; stage (`git add`), no commit |
-| 8 | Self-review staged | `/review-staged` | Level-based report; commit if READY |
+| 8 | Self-review staged | `/review-staged` | Diff + integration sweep + **run tests** + Manual QA; commit if READY |
 | 9a | Release check | `/recheck-release` | READY ✅ or BLOCKED ❌ |
-| 9b | Create PR | `/create-pr` or `/create-pr-ai-housemaker` | Tri-lingual PR (default) or JA body PR (ai-housemaker) |
+| 9b | Create PR | `/create-pr` | Tri-lingual PR (default) or JA body (ai-housemaker profile §9b) |
 | 9c | Create release note (utility) | `/create-release` | Deploy handoff summary |
 
 Details: [docs/workflow/SENIOR-WORKFLOW.md](docs/workflow/SENIOR-WORKFLOW.md).
+
+## Context budget / Liên kết rules–skills–prompts
+
+**Map:** [docs/workflow/RULES-SKILLS-PROMPTS-MAP.md](docs/workflow/RULES-SKILLS-PROMPTS-MAP.md)
+
+| Layer | Always on | On demand |
+|-------|-----------|-----------|
+| Rules | `karpathy-guidelines`, `git-commit-policy` | `clean-code`, `architecture` (code globs); pattern catalogs (view/list globs) |
+| Skills | — | Stage-specific; **one canonical skill per output** (e.g. `code-review` → report template) |
+| Prompts | — | Steps + pointers only — **no embedded templates** |
 
 ---
 
@@ -62,14 +72,14 @@ These files MUST be read **before** executing the corresponding stage:
 
 | Stage | Files |
 |---|---|
-| 1 — analyze-task | `.agents/skills/field-impact-analysis/SKILL.md` (when task may add/change fields); ai-housemaker: `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc` |
-| 3 — write-spec | `.agents/skills/writing-bd/SKILL.md`, `.agents/skills/writing-ddd/SKILL.md` |
-| 3 — write-spec (ai-housemaker) | Above + `.github/prompts/write-spec-ai-housemaker.prompt.md`, `docs/ddd/_TEMPLATE-ai-housemaker.vi.md`, `.agents/skills/rails-ui-layouts/SKILL.md` |
-| 7 — implement | `.cursor/rules/clean-code.mdc`, `.cursor/rules/architecture.mdc`, `.cursor/rules/git-commit-policy.mdc`, `.agents/skills/design-patterns/SKILL.md`, `.agents/skills/rails-ui-layouts/SKILL.md` (Rails auth/dashboard layouts) |
-| 8 — review | `.agents/skills/code-review/SKILL.md`, `.cursor/rules/git-commit-policy.mdc` |
-| 9 — PR | `.agents/skills/pr-conventions/SKILL.md` |
-| 9 — PR (ai-housemaker) | `.agents/skills/ai-housemaker-pr-description/SKILL.md`, `.github/prompts/create-pr-ai-housemaker.prompt.md` |
+| 1 — analyze-task | `.agents/skills/field-impact-analysis/SKILL.md` (when task may add/change fields); **ai-housemaker** → `common/profiles/ai-housemaker.md` §1 |
+| 3 — write-spec | `.agents/skills/writing-bd/SKILL.md`, `.agents/skills/writing-ddd/SKILL.md`; paginated list edge cases → `.cursor/rules/paginated-list-patterns.mdc` § G; **ai-housemaker** → profile §3 + `rails-ui-layouts` |
+| 7 — implement | `.cursor/rules/karpathy-guidelines.mdc`, `.agents/skills/karpathy-guidelines/SKILL.md`, `.cursor/rules/clean-code.mdc`, `.cursor/rules/architecture.mdc`, `.cursor/rules/git-commit-policy.mdc`, `.agents/skills/design-patterns/SKILL.md`, `.agents/skills/rails-ui-layouts/SKILL.md`; **ai-housemaker** → profile §7 + review checklist + rspec skills |
+| 8 — review | `code-review` skill (report template); conditional: `integration-regression-review`, `functional-verification-review`, pattern rules; **ai-housemaker** → profile §8 + checklist skill only |
+| 9 — PR | `.agents/skills/pr-conventions/SKILL.md`; **ai-housemaker** → profile §9b + `ai-housemaker-pr-description` |
 | 9c — release handoff | `.agents/skills/create-release/SKILL.md` |
+
+**Project profiles:** `common/profiles/ai-housemaker.md` — auto-detect or `(ai-housemaker)` flag on any stage prompt.
 
 ---
 

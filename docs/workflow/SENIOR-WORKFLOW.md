@@ -85,9 +85,9 @@ flowchart TD
 
 > **Must read**: `.agents/skills/writing-bd/SKILL.md`, `.agents/skills/writing-ddd/SKILL.md`.
 
-### 3b. `/write-spec-ai-housemaker` — ai-housemaker variant (Stage 3)
+### 3b. ai-housemaker profile (Stage 3)
 
-Use for **ai-housemaker** repo (Rails 7.2 + Hotwire + Tailwind + Preline).
+Use `/write-spec` in **ai-housemaker** repo — loads `common/profiles/ai-housemaker.md` §3.
 
 | Output | Language | Path |
 |---|---|---|
@@ -96,8 +96,6 @@ Use for **ai-housemaker** repo (Rails 7.2 + Hotwire + Tailwind + Preline).
 | DDD (Notion) | Vietnamese only | `docs/ddd/<YYYY-MM-DD>-<slug>.vi.md` |
 
 Templates: `docs/ddd/_TEMPLATE-ai-housemaker.md` (EN), `docs/ddd/_TEMPLATE-ai-housemaker.vi.md` (VI).
-
-Prompt: `.github/prompts/write-spec-ai-housemaker.prompt.md`
 
 ---
 
@@ -195,9 +193,16 @@ Prompt: `.github/prompts/write-spec-ai-housemaker.prompt.md`
 
 ## 8. `/review-staged` — Self-review staged changes + commit gate
 
-Scope: only staged files (`git diff --cached`).
+Scope:
+- **Staged** (`git diff --cached`) — what will be committed
+- **PR branch** (`git diff <base>...HEAD`) — full feature context on branch
 
-**When verdict is READY** (no 🔴/🟠): run `git commit` — the **only** allowed commit point in the implementation loop. See `.cursor/rules/git-commit-policy.mdc`.
+**Three review layers** (see skills):
+1. **Static** — 8 dimensions + spot-checks + Lean Code Gates
+2. **Integration** — `integration-regression-review` + Hotwire + **paginated list / search** pattern sweeps
+3. **Functional** — `functional-verification-review` — run mapped tests, Manual QA script for UI
+
+**When verdict is READY** (no 🔴/🟠, staged-related tests pass): run `git commit` — the **only** allowed commit point in the implementation loop. See `.cursor/rules/git-commit-policy.mdc`.
 
 **8 review dimensions:**
 1. Spec compliance (matches DDD?)
@@ -246,15 +251,17 @@ Scope: only staged files (`git diff --cached`).
 | # | Command | Stage | When to use | File |
 |---|---|---|---|---|
 | 1 | `/analyze-task` | 1 | Nhận task mới, phân tích sơ bộ | `.github/prompts/analyze-task.prompt.md` |
-| 1b | `/analyze-task-ai-housemaker` | 1 | ai-housemaker — + `development-guideline.mdc` | `.github/prompts/analyze-task-ai-housemaker.prompt.md` |
 | 2 | `/grooming` | 2 | Đào sâu 5W, risk, dependencies | `.github/prompts/grooming.prompt.md` |
-| 3 | `/write-spec` | 3 | Viết BD + DDD (tri-lingual) | `.github/prompts/write-spec.prompt.md` |
-| 3b | `/write-spec-ai-housemaker` | 3 | ai-housemaker: BD tri-lingual + DDD EN + `.vi.md` | `.github/prompts/write-spec-ai-housemaker.prompt.md` |
+| 3 | `/write-spec` | 3 | Viết BD + DDD (tri-lingual; ai-housemaker → profile §3) | `.github/prompts/write-spec.prompt.md` |
 | 4 | `/recheck-spec` | 4 | Audit spec, chấm điểm /10 | `.github/prompts/recheck-spec.prompt.md` |
 | 5 | `/check-spec` | 5 | Lock spec → FINAL | `.github/prompts/check-spec.prompt.md` |
 | 6 | `/breakdown-task` | 6 | Chia sub-tasks ≤4h | `.github/prompts/breakdown-task.prompt.md` |
 | 7 | `/start-coding` | 7 | Code sub-task theo spec + DDD | `.github/prompts/start-coding.prompt.md` |
-| 8 | `/review-staged` | 8 | Self-review staged changes | `.github/prompts/review-staged.prompt.md` |
+| 8 | `/review-staged` | 8 | Staged + branch review, tests, regression sweep; commit if READY | `.github/prompts/review-staged.prompt.md` |
 | 9 | `/recheck-release` | 9a | Kiểm tra release readiness | `.github/prompts/recheck-release.prompt.md` |
-| 10 | `/create-pr` | 9b | Tạo PR tri-lingual | `.github/prompts/create-pr.prompt.md` |
+| 10 | `/create-pr` | 9b | Tạo PR (tri-lingual hoặc JA qua profile) | `.github/prompts/create-pr.prompt.md` |
 | 11 | `/create-release` | 9c (utility) | Tạo release summary cho deploy handoff | `.github/prompts/create-release.prompt.md` |
+
+**ai-housemaker:** `common/profiles/ai-housemaker.md` — auto-detect hoặc flag `(ai-housemaker)` trên mọi stage prompt.
+
+**Linking map (context budget):** [RULES-SKILLS-PROMPTS-MAP.md](RULES-SKILLS-PROMPTS-MAP.md)

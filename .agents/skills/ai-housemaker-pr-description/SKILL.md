@@ -164,7 +164,7 @@ After:
 ## Related files
 
 - `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc` — canonical dev workflow
-- `.github/prompts/create-pr-ai-housemaker.prompt.md` — agent prompt for Stage 9b variant
+- `/create-pr` + `common/profiles/ai-housemaker.md` §9b — agent prompt for Stage 9b (JA body)
 - `.cursor/rules/ai-housemaker-pr-description.mdc` — rule summary
 - `common/snippets/pr-description.ai-housemaker.ja.md` — copy-paste skeleton
 - `.agents/skills/pr-conventions/SKILL.md` — title + squash commit (English)

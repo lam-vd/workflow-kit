@@ -22,21 +22,19 @@ Language behavior:
 - If mode is `(en)`: explanations and reasoning are in English.
 - Domain keywords and technical terms in English are preserved in all modes.
 
+## Project profile
+
+If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` §1 before analysis.
+
 ## Must read first (for field-related tasks)
 
 - `.agents/skills/field-impact-analysis/SKILL.md`
 
 If the task may add/change fields, this skill is mandatory and must be reflected in output.
 
-## Must read first (ai-housemaker)
+## Must read first (generic ai-housemaker hint)
 
-When target repo is **ai-housemaker** (`Documents/workspaces/ai-housemaker`):
-
-- `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc` — GitHub Flow, review layers (Copilot → PM), quality gates (lefthook + CI), Conventional Commits/Comments, Release Please deploy constraints
-
-Use this to sanity-check **Scope OUT** (e.g. skip deploy/CI changes unless task requires), **Impact** (auth/tenant → 🟠/🔴), and **Estimate** (lint + RSpec + Copilot review overhead).
-
-Variant prompt: `.github/prompts/analyze-task-ai-housemaker.prompt.md`
+When target repo is **ai-housemaker**, profile §1 loads `development-guideline.mdc` and team workflow constraints — use for Scope OUT, Impact, and Estimate.
 
 The user will paste a task description. Execute ALL the steps below in order — do not skip any:
 

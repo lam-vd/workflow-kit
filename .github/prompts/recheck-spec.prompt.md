@@ -19,7 +19,7 @@ Before scoring, load and reuse the shared checklist at `common/checklists/rechec
 1. **BD tri-lingual sync** — EN canonical Goals / Solution / User stories must match VI and JP collapsible blocks (same scope, no contradictions e.g. avatar in EN but out-of-scope in VI/JP).
 2. **DDD diagrams inline** — EN canonical DDD must contain Mermaid in the Diagrams section (flowchart + ≥1 happy sequence + ≥1 error sequence). Flag 🟠 if diagrams are deferred to another file that is empty or missing.
 3. **Amendment drift** — If BD/DDD has `Amended` / `vN` changelog, verify Decision log + EN body + VI `.vi.md` (ai-housemaker) reflect the same version. Outdated audit score on metadata → 🟢 note only.
-4. **ai-housemaker** (when repo is ai-housemaker): also read `write-spec-ai-housemaker.prompt.md` §DDD mandatory sections; DDD `.vi.md` technical content must match EN (diagrams may be subset but not contradictory).
+4. **ai-housemaker** (when profile active): read `common/profiles/ai-housemaker.md` §4 — DDD mandatory sections; `.vi.md` must match EN technically.
 
 ## 🎯 Pass criteria / Tiêu chí đạt
 - **Score ≥ 8.0 / 10** → can proceed to `/check-spec`. / Đạt ≥8.0 → được qua bước tiếp.

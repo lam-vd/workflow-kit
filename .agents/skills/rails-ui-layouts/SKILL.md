@@ -238,6 +238,6 @@ Scope `(auth)` for layout/auth-flow work; keep commits small (one concern per co
 
 ## Related kit resources
 
-- Stage 7 prompt: `.github/prompts/implement-ui-layout.prompt.md`
+- Stage 7: `/start-coding` + `common/profiles/ai-housemaker.md` §7 (UI layout → this skill)
 - PR titles/commits: `.agents/skills/pr-conventions/SKILL.md`
 - i18n: user-facing JA via Rails I18n, never hardcode in views

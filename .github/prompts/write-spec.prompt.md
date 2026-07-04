@@ -12,6 +12,10 @@ You are at **Stage 3: Write Spec**.
 - All Open Questions are resolved. / Tất cả câu hỏi mở đã được giải quyết.
 - If not → STOP, ask user to complete the previous stages.
 
+## Project profile
+
+If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` §3 for DDD format, `.vi.md` output, Rails UI conventions, and templates `_TEMPLATE-ai-housemaker*`.
+
 ## Task / Nhiệm vụ
 
 Generate **two files** from templates:
@@ -67,6 +71,7 @@ JP translation here.
 - `.agents/skills/writing-bd/SKILL.md`
 - `.agents/skills/writing-ddd/SKILL.md`
 - `.cursor/rules/architecture.mdc` (so the spec doesn't violate existing architecture)
+- UI tasks (ai-housemaker): `.agents/skills/rails-ui-layouts/SKILL.md`
 
 ## Spec writing rules
 

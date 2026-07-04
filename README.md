@@ -25,21 +25,25 @@ senior-workflow-kit/
 ├── README.md
 ├── common/
 │   ├── README.md                      # Shared reusable assets
+│   ├── profiles/
+│   │   └── ai-housemaker.md           # Project delta (auto-detect or flag)
 │   ├── snippets/
 │   │   ├── pr-description.trilingual.md
 │   │   └── spec-section.trilingual.md
 │   └── checklists/
-│       └── recheck-spec-scorecard.md
+│       ├── recheck-spec-scorecard.md
+│       └── review-linters.md
 ├── .github/
 │   ├── copilot-instructions.md
 │   ├── prompts/                       # 11 slash commands
 │   └── instructions/                  # Auto-applied rules (by glob)
 ├── .cursor/
-│   └── rules/                         # Cursor rules (.mdc) incl. git-commit-policy
+│   └── rules/                         # Cursor rules (.mdc): karpathy-guidelines, git-commit-policy, hotwire-integration-patterns, paginated-list-patterns
 ├── .agents/
-│   └── skills/                        # Domain knowledge SKILL.md
+│   └── skills/                        # Domain + behavioral SKILL.md (karpathy-guidelines, code-review, integration-regression-review, …)
 └── docs/
     ├── workflow/SENIOR-WORKFLOW.md    # Main workflow doc
+    ├── workflow/RULES-SKILLS-PROMPTS-MAP.md  # Linking index (context budget)
     ├── specs/_TEMPLATE.md             # Basic Design template (VI/EN/JP)
     ├── ddd/_TEMPLATE.md               # Detail Design template (VI/EN/JP)
     └── examples/sample-task.md        # End-to-end walk-through
@@ -53,12 +57,12 @@ senior-workflow-kit/
 |---|---|---|---|
 | 1 | Intake & Analyze | `/analyze-task` | Initial analysis |
 | 2 | Grooming (5W + risk) | `/grooming` | Risk matrix + open questions |
-| 3 | Write Spec | `/write-spec` or `/write-spec-ai-housemaker` | `docs/specs/*.md`, `docs/ddd/*.md` (+ `.vi.md` for ai-housemaker) |
+| 3 | Write Spec | `/write-spec` | `docs/specs/*.md`, `docs/ddd/*.md` (+ `.vi.md` via ai-housemaker profile) |
 | 4 | Recheck Spec (score) | `/recheck-spec` | Audit scorecard /10 |
 | 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate ≥8) |
 | 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks ≤4h |
 | 7 | Implement | `/start-coding` | Code + tests; stage only |
-| 8 | Self-review | `/review-staged` | Level-based report + **commit if READY** |
+| 8 | Self-review | `/review-staged` | Diff + regression sweep + **functional tests** + Manual QA; **commit if READY** |
 | 9a | Release check | `/recheck-release` | READY ✅ or BLOCKED ❌ |
 | 9b | Create PR | `/create-pr` | PR (VI/EN/JP) |
 
@@ -75,7 +79,7 @@ senior-workflow-kit/
 ### 1) Daily operational flow
 
 1. Start every task with `/analyze-task` and `/grooming`.
-2. Write BD + DDD via `/write-spec` (tri-lingual) or `/write-spec-ai-housemaker` (ai-housemaker: BD tri-lingual + DDD EN + `.vi.md`).
+2. Write BD + DDD via `/write-spec` (tri-lingual; ai-housemaker auto-loads `common/profiles/ai-housemaker.md` §3).
 3. Recheck quality by `/recheck-spec` (score gate >= 8.0).
 4. Lock by `/check-spec` (no git commit — spec stays in working tree), then implement by sub-task.
 5. Per sub-task: `/start-coding` → stage → `/review-staged` → commit if READY → `/recheck-release` → `/create-pr`.
@@ -100,10 +104,11 @@ Detail: [.cursor/rules/git-commit-policy.mdc](.cursor/rules/git-commit-policy.md
 ### 3) How skills are applied
 
 - Skills are domain playbooks in `.agents/skills/` and are consulted at the right stages:
+  - Always (Cursor): `.cursor/rules/karpathy-guidelines.mdc` — behavioral baseline (assumptions, simplicity, surgical diffs, verifiable goals)
   - Stage 1: `field-impact-analysis` (khi task có khả năng thêm/sửa field)
   - Stage 3: `writing-bd`, `writing-ddd`
-  - Stage 7: `design-patterns`
-  - Stage 8: `code-review`
+  - Stage 7: `karpathy-guidelines`, `design-patterns`; ai-housemaker → `ai-housemaker-review-checklist` + `ai-housemaker-rspec` (nếu có spec)
+  - Stage 8: `karpathy-guidelines`, `code-review`, `integration-regression-review`, `functional-verification-review`, `paginated-list-patterns`; ai-housemaker → profile §8 + `hotwire-integration-patterns`
   - Stage 9: `pr-conventions`
   - Deploy handoff: `create-release`
 
@@ -113,6 +118,7 @@ Detail: [.cursor/rules/git-commit-policy.mdc](.cursor/rules/git-commit-policy.md
 - Use `common/checklists/recheck-spec-scorecard.md` when scoring Stage 4.
 - Use `common/snippets/pr-description.trilingual.md` when drafting PR body.
 - See usage notes in `common/README.md`.
+- See linking map: [docs/workflow/RULES-SKILLS-PROMPTS-MAP.md](docs/workflow/RULES-SKILLS-PROMPTS-MAP.md).
 
 ---
 

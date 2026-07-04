@@ -2,7 +2,7 @@
 description: "Clean code rules auto-applied to every source file (TS/JS, Python, Go, Java/Kotlin, Ruby, Rust, PHP, C#). Enforces meaningful naming with intent-revealing prefixes, short single-responsibility functions, why-not-what comments, explicit error types, no magic literals or dead code, bounded file size, and ordered imports without circular dependencies."
 globs:
   - "**/*.{ts,tsx,js,jsx,py,go,java,kt,rb,rs,php,cs}"
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Clean Code Rules

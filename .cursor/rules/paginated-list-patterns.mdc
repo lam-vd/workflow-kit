@@ -1,0 +1,213 @@
+---
+description: "Paginated list + search/filter patterns — page overflow, URL sync, param preservation. Load at Stage 3 (DDD edge cases), Stage 7 (listing CRUD), Stage 8 review. Complements hotwire-integration-patterns.mdc."
+alwaysApply: false
+globs:
+  - "**/app/controllers/**/*_controller.rb"
+  - "**/app/controllers/concerns/**"
+  - "**/app/views/**/_list*.html.erb"
+  - "**/app/views/**/_list_frame.html.erb"
+  - "**/app/views/**/_filters.html.erb"
+  - "**/app/helpers/**"
+  - "**/spec/requests/**"
+---
+
+# Paginated List + Search / Filter Patterns
+
+> Methodology: `.agents/skills/integration-regression-review/SKILL.md` (Phase C2)  
+> Functional QA: `.agents/skills/functional-verification-review/SKILL.md` (search + page matrix)  
+> Hotwire/Turbo: `.cursor/rules/hotwire-integration-patterns.mdc`
+
+**Core rule:** After any mutation or filter change, **page index**, **filtered result set**, and **URL query string** must stay consistent. Implement all three layers:
+
+1. **Collection** — load `min(requested_page, total_pages)` or page 1 when empty  
+2. **URL** — GET redirect or `history.replaceState` when page is corrected  
+3. **UI outside frame** — total count, empty message, pagination links include filters  
+
+---
+
+## A. Page overflow (delete / empty page)
+
+| ID | What breaks | Repro | Sev |
+|----|-------------|-------|-----|
+| **PAGE-OVERFLOW-01** | Delete last row(s) on last page → stay on `page=N`, empty list, no pagination | 10 rows, per=2, page 5, delete all on page | 🟠 |
+| **PAGE-OVERFLOW-02** | `total_pages.zero?` early return leaves overflow empty collection | Delete every row in DB while on page 5 | 🟠 |
+| **PAGE-GET-01** | `index` GET has no redirect when `page > total_pages` | GET `?page=99` | 🟠 |
+| **PAGE-TURBO-01** | Turbo repage fixes data but URL still wrong → F5 breaks | Same as OVERFLOW-01 via turbo delete | 🟠 |
+| **PAGE-EMPTY-01** | `pagination_nav` hidden when `blank?` masks overflow symptom | Empty page 5 with data on page 4 | 🟡 |
+
+**Fix reference (two layers — both required):**
+
+| Layer | GET (full page) | Turbo mutate (inline delete) |
+|-------|-----------------|---------------------------|
+| Collection | `repage` / clamp page | `repage_index_collection_if_overflow` → `fetch_index_page(last)` |
+| URL | `redirect_to_last_page_if_overflow!` (303) | `history-replace` **only when** page was corrected (`repaged_to` present) |
+| Filters | `index_list_url(q:, published:, page:)` single helper | Same helper in `history_replace_url_value` |
+
+**ai-housemaker reference (house series `25da272`):**
+
+```ruby
+# repage returns effective page for URL sync, else nil
+def repage_index_collection_if_overflow
+  requested_page = Pagination::PageParam.coerce(params[:page], default: nil)
+  return nil unless requested_page&.positive?
+  return 1 if total_pages.zero?                    # PAGE-OVERFLOW-02 fix
+  return nil if requested_page <= total_pages
+  @house_series = fetch_index_page(total_pages)
+  total_pages                                    # signal history-replace
+end
+
+# destroy: append history-replace only when repaged
+streams << index_history_replace_stream(repaged_to) if repaged_to
+```
+
+**Still required if missing:** `index` GET → `redirect_to_last_page_if_overflow!` (properties has it; house series may still need — **PAGE-GET-01**).
+
+---
+
+## B. Search / filter + pagination (combined)
+
+| ID | What breaks | Repro | Sev |
+|----|-------------|-------|-----|
+| **PAGE-SEARCH-01** | User on `?q=foo&page=3`; narrows search to 1 page of results → still `page=3` → empty | Type new `q` while on high page **if** form submits hidden `page` | 🟠 |
+| **PAGE-SEARCH-02** | Pagination links drop `q` / `status` / `published` after fix for member `:id` | Search → page 2 → `q` missing in href | 🟠 |
+| **PAGE-SEARCH-03** | Filter via turbo frame updates list but header shows **unfiltered** total count | Search → `#house_series_total_count` stale | 🟠 |
+| **PAGE-SEARCH-04** | Redirect/repage after delete drops `q` → user sees full list after filtered delete | Delete on `?q=foo&page=2` → redirect without `q` | 🟠 |
+| **PAGE-SEARCH-05** | Clear search (`q=`) while on page 5 → empty or wrong slice | Clear input on page 5 without reset to page 1 | 🟡 |
+| **PAGE-SEARCH-06** | `no_results` vs `no_records` wrong when overflow vs truly empty filter | `q=zzz` on page 5 vs no data at all | 🟡 |
+| **PAGE-SEARCH-07** | Delete destroy URL missing `q` / `page` → repage wrong scope | Delete from detail modal while filtered | 🟠 |
+| **PAGE-SEARCH-08** | Auto-submit search debounce: rapid typing leaves URL with old `q` and new list | Fast type + paginate before debounce fires | 🟡 |
+| **PAGE-CTX-01** | DELETE from modal/detail: `params[:page]` / `q` absent on request | Delete on `?q=foo&page=5` opened from modal | 🟠 |
+| **PAGE-COERCE-01** | `page` nil/0/abc coerced wrong: repage never runs or always page 1 | `Pagination::PageParam.coerce(page, default: nil)` vs `default: 1` | 🟡 |
+
+### Search + page interaction (design rules for codegen)
+
+| Event | Expected page behavior |
+|-------|------------------------|
+| **New search / filter change** | Reset to **page 1** (drop `page` param or set `page=1`) |
+| **Paginate** | Keep all active filter params (`q`, `status`, `published`, …) |
+| **Delete / bulk delete** | Repage within **filtered** scope; preserve `q` in URL |
+| **GET with `page` > filtered total_pages** | Redirect to last valid page **with same filters** |
+| **Clear search** | Page 1 + full unfiltered list |
+
+### Filter form checklist
+
+- [ ] Filter form must **not** include hidden `page` unless it resets to `1` on `q` change  
+- [ ] OR explicitly reset page via Stimulus on `input->auto-submit`  
+- [ ] `paginate(..., params:)` must **merge** route params **and** `permit(q:, status:, published:, …)` — not only `{ controller:, action:, id: nil }`  
+- [ ] `redirect_to` / `history-replace` URL built from **same helper** as delete links (`index_list_url`)  
+- [ ] DELETE without query params: fallback **`request.referer`** parse OR Stimulus `window.location.search` for `q`/`page` (`confirm_delete`)  
+- [ ] Shared `Pagination::PageParam.coerce` — `default: nil` when detecting overflow; `default: 1` when loading page  
+
+**Example `index_list_url` (Rails — house series `25da272`):**
+
+```ruby
+def index_list_url(page: nil)
+  house_series_properties_path({
+    q: @query.presence,
+    published: @published.presence,
+    page: (page.to_i > 1 ? page : nil)
+  }.compact)
+end
+```
+
+---
+
+## C. Param preservation & security
+
+| ID | What breaks | Repro | Sev |
+|----|-------------|-------|-----|
+| **PAGE-PARAM-01** | Repage redirect drops filter params | Overflow redirect without `q` | 🟠 |
+| **PAGE-PARAM-02** | Pagination leaks unpermitted params into links | Evil param in URL echoed in `page=2` href | 🟡 |
+| **PAGE-PARAM-03** | Member `:id` stuck in pagination after detail modal | Open detail → paginate (see TURBO-URL-01) | 🟠 |
+
+**Fix:** Single `index_query_params` / `index_list_url` helper — `permit` only; use for paginate, redirect, delete, history-replace.
+
+**Pagination link params (still verify PAGE-SEARCH-02):**
+
+```ruby
+pagination_params = {
+  controller: "house_series",
+  action: "index",
+  id: nil,
+  q: query.presence,
+  published: index_published
+}.compact_blank
+```
+
+---
+
+## D. Turbo-specific (search in frame)
+
+| ID | What breaks | Repro | Sev |
+|----|-------------|-------|-----|
+| **PAGE-TURBO-FILTER-01** | `turbo_action: advance` on frame: search updates list URL but omits `page` → OK; paginate omits `q` → FAIL | Search → page 2 → check URL has both | 🟠 |
+| **PAGE-TURBO-FILTER-02** | Filter targets frame only; browser back skips filter state | Search → back button | 🟡 |
+| **PAGE-TURBO-FILTER-03** | Turbo stream after delete repages unfiltered collection while URL has `q` | Filtered delete via stream | 🟠 |
+
+---
+
+## E. Mandatory tests (request spec)
+
+| ID | Example |
+|----|---------|
+| **TEST-PAGE-01** | GET `page=99` → redirect last page |
+| **TEST-PAGE-02** | GET `q=foo&page=99` → redirect `q=foo&page=last` |
+| **TEST-PAGE-03** | GET `q=foo&page=2` → pagination href includes `q` |
+| **TEST-PAGE-04** | Turbo DELETE `q=foo&page=last` → stream has filtered rows + `history-replace` when repaged |
+| **TEST-PAGE-05** | Search narrowing: seed so page 3 exists, change `q` to 1-page result → page 1 data |
+| **TEST-PAGE-06** | `Pagination::PageParam.coerce` unit spec (nil/0/abc/default: nil) |
+| **TEST-PAGE-07** | Delete from modal while `?q=&page=5` → repage preserves `q` (referer or location fallback) |
+
+---
+
+## F. Manual QA script rows (copy to review report)
+
+| # | Preconditions | Steps | Expected URL / UI |
+|---|---------------|-------|-------------------|
+| 1 | 10 rows, per=2 | page 5 → delete all on page | `page=4`, rows visible, pagination |
+| 2 | 20 rows, 5 match `q=alpha` | `q=alpha` page 3 → change `q` to 1-match | `page=1`, one row |
+| 3 | Filtered list | click page 2 | `q` + `page=2` in address bar |
+| 4 | `q=foo&page=2` | delete last row on page | `q=foo&page=1` or last filtered page |
+| 5 | Filtered | F5 after turbo delete repage | same corrected URL, not empty |
+
+---
+
+## G. DDD / spec edge cases (Stage 3)
+
+When BD/DDD describes a searchable paginated list, **Non-goals** must not skip:
+
+1. Delete last item on last page **while filtered**  
+2. Search while on high page number  
+3. Empty filter result vs overflow empty page (different copy)  
+4. Refresh with stale `page` + active `q`  
+
+---
+
+## H. Commit lineage (house series — learn from fixes)
+
+| Commit | Theme | Key fixes |
+|--------|-------|-----------|
+| `b08b690` | revise codes | Introduced bugs: turbo URL, stale count, locale, CSS |
+| `d8319dd` | locale + styling + bugs | `total-count-sync`, `history-replace` on create, pagination `params`, `method: :post` new form |
+| `25da272` | **pagination bugs** | Repage on destroy + `history-replace` when corrected; `PageParam.coerce`; `index_list_url`; referer + `window.location` delete context; `total_pages.zero?` → page 1; DRY turbo streams |
+
+### `25da272` — what was fixed (canonical for codegen)
+
+1. **PAGE-OVERFLOW-01/02** — `repage_index_collection_if_overflow` uses `requested_page` from params; `total_pages.zero?` reloads page 1; returns last page for URL sync  
+2. **PAGE-TURBO-01** — `index_history_replace_stream(repaged_to)` on destroy when page corrected (create already had replace)  
+3. **PAGE-SEARCH-04/07 / PAGE-CTX-01** — `index_list_url` keeps `q` + `published`; `referer_index_query_params` + `confirm_delete` reads `window.location.search`  
+4. **PAGE-COERCE-01** — `Pagination::PageParam` + spec; `offset_paginate` uses shared coerce  
+5. **TURBO-FORM-02** — edit modal `html: { method: "post" }` for multipart PATCH (Rails spoofing)  
+6. **TURBO-FRAME-02** — link-houses picker `data-turbo-frame: "_top"`  
+
+### Known gap after `25da272` (flag in review)
+
+- **PAGE-GET-01** — `house_series#index` may still lack `redirect_to_last_page_if_overflow!` (properties has it). F5 on `?page=99` may still show empty until added.
+
+---
+
+## Accumulate patterns
+
+Add rows with stable IDs after each production bug. Cross-link Hotwire patterns when overlap (e.g. TURBO-SYNC-01 ↔ PAGE-SEARCH-03).
+
+**Sources:** house series `b08b690` → `d8319dd` → `25da272`; properties `redirect_to_last_page_if_overflow!` + `spec/requests/properties/index_spec.rb`.

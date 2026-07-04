@@ -16,6 +16,8 @@ Verify each item in the gate checklist. If ANY item fails → result is `BLOCKED
 
 ### A. Code quality / Chất lượng code
 - [ ] `/review-staged` ran and has no remaining 🟠 or 🔴. / Đã chạy và không còn 🟠/🔴.
+- [ ] Latest `/review-staged` report includes **Functional verification** (tests run + Manual QA for UI). / Báo cáo review có chạy test + Manual QA.
+- [ ] Staged-related automated tests passed in review (not diff-only). / Test liên quan feature đã pass khi review.
 - [ ] Any unresolved 🟡 Medium findings are triaged and tracked (ticket + owner + target). / Mọi 🟡 chưa sửa phải được triage và có tracking.
 - [ ] No `TODO` / `FIXME` / `XXX` in staged code. / Không có TODO/FIXME/XXX.
 - [ ] No `console.log` / `print` / debugger statements. / Không có console.log/print/debugger.

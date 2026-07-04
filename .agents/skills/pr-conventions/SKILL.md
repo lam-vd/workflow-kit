@@ -7,14 +7,7 @@ description: "Skill for crafting PR titles, commit messages, and PR descriptions
 
 ## When commits happen in the workflow
 
-| Phase | Commit? |
-|---|---|
-| Stages 1–6 (spec, audit, FINAL lock, breakdown) | ❌ Never |
-| `/start-coding` | ❌ Stage only |
-| `/review-staged` READY | ✅ One commit per sub-task |
-| `/create-pr` | ❌ Artifacts only |
-
-Do **not** use `docs(spec): lock FINAL` commits — spec stays in working tree until implementation. See `.cursor/rules/git-commit-policy.mdc`.
+See `.cursor/rules/git-commit-policy.mdc` — **only** `/review-staged` READY may commit during implementation.
 
 ## PR / Commit Title
 
@@ -64,7 +57,7 @@ Ship in 3 languages: EN (canonical, expanded by default) + VI + JP (collapsed `<
 Each language block contains the same 8 sections below.
 
 ### ai-housemaker format override
-- For repo **ai-housemaker**, use `.agents/skills/ai-housemaker-pr-description/SKILL.md` and prompt `/create-pr-ai-housemaker`.
+- For repo **ai-housemaker**, use `.agents/skills/ai-housemaker-pr-description/SKILL.md` and `/create-pr` (profile §9b loads JA format).
 - PR body: **Japanese** with `概要` (Before/After), `仕様`, `対応内容`, `レビュワー確認項目`, `タスクリンク`, `備考`.
 - PR title and squash commit remain English Conventional Commits (this skill).
 

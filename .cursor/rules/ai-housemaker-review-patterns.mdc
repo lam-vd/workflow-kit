@@ -1,0 +1,24 @@
+---
+description: "ai-housemaker Stage 7–8 — pointer to checklist skill. Do not duplicate P0/P1 tables here."
+alwaysApply: false
+globs:
+  - "**/ai-housemaker/app/**"
+  - "**/ai-housemaker/spec/**"
+---
+
+# ai-housemaker Review Patterns (pointer)
+
+**Canonical checklist:** `.agents/skills/ai-housemaker-review-checklist/SKILL.md`
+
+**Also load at Stage 8 (when applicable):**
+
+| Need | File |
+|------|------|
+| Request spec boundaries | `ai-housemaker-rspec` skill |
+| Hotwire sweep | `hotwire-integration-patterns.mdc` |
+| Pagination + search | `paginated-list-patterns.mdc` |
+| Cross-layer trace | `integration-regression-review` skill |
+| Run tests + Manual QA | `functional-verification-review` skill |
+| Profile gates | `common/profiles/ai-housemaker.md` §7–§8 |
+
+Do **not** read this file and the checklist skill — **checklist skill only**.

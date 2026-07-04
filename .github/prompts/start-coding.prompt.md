@@ -18,20 +18,20 @@ Implement the **next sub-task** (or the one user specifies) following the FINAL 
 
 **VI**: Code sub-task tiếp theo (hoặc sub-task user chỉ định), bám sát FINAL spec tuyệt đối.
 
+## Project profile
+
+If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` §7 (lint gates, autocomplete, UI layout via `rails-ui-layouts`, pre-flight checklist).
+
 ## Steps
 
 ### 1. Load context (do this EVERY time)
-Read these files in order:
 ```
-1. docs/specs/<task>.md          → understand WHAT and WHY
-2. docs/ddd/<task>.md            → understand HOW (API, schema, algorithms, diagrams)
-3. Sub-task list from Stage 6    → identify current sub-task's DoD
-4. .cursor/rules/clean-code.mdc  (or .github/instructions/clean-code.instructions.md)
-5. .cursor/rules/architecture.mdc (or .github/instructions/architecture.instructions.md)
-6. .agents/skills/design-patterns/SKILL.md (if patterns needed)
-7. **Project lint skill** (if exists) — e.g. ai-housemaker: `.agents/skills/static-analysis-lint/SKILL.md`
-   Or run variant prompt: `/start-coding-ai-housemaker` when working in ai-housemaker repo.
+1. docs/specs/<task>.md + docs/ddd/<task>.md
+2. Sub-task list from Stage 6 → current DoD
+3. .agents/skills/design-patterns/SKILL.md (if patterns needed)
+4. Project profile — if ai-housemaker → common/profiles/ai-housemaker.md §7
 ```
+Code style / layering: `clean-code.mdc` and `architecture.mdc` apply via **globs** on files you edit — do not load manually unless linter fails.
 
 ### 2. Identify current sub-task
 - Check which sub-task is next (by priority P0 → P1 → P2 → P3 → P4).
@@ -93,15 +93,9 @@ If all pass → print:
 
 If any DoD item fails → continue fixing until met.
 
-## Coding principles (from rules)
+## Coding principles
 
-| Rule | Summary |
-|---|---|
-| Clean code | ≤20-line functions, meaningful names, no magic values, no dead code |
-| Architecture | Layer direction: Controller → Application → Domain → Infra. Domain is pure. |
-| Error handling | Catch at boundaries, typed errors with codes, log context not secrets |
-| Security | Validate input at boundaries, authz on every endpoint, no hardcoded secrets |
-| Tests | AAA structure, behavior-named, mock only at boundaries |
+Follow `karpathy-guidelines.mdc` + rules on edited files (`clean-code`, `architecture` via globs). See `docs/workflow/RULES-SKILLS-PROMPTS-MAP.md`.
 
 ## ⚠️ Hard rules / Quy tắc bắt buộc
 
