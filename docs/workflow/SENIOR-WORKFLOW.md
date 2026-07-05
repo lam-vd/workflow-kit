@@ -105,8 +105,8 @@ Templates: `docs/ddd/_TEMPLATE-ai-housemaker.md` (EN), `docs/ddd/_TEMPLATE-ai-ho
 **VI**: Audit chế độ phản biện, có chấm điểm.
 
 ### Pass criteria
-- **Score ≥ 8.0 / 10** → APPROVED → `/check-spec`.
-- **Score < 8.0** → NOT YET. Recommend back to `/write-spec`.
+- **Score > 9.5 / 10** → APPROVED → `/check-spec`.
+- **Score ≤ 9.5** → NOT YET. Recommend back to `/write-spec`.
 - **User is final decision-maker** — may bypass < 8 (logged in Decision Log).
 - **Absolute hard rule**: any 🔴 Critical → BLOCKED, no bypass.
 
@@ -139,7 +139,7 @@ Templates: `docs/ddd/_TEMPLATE-ai-housemaker.md` (EN), `docs/ddd/_TEMPLATE-ai-ho
 
 **5 gates** (all required):
 1. ✅ `/recheck-spec` ran with scorecard.
-2. ✅ Score ≥ 8.0 OR explicit user bypass logged.
+2. ✅ Score > 9.5 OR explicit user bypass logged.
 3. ✅ NO 🔴 Critical (always blocks, never bypassable).
 4. ✅ Stakeholder sign-off (manual confirm).
 5. ✅ Spec files saved on disk (uncommitted OK).

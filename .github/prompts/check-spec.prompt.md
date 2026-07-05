@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: "Stage 5 of the Senior Workflow — FINAL spec lock. Gates entry to coding (Stage 7). Verifies 5 conditions: scorecard exists, score ≥ 8.0 OR explicit user bypass, NO 🔴 Critical (never bypassable), stakeholder sign-off, spec files saved on disk. On pass: flips Status DRAFT → FINAL, adds Locked-at timestamp + Audit-score, appends changelog. Does NOT git commit — see git-commit-policy. If bypass: changelog must list open risks + follow-up plan. Refuses to lock when 🔴 exists regardless of user request."
+description: "Stage 5 of the Senior Workflow — FINAL spec lock. Gates entry to coding (Stage 7). Verifies 5 conditions: scorecard exists, score > 9.5 OR explicit user bypass, NO 🔴 Critical (never bypassable), stakeholder sign-off, spec files saved on disk. On pass: flips Status DRAFT → FINAL, adds Locked-at timestamp + Audit-score, appends changelog. Does NOT git commit — see git-commit-policy. If bypass: changelog must list open risks + follow-up plan. Refuses to lock when 🔴 exists regardless of user request."
 ---
 
 You are at **Stage 5: Final Spec Lock**.
@@ -9,7 +9,7 @@ You are at **Stage 5: Final Spec Lock**.
 
 ## Preconditions / Điều kiện (verify ALL 5 / xác nhận đủ 5)
 1. ✅ `/recheck-spec` ran with a clear scorecard. / Đã chạy `/recheck-spec` có scorecard rõ ràng.
-2. ✅ **Score ≥ 8.0 / 10** OR user has explicitly approved a bypass. / Điểm ≥8.0 hoặc user đã chấp nhận bypass.
+2. ✅ **Score > 9.5 / 10** OR user has explicitly approved a bypass. / Điểm > 9.5 hoặc user đã chấp nhận bypass.
 3. ✅ **NO 🔴 Critical issue** (Critical always blocks, regardless of user decision). / KHÔNG có lỗi 🔴 (🔴 luôn chặn, không bypass được).
 4. ✅ Stakeholder / PO sign-off (manual user confirmation). / PO đã sign-off.
 5. ✅ Spec files are saved on disk (BD + DDD). Uncommitted working-tree changes are OK. / File spec đã lưu trên disk; **không** cần `git commit`.
@@ -20,10 +20,10 @@ If ANY condition fails → STOP, print the reason, ask user to fix.
 
 | Score | 🔴 Critical | Action |
 |---|---|---|
-| ≥ 8.0 | 0 | ✅ Proceed to lock FINAL |
-| ≥ 8.0 | ≥1 | ❌ BLOCKED — fix 🔴 first, no bypass |
-| < 8.0 | 0 | ⚠️ Ask user: "Score X.X < 8. Bypass or revise?" — proceed only if user chooses bypass |
-| < 8.0 | ≥1 | ❌ BLOCKED |
+| > 9.5 | 0 | ✅ Proceed to lock FINAL |
+| > 9.5 | ≥1 | ❌ BLOCKED — fix 🔴 first, no bypass |
+| ≤ 9.5 | 0 | ⚠️ Ask user: "Score X.X ≤ 9.5. Bypass or revise?" — proceed only if user chooses bypass |
+| ≤ 9.5 | ≥1 | ❌ BLOCKED |
 
 ## Task
 

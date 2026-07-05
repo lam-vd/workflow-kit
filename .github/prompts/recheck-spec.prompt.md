@@ -1,13 +1,14 @@
 ---
 mode: ask
-description: "Stage 4 of the Senior Workflow — Critic-mode self-audit of BD + DDD with QUANTITATIVE SCORING (10-item rubric, max 10.0) and severity classification (🔴/🟠/🟡/🟢). Pass threshold = ≥ 8.0/10. If score < 8 with no 🔴 — user is the final decision-maker (option 1: revise, option 2: bypass with Decision Log entry). If any 🔴 Critical — auto-block, no bypass possible. Output: scorecard table + issues table + verdict. Does NOT modify the spec, only reports."
+description: "Stage 4 of the Senior Workflow — Critic-mode self-audit of BD + DDD with QUANTITATIVE SCORING (10-item rubric, max 10.0) and severity classification (🔴/🟠/🟡/🟢). Pass threshold = > 9.5/10. If score ≤ 9.5 with no 🔴 — user is the final decision-maker (option 1: revise, option 2: bypass with Decision Log entry). If any 🔴 Critical — auto-block, no bypass possible. Output: scorecard table + issues table + verdict. Does NOT modify the spec, only reports."
 ---
 
 You are at **Stage 4: Recheck Spec**.
 
-> **VI**: Bước 4 — Tự audit spec với tư duy phản biện, chấm điểm 10 tiêu chí. Đạt ≥8.0 mới pass.
+> **VI**: Bước 4 — Tự audit spec với tư duy phản biện, chấm điểm 10 tiêu chí. **Pass khi > 9.5/10**.
 
 ## Task / Nhiệm vụ
+
 Read the BD and DDD files produced in Stage 3. Put on the **critic hat**, find issues, and **score** using the 10-item rubric.
 
 **VI**: Đọc BD + DDD từ Bước 3, mang "mũ phản biện", tìm lỗi và chấm điểm theo rubric 10 mục.
@@ -22,16 +23,21 @@ Before scoring, load and reuse the shared checklist at `common/checklists/rechec
 4. **ai-housemaker** (when profile active): read `common/profiles/ai-housemaker.md` §4 — DDD mandatory sections; `.vi.md` must match EN technically.
 
 ## 🎯 Pass criteria / Tiêu chí đạt
-- **Score ≥ 8.0 / 10** → can proceed to `/check-spec`. / Đạt ≥8.0 → được qua bước tiếp.
-- **Score < 8.0** → spec **NOT YET MEETING BAR**, recommend back to `/write-spec`. / Chưa đạt, khuyến nghị quay lại `/write-spec`.
-- ⚠️ **User is the final decision-maker**: even with < 8, the user can choose to "bypass" or "fix". You MUST ask explicitly and record the decision.
-- **VI**: Người dùng là người quyết định cuối cùng — kể cả khi <8 vẫn có thể chọn bypass hoặc sửa.
+
+| Condition | Verdict |
+|---|---|
+| **Score > 9.5 / 10** and **0 🔴** | ✅ APPROVED → proceed to `/check-spec` |
+| **Score ≤ 9.5 / 10** and **0 🔴** | ⚠️ NOT YET — recommend `/write-spec`; user may choose bypass |
+| **Any 🔴 Critical** | ❌ BLOCKED — fix 🔴 first; **no bypass** |
+
+- **VI**: Đạt **> 9.5** và không có 🔴 → được qua bước tiếp. ≤ 9.5 → chưa đạt bar; user có thể bypass nếu không có 🔴.
 
 ---
 
 ## 📊 Scoring Rubric — 10 items × 1 point
 
 Each item scored as one of three levels:
+
 - **1.0** = Fully passes
 - **0.5** = Partial (present but quality below bar)
 - **0.0** = Fails / missing
@@ -51,7 +57,7 @@ Each item scored as one of three levels:
 
 > **Total**: sum of 10 items → max 10.0.
 > Some tasks may not need item 5 (no schema change) or item 9 (no perf concern). Items can be marked **N/A with justification**, then final score = (sum of applied items) / (count of applied items) × 10.
-> Example: 8 items apply, you score 7.0 → final = 7.0 / 8 × 10 = **8.75**.
+> Example: 8 items apply, you score 7.6 → final = 7.6 / 8 × 10 = **9.5** → **does not pass** (> 9.5 required).
 
 ---
 
@@ -82,20 +88,19 @@ Each item scored as one of three levels:
 | 2 | Edge cases coverage | 0.5 | 🟡 Only 4 cases, missing concurrent submit |
 | 3 | Flow + sequence diagrams | 1.0 | ✅ Flow + happy + error |
 | 4 | API contract | 1.0 | ✅ |
-| 5 | Migration & rollback | 0.0 | 🟠 Missing outbox rollback script |
+| 5 | Migration & rollback | 1.0 | N/A — no schema change |
 | 6 | Quantitative test plan | 1.0 | ✅ |
 | 7 | Observability | 0.5 | 🟡 Missing alert threshold for `bounce_rate` |
 | 8 | Security | 1.0 | ✅ |
 | 9 | Performance budget | 1.0 | ✅ p95 ≤ 200ms |
 | 10 | Consistency & clarity | 1.0 | ✅ |
-| | **Total** | **8.0 / 10** | |
+| | **Total** | **9.0 / 10** | |
 
 ## ❌ Issues found
 | # | File:Section | Issue | Severity | Suggested fix |
 |---|---|---|---|---|
-| 1 | DDD §9 Rollback | Missing revert step for outbox table on panic | 🟠 | Add `scripts/drain-outbox.ts` + migration down |
-| 2 | DDD §10 Observability | `bounce_rate` lacks alert threshold | 🟡 | Add alert: bounce_rate > 5% in 5 min |
-| 3 | BD §3 Edge cases | Missing "concurrent submit" case | 🟡 | Add idempotency key in contract |
+| 1 | DDD §10 Observability | `bounce_rate` lacks alert threshold | 🟡 | Add alert: bounce_rate > 5% in 5 min |
+| 2 | BD §3 Edge cases | Missing "concurrent submit" case | 🟡 | Add idempotency key in contract |
 
 ## ✅ Passed checks
 - API contract: schema + examples + error codes complete
@@ -108,18 +113,18 @@ Each item scored as one of three levels:
 
 |  |  |
 |---|---|
-| **Score** | **8.0 / 10** |
-| **Threshold** | ≥ 8.0 |
+| **Score** | **9.0 / 10** |
+| **Threshold** | > 9.5 |
 | **🔴 Critical issues** | 0 |
-| **🟠 High issues** | 1 |
-| **Auto verdict** | ✅ APPROVED (meets threshold) |
+| **🟠 High issues** | 0 |
+| **Auto verdict** | ⚠️ NOT APPROVED (below threshold) |
 
 ### ➡️ Next step
-- If score ≥ 8 and no 🔴 → run `/check-spec` to FINAL lock.
-- If score < 8 → return to `/write-spec` to fix 🔴 / 🟠 issues.
+- If score **> 9.5** and no 🔴 → run `/check-spec` to FINAL lock.
+- If score **≤ 9.5** → return to `/write-spec` to fix issues (or user bypass below).
 
-### ⚠️ User decision required (only when score < 8)
-> "Current score is **X.X / 10**, below the 8.0 threshold. Please choose:
+### ⚠️ User decision required (only when score ≤ 9.5 and no 🔴)
+> "Current score is **X.X / 10**, at or below the **> 9.5** pass threshold. Please choose:
 >
 > 1. ✅ **Return to `/write-spec`** to fix issues (recommended).
 > 2. ⚠️ **Bypass** and proceed to `/check-spec` — accept risk, will be logged in BD/DDD Decision Log.
@@ -137,15 +142,17 @@ Each item scored as one of three levels:
 4. **N/A items** require a 1-line justification (e.g. "no schema change → item 5 N/A") and trigger pro-rating.
 5. **If any 🔴 Critical exists** → regardless of score, verdict is automatically `BLOCKED — fix 🔴 first`. **User CANNOT bypass** this.
 6. **If any 🟠 High exists** → related item is automatically 0.0, cannot be 0.5.
-7. **When user chooses bypass (only valid for score < 8 AND no 🔴)** → record in BD/DDD Decision Log:
+7. **When user chooses bypass (only valid for score ≤ 9.5 AND no 🔴)** → record in BD/DDD Decision Log:
    ```markdown
-   | <date> | Bypass audit at score X.X | User approved despite N 🟠 issues. Risks: <list>. Mitigation deferred to <stage/PR>. | <user> |
+   | <date> | Bypass audit at score X.X | User approved despite score ≤ 9.5 and N open issues. Risks: <list>. Mitigation deferred to <stage/PR>. | <user> |
    ```
 
 ---
 
 ## 🔁 Re-audit
+
 After user fixes → re-run `/recheck-spec`. The new report MUST reference the previous one:
+
 - Issues fixed → mark ✅ + raise score on related items.
 - Issues remaining → keep as-is.
 - New issues → flag 🆕.

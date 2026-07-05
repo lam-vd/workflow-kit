@@ -33,7 +33,7 @@ Details: `.cursor/rules/git-commit-policy.mdc`.
 | 2 | Grooming (5W + risk) | `/grooming` | Risk matrix + open questions |
 | 3 | Write Spec (BD/DDD) | `/write-spec` | Tri-lingual `docs/specs/*.md`; DDD EN (+ `.vi.md` via ai-housemaker profile) |
 | 4 | Recheck Spec (score /10) | `/recheck-spec` | Scorecard + level-based issues |
-| 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate ≥ 8.0) |
+| 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate > 9.5) |
 | 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks ≤4h each |
 | 7 | Implement | `/start-coding` | Code + tests; stage (`git add`), no commit |
 | 8 | Self-review staged | `/review-staged` | Diff + integration sweep + **run tests** + Manual QA; commit if READY |
@@ -86,7 +86,7 @@ These files MUST be read **before** executing the corresponding stage:
 ## 🛡️ Hard Gates (NEVER bypass)
 
 - ❌ Cannot enter **stage 5** if spec audit has any 🔴 Critical (regardless of score).
-- ❌ Cannot enter **stage 5** if **score < 8.0/10** UNLESS user explicitly approves bypass (logged in Decision Log).
+- ❌ Cannot enter **stage 5** if **score ≤ 9.5/10** UNLESS user explicitly approves bypass (logged in Decision Log).
 - ❌ Cannot enter **stage 7** unless spec is `FINAL`.
 - ❌ Cannot enter **stage 9** if `/review-staged` has unresolved 🟠 or 🔴.
 - ❌ Cannot expand scope outside spec — must return to stage 3.
@@ -100,10 +100,10 @@ Audit score is computed by 10-item rubric (see `.github/prompts/recheck-spec.pro
 
 | Score | 🔴 | Action |
 |---|---|---|
-| ≥ 8.0 | 0 | ✅ Auto APPROVED → `/check-spec` |
-| ≥ 8.0 | ≥1 | ❌ BLOCKED — fix 🔴 |
-| < 8.0 | 0 | ⚠️ Ask user: (1) fix or (2) bypass with Decision Log entry |
-| < 8.0 | ≥1 | ❌ BLOCKED |
+| > 9.5 | 0 | ✅ Auto APPROVED → `/check-spec` |
+| > 9.5 | ≥1 | ❌ BLOCKED — fix 🔴 |
+| ≤ 9.5 | 0 | ⚠️ Ask user: (1) fix or (2) bypass with Decision Log entry |
+| ≤ 9.5 | ≥1 | ❌ BLOCKED |
 
 ---
 

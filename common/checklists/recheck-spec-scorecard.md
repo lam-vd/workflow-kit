@@ -36,8 +36,8 @@ Use this in Stage 4 for consistent scoring.
 
 ## Gate
 
-- score >= 8.0 and no Red: pass
-- score < 8.0 and no Red: user decides fix or bypass
+- score > 9.5 and no Red: pass
+- score ≤ 9.5 and no Red: user decides fix or bypass
 - any Red: blocked
 
 ## Common regressions (ai-housemaker / tri-lingual BD)

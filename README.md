@@ -59,7 +59,7 @@ senior-workflow-kit/
 | 2 | Grooming (5W + risk) | `/grooming` | Risk matrix + open questions |
 | 3 | Write Spec | `/write-spec` | `docs/specs/*.md`, `docs/ddd/*.md` (+ `.vi.md` via ai-housemaker profile) |
 | 4 | Recheck Spec (score) | `/recheck-spec` | Audit scorecard /10 |
-| 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate ≥8) |
+| 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate > 9.5) |
 | 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks ≤4h |
 | 7 | Implement | `/start-coding` | Code + tests; stage only |
 | 8 | Self-review | `/review-staged` | Diff + regression sweep + **functional tests** + Manual QA; **commit if READY** |
@@ -80,7 +80,7 @@ senior-workflow-kit/
 
 1. Start every task with `/analyze-task` and `/grooming`.
 2. Write BD + DDD via `/write-spec` (tri-lingual; ai-housemaker auto-loads `common/profiles/ai-housemaker.md` §3).
-3. Recheck quality by `/recheck-spec` (score gate >= 8.0).
+3. Recheck quality by `/recheck-spec` (score gate > 9.5).
 4. Lock by `/check-spec` (no git commit — spec stays in working tree), then implement by sub-task.
 5. Per sub-task: `/start-coding` → stage → `/review-staged` → commit if READY → `/recheck-release` → `/create-pr`.
 
@@ -135,14 +135,14 @@ Detail: [.cursor/rules/git-commit-policy.mdc](.cursor/rules/git-commit-policy.md
 
 ## 📊 Spec Quality Gate (Stage 4)
 
-Audit scoring rubric: **10 items × 1 point**. Pass threshold = **≥ 8.0 / 10**.
+Audit scoring rubric: **10 items × 1 point**. Pass threshold = **> 9.5 / 10**.
 
 | Score | 🔴 Critical | Action |
 |---|---|---|
-| ≥ 8.0 | 0 | ✅ Auto APPROVED → `/check-spec` |
-| ≥ 8.0 | ≥ 1 | ❌ BLOCKED — fix 🔴 first |
-| < 8.0 | 0 | ⚠️ Ask user: fix or bypass? Bypass logged in Decision Log |
-| < 8.0 | ≥ 1 | ❌ BLOCKED |
+| > 9.5 | 0 | ✅ Auto APPROVED → `/check-spec` |
+| > 9.5 | ≥ 1 | ❌ BLOCKED — fix 🔴 first |
+| ≤ 9.5 | 0 | ⚠️ Ask user: fix or bypass? Bypass logged in Decision Log |
+| ≤ 9.5 | ≥ 1 | ❌ BLOCKED |
 
 Detail: [.github/prompts/recheck-spec.prompt.md](.github/prompts/recheck-spec.prompt.md).
 

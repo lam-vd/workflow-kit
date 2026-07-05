@@ -147,7 +147,7 @@ Both files are **tri-lingual** (EN canonical + VI + JP collapsible blocks).
 | | |
 |---|---|
 | Score | **8.5 / 10** |
-| Threshold | ≥ 8.0 |
+| Threshold | > 9.5 |
 | 🔴 Critical | 0 |
 | Auto verdict | ✅ APPROVED |
 ```
