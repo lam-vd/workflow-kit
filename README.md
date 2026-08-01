@@ -62,7 +62,7 @@ senior-workflow-kit/
 | 5 | Final Spec Lock | `/check-spec` | Status = `FINAL` (gate > 9.5) |
 | 6 | Task Breakdown | `/breakdown-task` | Prioritized sub-tasks ≤4h |
 | 7 | Implement | `/start-coding` | Code + tests; stage only |
-| 8 | Self-review | `/review-staged` | Diff + regression sweep + **functional tests** + Manual QA; **commit if READY** |
+| 8 | Self-review | `/review-staged` | Diff + tests + Manual QA; READY → **user** commits in terminal |
 | 9a | Release check | `/recheck-release` | READY ✅ or BLOCKED ❌ |
 | 9b | Create PR | `/create-pr` | PR (VI/EN/JP) |
 
@@ -82,13 +82,14 @@ senior-workflow-kit/
 2. Write BD + DDD via `/write-spec` (tri-lingual; ai-housemaker auto-loads `common/profiles/ai-housemaker.md` §3).
 3. Recheck quality by `/recheck-spec` (score gate > 9.5).
 4. Lock by `/check-spec` (no git commit — spec stays in working tree), then implement by sub-task.
-5. Per sub-task: `/start-coding` → stage → `/review-staged` → commit if READY → `/recheck-release` → `/create-pr`.
+5. Per phase/sub-task: `/start-coding` → stage → `/review-staged` → **you** commit in terminal if READY → `/recheck-release` → `/create-pr`.
 
-### Git commit policy
+### Git commit & push policy
 
-- **Stages 1–6**: never `git commit` (including `docs: lock spec FINAL`).
-- **`/start-coding`**: `git add` only.
-- **`/review-staged`**: `git commit` when verdict is READY.
+- **Agent:** `git add` only in `/start-coding`. **Never** `git commit` or `git push`.
+- **You:** run `git commit` in your terminal after `/review-staged` READY (keeps your git author).
+- **One phase → one commit** — e.g. `feat(property-ui): part 2: land - scope routes under properties`
+- **Push:** only you, when you choose — agent never pushes.
 
 Detail: [.cursor/rules/git-commit-policy.mdc](.cursor/rules/git-commit-policy.mdc).
 
@@ -107,7 +108,7 @@ Detail: [.cursor/rules/git-commit-policy.mdc](.cursor/rules/git-commit-policy.md
   - Always (Cursor): `.cursor/rules/karpathy-guidelines.mdc` — behavioral baseline (assumptions, simplicity, surgical diffs, verifiable goals)
   - Stage 1: `field-impact-analysis` (khi task có khả năng thêm/sửa field)
   - Stage 3: `writing-bd`, `writing-ddd`
-  - Stage 7: `karpathy-guidelines`, `design-patterns`; ai-housemaker → `ai-housemaker-review-checklist` + `ai-housemaker-rspec` (nếu có spec)
+  - Stage 7: `karpathy-guidelines`, `design-patterns`; ai-housemaker → `ai-housemaker-review-checklist` + `ai-housemaker-rspec` (nếu có spec); Figma SVG → `figma-svg-html-structure` / `figma-erb-styling-audit`
   - Stage 8: `karpathy-guidelines`, `code-review`, `integration-regression-review`, `functional-verification-review`, `paginated-list-patterns`; ai-housemaker → profile §8 + `hotwire-integration-patterns`
   - Stage 9: `pr-conventions`
   - Deploy handoff: `create-release`

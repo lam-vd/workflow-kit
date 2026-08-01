@@ -30,7 +30,7 @@ flowchart TD
     H -->|Yes| I
     I --> J[6. /breakdown-task<br/>Sub-tasks]
     J --> K[7. /start-coding<br/>Code per spec + DDD]
-    K --> L[8. /review-staged<br/>Self-review + commit if READY]
+    K --> L[8. /review-staged<br/>Self-review → user commits if READY]
     L --> M{Has 🟠/🔴?}
     M -->|Yes| K
     M -->|No| N[9. /recheck-release<br/>+ /create-pr<br/>VI/EN/JP]
@@ -177,17 +177,17 @@ Templates: `docs/ddd/_TEMPLATE-ai-housemaker.md` (EN), `docs/ddd/_TEMPLATE-ai-ho
 3. Write production code + tests.
 4. Verify Definition of Done.
 5. Stage changes (`git add`) — **do not commit**.
-6. → Run `/review-staged` → commit **only if** READY.
+6. → Run `/review-staged` → if READY, user commits in **their terminal** (agent never commits).
 
 ### Repeat cycle:
 ```
-/start-coding → code → stage → /review-staged → commit if READY → next sub-task
+/start-coding → code → stage → /review-staged → user commits if READY → next phase
 ```
 
 ### Hard rules:
 - NEVER deviate from FINAL spec — if change needed, STOP and return to Stage 3.
 - NEVER skip tests — every sub-task must have tests matching its DoD.
-- **Never commit in Stages 1–6 or in `/start-coding`** — one commit per sub-task after `/review-staged` READY.
+- **Agent never `git commit` or `git push`** — one commit per phase/sub-task, **user** runs after `/review-staged` READY.
 
 ---
 
@@ -202,7 +202,7 @@ Scope:
 2. **Integration** — `integration-regression-review` + Hotwire + **paginated list / search** pattern sweeps
 3. **Functional** — `functional-verification-review` — run mapped tests, Manual QA script for UI
 
-**When verdict is READY** (no 🔴/🟠, staged-related tests pass): run `git commit` — the **only** allowed commit point in the implementation loop. See `.cursor/rules/git-commit-policy.mdc`.
+**When verdict is READY** (no 🔴/🟠, staged-related tests pass): print copy-ready `git commit` command for the **user** — agent **never** runs `git commit` or `git push`. See `.cursor/rules/git-commit-policy.mdc`.
 
 **8 review dimensions:**
 1. Spec compliance (matches DDD?)
@@ -257,7 +257,7 @@ Scope:
 | 5 | `/check-spec` | 5 | Lock spec → FINAL | `.github/prompts/check-spec.prompt.md` |
 | 6 | `/breakdown-task` | 6 | Chia sub-tasks ≤4h | `.github/prompts/breakdown-task.prompt.md` |
 | 7 | `/start-coding` | 7 | Code sub-task theo spec + DDD | `.github/prompts/start-coding.prompt.md` |
-| 8 | `/review-staged` | 8 | Staged + branch review, tests, regression sweep; commit if READY | `.github/prompts/review-staged.prompt.md` |
+| 8 | `/review-staged` | 8 | Staged + branch review, tests; READY → print commit cmd for user | `.github/prompts/review-staged.prompt.md` |
 | 9 | `/recheck-release` | 9a | Kiểm tra release readiness | `.github/prompts/recheck-release.prompt.md` |
 | 10 | `/create-pr` | 9b | Tạo PR (tri-lingual hoặc JA qua profile) | `.github/prompts/create-pr.prompt.md` |
 | 11 | `/create-release` | 9c (utility) | Tạo release summary cho deploy handoff | `.github/prompts/create-release.prompt.md` |

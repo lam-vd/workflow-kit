@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: "Stage 7 of the Senior Workflow — Start coding a sub-task according to the FINAL spec and DDD plan. Use AFTER /breakdown-task when you are ready to implement the next sub-task. Reads the FINAL BD + DDD + sub-task list, identifies which sub-task to work on next (by priority or user request), loads relevant rules (clean-code, architecture) and skills (design-patterns), then generates production code + tests following the spec exactly. Stages changes with git add (no commit). After each sub-task completes, reminds user to run /review-staged to review and commit."
+description: "Stage 7 — Start coding a sub-task per FINAL spec. Stages with git add only (no commit). After sub-task: remind /review-staged; user commits in terminal when READY."
 ---
 
 You are at **Stage 7: Start Coding** of the workflow.
@@ -20,7 +20,7 @@ Implement the **next sub-task** (or the one user specifies) following the FINAL 
 
 ## Project profile
 
-If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` §7 (lint gates, autocomplete, UI layout via `rails-ui-layouts`, pre-flight checklist).
+If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` §7 (lint gates, autocomplete, UI layout via `rails-ui-layouts`, Figma SVG handoff via `figma-svg-html-structure` / `figma-erb-styling-audit`, pre-flight checklist).
 
 ## Steps
 
@@ -28,8 +28,9 @@ If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/pr
 ```
 1. docs/specs/<task>.md + docs/ddd/<task>.md
 2. Sub-task list from Stage 6 → current DoD
-3. .agents/skills/design-patterns/SKILL.md (if patterns needed)
-4. Project profile — if ai-housemaker → common/profiles/ai-housemaker.md §7
+3. .agents/skills/dry-duplication-scan/SKILL.md (mandatory before writing new code)
+4. .agents/skills/design-patterns/SKILL.md (if patterns needed)
+5. Project profile — if ai-housemaker → common/profiles/ai-housemaker.md §7
 ```
 Code style / layering: `clean-code.mdc` and `architecture.mdc` apply via **globs** on files you edit — do not load manually unless linter fails.
 
@@ -51,6 +52,13 @@ Before writing any code, produce a brief **implementation plan** (5–15 lines):
 - Key decisions and why (reference DDD section).
 - Test approach for this sub-task.
 
+**DRY gate** — the plan MUST carry a Reuse Scan row for every **new** symbol it introduces (file, class, method, partial, Stimulus controller, CSS block, locale key, constant/enum):
+
+| New symbol | Layers searched | Search terms | Hits | Decision |
+|------------|-----------------|--------------|------|----------|
+
+Reuse the Stage 1 scan if the capability is unchanged; re-scan when the sub-task adds something Stage 1 did not name. Preference: **Reuse > Extend opt-in > Adapt > New**. Extending a symbol with ≥2 consumers → `.cursor/rules/shared-abstraction-safety.mdc` (default behavior unchanged).
+
 Ask user: "Plan looks good? Proceed?" — wait for confirmation.
 
 ### 4. Implement
@@ -62,16 +70,18 @@ Ask user: "Plan looks good? Proceed?" — wait for confirmation.
   - Unit tests for business logic.
   - Integration tests if sub-task involves DB/external.
   - Cover happy path + edge cases listed in DDD.
+  - For every limit / range / date / collection the sub-task touches, cover **inside, at, and outside** the boundary — see `.agents/skills/edge-case-boundary-review/SKILL.md`. Stage 8 will sweep these anyway; writing them now is cheaper.
 
 ### 5. Stage for review (do NOT commit here)
 ```sh
 git add <files changed for this sub-task only>
 ```
-- Print a **suggested commit message** (for `/review-staged` when READY):
+- Print a **suggested commit message** (user runs after `/review-staged` READY):
   ```
-  <type>(<scope>): <imperative summary>
+  feat(<scope>): part <N>: <area> - <imperative summary>
   ```
-- **DO NOT run `git commit`** — see `.cursor/rules/git-commit-policy.mdc`.
+  Example: `feat(property-ui): part 2: land - scope routes under properties`
+- **DO NOT** run `git commit` or `git push` — see `.cursor/rules/git-commit-policy.mdc`.
 
 ### 6. Verify DoD
 After coding, check the sub-task's Definition of Done:
@@ -88,7 +98,7 @@ If project has `static-analysis-lint` skill → run scoped lint before staging (
 If all pass → print:
 ```
 ✅ Sub-task #N complete. DoD met. Changes staged.
-➡️ Next: run /review-staged — review staged diff, then commit if READY.
+➡️ Next: run `/review-staged` — if READY, copy commit command and run in **your terminal**.
 ```
 
 If any DoD item fails → continue fixing until met.
@@ -102,9 +112,10 @@ Follow `karpathy-guidelines.mdc` + rules on edited files (`clean-code`, `archite
 - **NEVER deviate from FINAL spec** — if you discover a needed change, STOP and ask: "Spec may need update. Return to Stage 3 or continue with assumption?" / KHÔNG lệch khỏi FINAL spec — nếu cần thay đổi, DẮNG và hỏi user.
 - **NEVER skip tests** — every sub-task must have tests matching its DoD. / KHÔNG bỏ qua test — mọi sub-task phải có test khớp DoD.
 - **NEVER ignore sub-task dependencies** — if sub-task #3 depends on #2, verify #2 is done first. / KHÔNG bỏ qua dependency giữa các sub-task.
-- **NEVER run `git commit` in this stage** — stage only (`git add`); commit happens in `/review-staged` after READY. / KHÔNG commit ở bước này.
+- **NEVER run `git commit` or `git push`** — stage only (`git add`); user commits after `/review-staged` READY. / KHÔNG commit/push — user commit ở terminal.
 - **After completing a sub-task** → always remind: "Run `/review-staged` now." / Sau khi xong sub-task → nhắc chạy `/review-staged`.
 - **NEVER touch unrelated code** — only modify files/functions directly required by the current sub-task's DoD. / KHÔNG đụng vào code không liên quan — chỉ sửa file/function trực tiếp cần cho DoD của sub-task hiện tại.
+- **NEVER introduce a new symbol without a Reuse Scan row** — a search that failed to find an existing one is the justification. / KHÔNG tạo symbol mới nếu chưa có dòng Reuse Scan chứng minh đã tìm mà không có sẵn.
 
 ## 📤 Output structure
 
@@ -123,9 +134,9 @@ Follow `karpathy-guidelines.mdc` + rules on edited files (`clean-code`, `archite
 ### Tests
 <actual test code>
 
-### Suggested commit message (for /review-staged when READY)
+### Suggested commit message (user runs after /review-staged READY)
 ```
-feat(xxx): <imperative summary>
+feat(property-ui): part <N>: <area> - <imperative summary>
 ```
 
 ### DoD check
@@ -133,12 +144,12 @@ feat(xxx): <imperative summary>
 - [x] ...
 
 ### ➡️ Next
-Run `/review-staged` on staged changes. Commit only if verdict is READY.
+Run `/review-staged`. If READY → copy commit command into **your terminal** (preserves git author).
 ```
 
 ## 🔁 Multiple sub-tasks in sequence
 
-After `/review-staged` passes for sub-task #N (committed):
+After `/review-staged` READY for sub-task #N (user committed in terminal):
 - User can run `/start-coding` again for sub-task #N+1.
 - Repeat until all sub-tasks from Stage 6 are complete.
 - Then → `/recheck-release` → `/create-pr`.

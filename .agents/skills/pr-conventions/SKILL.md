@@ -7,7 +7,21 @@ description: "Skill for crafting PR titles, commit messages, and PR descriptions
 
 ## When commits happen in the workflow
 
-See `.cursor/rules/git-commit-policy.mdc` — **only** `/review-staged` READY may commit during implementation.
+See `.cursor/rules/git-commit-policy.mdc`:
+
+- **Agent:** stage only (`git add` in `/start-coding`). **Never** `git commit` or `git push`.
+- **User:** runs `git commit` in their terminal after `/review-staged` READY (preserves git author).
+- **One phase / sub-task → one commit** (user creates it).
+
+## Multi-phase commit title (property-ui style)
+
+```
+feat(<scope>): part <N>: <area> - <imperative summary>
+```
+
+Example: `feat(property-ui): part 1: house series - update CSS for name`
+
+Use when task is split into phases (land, house series, house option, …).
 
 ## PR / Commit Title
 

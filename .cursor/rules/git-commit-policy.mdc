@@ -1,48 +1,99 @@
 ---
-description: "Git commit policy for the Senior Workflow. Stages 1–6 (analyze through breakdown) and spec amend loops must NEVER create commits. Only /review-staged may run git commit — after a sub-task is implemented via /start-coding and review verdict is READY (no 🔴/🟠). One commit per sub-task."
+description: "Git policy for Senior Workflow. Agent may stage (git add) only. User commits in their terminal (preserve author). Agent NEVER runs git commit or git push unless user explicitly requests that exact command in the same message."
 alwaysApply: true
 ---
 
-# Git Commit Policy
+# Git Commit & Push Policy
 
-## When commits are allowed
+## Agent permissions (hard ceiling)
 
-| Stage | Commands | `git commit` |
+| Command | Agent |
+|---|---|
+| `git add` (stage) | ✅ In `/start-coding` only — files for current sub-task/phase |
+| `git status`, `git diff`, `git log` | ✅ Read-only — any stage |
+| `git commit` | ❌ **Never** — user runs in their terminal |
+| `git push` | ❌ **Never** — unless user **explicitly** asks to push in the same message |
+| `git push --force` | ❌ **Never** — unless user explicitly requests (warn on main/master) |
+
+**Why:** Commits must keep the requester's git author (e.g. `viet-le-ship`), not Cursor AI.
+
+## When the user commits
+
+| Stage | Commands | Who commits |
 |---|---|---|
-| 1–2 | `/analyze-task`, `/grooming` | ❌ Never |
-| 3–5 | `/write-spec`, `/recheck-spec`, `/check-spec` | ❌ Never |
-| 6 | `/breakdown-task` | ❌ Never |
-| 7 | `/start-coding` | ❌ Never — stage only (`git add`) |
-| 8 | `/review-staged` | ✅ Yes — **only** when verdict is READY (no 🔴/🟠) |
-| 9 | `/recheck-release`, `/create-pr` | ❌ Never (artifacts only) |
+| 1–2 | `/analyze-task`, `/grooming` | ❌ Nobody — no commit |
+| 3–5 | `/write-spec`, `/recheck-spec`, `/check-spec` | ❌ Nobody — working tree only |
+| 6 | `/breakdown-task` | ❌ Nobody |
+| 7 | `/start-coding` | ❌ Agent stages only (`git add`) |
+| 8 | `/review-staged` | ✅ **User** — after READY verdict, copy command agent prints |
+| 9 | `/recheck-release`, `/create-pr` | ❌ Nobody — artifacts only; **no push** |
 
 ## Implementation loop (Stages 7–8)
 
 ```
-/start-coding → implement sub-task → git add (stage) → /review-staged
+/start-coding → implement one phase/sub-task → git add (agent)
+  → /review-staged
   → if BLOCKED: fix → re-stage → /review-staged again
-  → if READY: git commit (one sub-task = one commit)
-  → next sub-task
+  → if READY: agent prints commit command → user runs git commit in terminal
+  → next phase/sub-task
 ```
 
-## Spec phase (Stages 3–5)
+**One phase / sub-task → one commit** (user creates it after READY).
 
-- Edit BD/DDD files in the **working tree only**.
-- `Status: FINAL` from `/check-spec` does **not** require a commit.
-- Revisions after `/recheck-spec` (amend, bypass, re-audit) stay uncommitted until the first implementation commit bundles spec + code **only if** the team chooses — default: **keep spec uncommitted** on the branch until PR squash, or let the **first** `/review-staged` READY commit include spec files if they are still unstaged.
+## `/review-staged` commit gate (READY only)
 
-Preferred default: spec files remain uncommitted through Stage 6; first code commit does not need to include spec docs unless the user asks.
+When verdict is **READY** (no 🔴/🟠):
 
-## Agent hard rules
+1. **DO NOT** run `git commit`.
+2. Print a **copy-ready block** for the user:
 
-1. **NEVER** run `git commit` during `/write-spec`, `/recheck-spec`, or `/check-spec` — even for "docs: lock spec FINAL".
-2. **NEVER** commit unless the user explicitly requests a commit outside Stages 7–8 policy.
-3. **`/start-coding`**: stage changes with `git add`; print suggested Conventional Commit message for `/review-staged`.
-4. **`/review-staged`**: commit only after READY verdict; use the suggested message from Stage 7 or derive from sub-task + diff.
-5. **One sub-task → one commit** after review passes (no extra commits for fix-up nits — amend or fold into the same commit before push if hooks allow and user approves).
+```bash
+git commit -m "$(cat <<'EOF'
+<type>(<scope>): <summary>
+EOF
+)"
+```
+
+3. Remind: run in **your terminal** so author stays yours.
+4. Optional: print `git log -1 --format='%an %ae'` after user confirms they committed.
+
+If verdict is **BLOCKED** — do not print a commit command.
 
 ## Commit message format
 
-Follow `.cursor/rules/pr-conventions.mdc` — Conventional Commits, English, imperative, ≤72 chars.
+Default: `.agents/skills/pr-conventions/SKILL.md` — Conventional Commits, English, imperative.
 
-Typical types in implementation loop: `feat`, `fix`, `refactor`, `test`, `style` — **not** `docs` for spec-only work during Stages 3–5 (because those stages must not commit).
+**Multi-phase features** (e.g. No.96 property-ui — land / house series / house option):
+
+```
+feat(<scope>): part <N>: <area> - <imperative summary>
+```
+
+Examples:
+
+```
+feat(property-ui): part 1: house series - update CSS for name
+feat(property-ui): part 2: land - scope routes under properties
+```
+
+- `<N>` = phase or PR number from `/breakdown-task`
+- `<area>` = `land`, `house series`, `house option`, etc.
+- One phase → one commit
+
+Typical types in implementation loop: `feat`, `fix`, `refactor`, `test`, `style` — not `docs` for spec-only work during Stages 3–5.
+
+## Spec phase (Stages 3–5)
+
+- Edit BD/DDD in the **working tree only** — no commit required for `Status: FINAL`.
+- Default: keep spec uncommitted until user chooses to include in a phase commit.
+
+## Agent hard rules
+
+1. **NEVER** run `git commit` in any stage — including `/review-staged` READY.
+2. **NEVER** run `git push` unless the user explicitly requests push in the same message.
+3. **NEVER** run `git commit` during spec stages — even for `docs: lock spec FINAL`.
+4. **`/start-coding`**: stage with `git add`; print suggested message for user's commit after `/review-staged`.
+5. **`/review-staged`**: review only; on READY → print commit command, do not execute.
+6. **`/create-pr`**: generate title/body text only — user pushes when ready.
+7. **NEVER** add `Co-authored-by: Cursor` or any agent co-author trailer to commit messages.
+7. **NEVER** add `Co-authored-by: Cursor` or any agent co-author trailer to commit messages.

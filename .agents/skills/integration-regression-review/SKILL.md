@@ -1,6 +1,6 @@
 ---
 name: integration-regression-review
-description: "Stage 8 supplement — trace cross-layer bugs beyond the staged diff. Maps Turbo/Hotwire/SPA flows, URL/history state, frame boundaries, i18n templates used by Stimulus, and CSS calc/line-height mismatches. Outputs regression sweep table + findings with data/URL preconditions and reproduction steps. Use with functional-verification-review at /review-staged."
+description: "Stage 8 supplement — trace cross-layer bugs beyond the staged diff. Maps Turbo/Hotwire/SPA flows, URL/history state, frame boundaries, multi-step API parity / early UI commit (Phase C3), i18n templates used by Stimulus, and CSS calc/line-height mismatches. Outputs regression sweep table + findings with data/URL preconditions and reproduction steps. Use with functional-verification-review at /review-staged."
 ---
 
 # Skill: Integration & Regression Review
@@ -33,6 +33,11 @@ Static diff review catches **syntax and local logic**. Integration review catche
 - CSS `min-height` uses variable A but `line-height` uses variable B → clipping
 - Search on page 5 narrows results but URL keeps `page=5` → empty filtered list
 - Pagination links drop `q` after `paginate(..., params: { controller:, id: nil })` only
+- Nested Preline modal inside transformed parent → child under dimmer or auto-opens
+- `turbo_stream` 422 replaces parent frame while form teleported to `body` → errors never show
+- `HSOverlay.open` after replace without stripping feature backdrops → screen darkens each submit
+- `data-*-open-value=""` (`nil` in ERB) → Stimulus Boolean true → modal opens on every parent load
+- Long unbroken memo string with only `pre-wrap` → horizontal layout blowout
 
 ---
 
@@ -125,6 +130,31 @@ When no project rule exists, run generic checks:
 | `INT-HIST-01` | Modal/stream success leaves browser URL not restorable on refresh |
 | `INT-I18N-01` | Dynamic label uses template key inconsistent with static copy |
 | `INT-CSS-01` | `line-height` / `min-height` / `padding-block` use mismatched tokens |
+| `INT-MODAL-01` | Nested/teleported Preline: wrong 422 stream target, backdrop stack, Stimulus bool auto-open |
+| `INT-CSS-02` | Unbroken text overflow without `overflow-wrap` / `min-width: 0` (also check chip/tag rows and label–value grids) |
+
+### Phase C3 — Multi-step / multi-API / early UI commit
+
+Run when staged work includes **any** of: second JSON endpoint for same renderer, cache/pool/snapshot between steps, Stimulus DOM mutate then Turbo frame re-fetch, modal that swaps list state.
+
+| Pattern ID | Checked | Result |
+|------------|---------|--------|
+| API-PAR-01 | ✅ | PASS / FAIL / N/A |
+| TURBO-TEMP-01 | ✅ | … |
+| TURBO-TEMP-02 | ✅ | … |
+
+**Also ask (document answers):**
+
+1. Which request is T₀ (snapshot) vs T₁ (live authority)?
+2. Does the client permanently change UI **before** T₁ success?
+3. If another actor changes record scope between steps, what should the user see?
+
+```bash
+# Find duplicate serialize builders / shared renderer consumers
+rg 'serialize_|buildResult|populateBudget|frame-missing|replaceWith' app/controllers app/javascript --glob '*.{rb,js}'
+```
+
+Catalog detail: `.cursor/rules/hotwire-integration-patterns.mdc` (TURBO-TEMP-*, API-PAR-01). Coding defaults: project `architecture/anti-patterns.mdc` §9–§10.
 
 ---
 
@@ -178,8 +208,13 @@ Output **Fix coverage table:**
 | Pagination drops `q` / filter params (PAGE-SEARCH-02) | 🟠 P1 |
 | Delete/repage drops filter params (PAGE-SEARCH-04/07) | 🟠 P1 |
 | URL broken on refresh after modal create | 🟠 P1 |
+| Nested Preline under parent / backdrop stack / 422 wipes teleported modal | 🟠 P1 |
+| Stimulus Boolean empty attribute auto-opens overlay | 🟠 P1 |
 | JA copy typo in dynamic label | 🟡 P2 |
-| CSS vertical clip in table/detail | 🟡 P2 |
+| CSS vertical clip / long-token horizontal overflow | 🟡 P2 |
+| Same renderer, second API drops display fields (API-PAR-01) | 🟠 P1 |
+| UI swapped before frame/auth request fails (TURBO-TEMP-01) | 🟠 P1 |
+| Error handler wipes unrelated results list (TURBO-TEMP-02) | 🟠 P1 |
 
 ---
 

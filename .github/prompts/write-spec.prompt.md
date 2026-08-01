@@ -14,7 +14,7 @@ You are at **Stage 3: Write Spec**.
 
 ## Project profile
 
-If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` §3 for DDD format, `.vi.md` output, Rails UI conventions, and templates `_TEMPLATE-ai-housemaker*`.
+If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` Sec. 3 for DDD format, `.vi.md` output, Rails UI conventions, and templates `_TEMPLATE-ai-housemaker*`.
 
 ## Task / Nhiệm vụ
 
@@ -53,6 +53,7 @@ JP translation here.
 - EN is canonical — VI and JP are translations of the EN text.
 - Code blocks, tables, diagrams are NOT duplicated (they are language-neutral).
 - API field names, error codes, type names stay in English everywhere.
+- **Section cross-refs:** use `Sec. N` / `Sec. N.M` — do **not** use the `§` character.
 
 ## 🎨 Diagrams / Sơ đồ (MANDATORY / BẮt buộc)
 

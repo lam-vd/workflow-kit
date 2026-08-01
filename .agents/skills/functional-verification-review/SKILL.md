@@ -176,6 +176,7 @@ UI/Turbo bugs often need manual QA. When deferring system spec:
 
 ## ai-housemaker notes
 
-- Request specs: status, redirect, DB, headers — **not** body copy/DOM (see `ai-housemaker-rspec` skill).
-- Functional verification for UI copy/layout → **Manual QA script**, not new request spec assertions.
+- **HARD BAN:** Request specs assert status, redirect, flash hash, DB, headers, `media_type` — **not** body copy/DOM/CSS/Stimulus (see `ai-housemaker-rspec` / `rspec-patterns`).
+- Functional verification for UI copy/layout/hover/scroll → **Manual QA script**, not new request spec assertions.
+- Autosave / replace-button enable → DB request specs + Manual QA (`stimulus-turbo-autosave`, TURBO-AUTOSAVE-*, TURBO-STREAM-HOOK-01).
 - After Stimulus/CSS change: `yarn build` + note stale assets (`assets:clobber` if needed).

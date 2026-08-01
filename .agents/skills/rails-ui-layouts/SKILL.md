@@ -108,6 +108,13 @@ Use CSS variables from `application.css` (`--ahm-color-*`, `--ahm-radius-sm`). N
 - `dashboard-layout` Stimulus: mobile sidebar drawer, backdrop, keyboard.
 - Page content wraps with `dashboard_page_shell` helper — adjusts top padding when flash present.
 - Modals: `yield :dashboard_modals` outside `<main>` scroll area.
+- **Nested Preline overlays** (detail → edit memo, etc.):
+  - Teleport child overlay to `document.body` when parent uses transform/stacking.
+  - Host controller inside parent turbo frame must remove child + feature backdrops on disconnect.
+  - Validation fail: `turbo_stream.replace` the **child modal id**, not the parent frame.
+  - Before `HSOverlay.open` / on teardown: strip feature backdrop class (avoid stack).
+  - Stimulus Boolean: always `'true'`/`'false'` strings — never `<%= nil %>` → empty attr.
+  - See pattern IDs PRELINE-*, TURBO-MODAL-01, STIMULUS-BOOL-01 in `hotwire-integration-patterns.mdc`.
 
 Auth pages intentionally use **plain CSS files**, not Tailwind in views, for pixel-stable Figma match.
 

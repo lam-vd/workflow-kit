@@ -188,7 +188,7 @@ Both files are **tri-lingual** (EN canonical + VI + JP collapsible blocks).
 - Re-read FINAL spec.
 - Read `.cursor/rules/clean-code.mdc` + `architecture.mdc`.
 - Code each sub-task; **stage** (`git add`) at end — no commit here.
-- After each sub-task → `/review-staged` → **commit if READY** (one commit per sub-task).
+- After each phase/sub-task → `/review-staged` → **you** commit in terminal if READY (one commit per phase).
 
 ---
 

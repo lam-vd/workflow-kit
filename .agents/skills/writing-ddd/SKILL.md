@@ -76,6 +76,8 @@ At least one for the most likely / highest-impact error scenario.
 ### 6. Error Handling & Edge Cases
 Complete table — each edge case has expected behavior.
 
+Derive the case list from `.agents/skills/edge-case-boundary-review/SKILL.md` (`EDGE-*` catalog). For every limit / range / date / collection in the design, state behavior **inside (`B-1`), at (`B`), and outside (`B+1`)** the boundary, and which layer enforces it. Stage 8 sweeps the same catalog — an edge missing here becomes a finding there.
+
 ### 7. Performance Budget
 - Latency p50 / p95 / p99 targets.
 - Throughput.

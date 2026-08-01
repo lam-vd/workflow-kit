@@ -49,6 +49,7 @@ Title and squash commit rules: **pr-conventions skill** (English Conventional Co
 
 ## ⚠️ Hard rules
 - DO NOT fabricate spec links — verify they exist before linking.
+- **NEVER** run `git push` — user pushes when ready. Generate PR text only.
 - Title ≤ 72 chars; body wraps at 100 chars.
 - For impact 🟠 / 🔴 — Rollback plan MUST have concrete steps, NOT just "revert PR".
 - If PR > 500 lines diff → warn "consider splitting" but still output the PR.

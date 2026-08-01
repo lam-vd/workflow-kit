@@ -1,5 +1,5 @@
 ---
-description: "Hotwire/Turbo integration regression patterns — catalog from real bugs (house series, profile). Load at Stage 8 when staged touches views, Stimulus, locales, or feature CSS. Used by integration-regression-review skill and common/profiles/ai-housemaker.md §8."
+description: "Hotwire/Turbo integration regression patterns — URL/sync/history, frame timing (TURBO-TEMP), API parity for same renderer (API-PAR). Load at Stage 7–8 when staged touches views, Stimulus, locales, or feature CSS. Used by integration-regression-review skill and common/profiles/ai-housemaker.md §8."
 alwaysApply: false
 globs:
   - "**/app/views/**"
@@ -33,8 +33,34 @@ Use this table during `/review-staged` **regression sweep**. Each row: trace cod
 | **I18N-TEMPLATE-01** | `*_template` locale with `__COUNT__` for Stimulus replace | Dynamic label ≠ static `*_with_selected_count` | Tick checkboxes in picker → compare JA copy | 🟡 |
 | **CSS-LINEHEIGHT-01** | `min-height: calc(var(--font-size) + …)` but `line-height: tight` or different token | Text clipped / misaligned in table or hero | Long name in list row or detail hero | 🟡 |
 | **STIMULUS-REG-01** | New controller in `index.js` without import/register | Controller never connects — silent no-op | Feature appears in HTML `data-controller` but no behavior | 🟠 |
+| **TURBO-TEMP-01** | Stimulus mutates list/card DOM, then `Turbo.visit` / frame load validates record | Frame missing / 404 after UI already swapped to invalid item | Force out-of-scope after list fetch → pick item that reloads frame → previous UI must stay | 🟠 |
+| **TURBO-TEMP-02** | Shared `frame-missing` / error handler clears entire results region | Soft failure wipes happy-path list | Trigger frame error mid-flow → only scoped status/message, not empty panel | 🟠 |
+| **API-PAR-01** | Second JSON endpoint builds cards for same renderer without shared serialize | Card after step 2 missing badges / shows raw enum | Compare Network payloads of both endpoints for same renderer fields | 🟠 |
+| **PRELINE-STALE-01** | Nested overlay teleported to `body` with a **shared** DOM id across records | Open record A edit modal → save/close → open record B → child modal still shows A's field values (parent preview may be correct) | Open proposal 1 memo → save → open proposal 2 memo; textarea must match proposal 2 | 🟠 |
+| **PRELINE-BACKDROP-01** | `turbo_stream.replace` of open Preline overlay then `HSOverlay.open` again (esp. 422 re-render) | Backdrops stack → screen darkens; success toast behind black veil | Fail validation 2–3× → inspect `.hs-overlay-backdrop` / feature backdrop class count; save OK must leave ≤1 parent dimmer | 🟠 |
+| **TURBO-MODAL-01** | 422/error stream replaces **parent** turbo frame while form lives in body-teleported modal | Host `disconnect` removes body modal; error banner never shows; modal looks “stuck” | Submit invalid nested modal → Network 422 + stream target; UI must show field errors on open modal | 🟠 |
+| **STIMULUS-BOOL-01** | `data-*-open-value="<%= @flag %>"` when `@flag` is `nil` | Empty attribute → Stimulus Boolean = **true** → modal auto-opens | Open parent only → child must stay closed until explicit open or intentional `open=true` | 🟠 |
+| **CSS-OVERFLOW-01** | Text / preview / label–value rows / chips without `overflow-wrap` or `min-width: 0` on the value cell and ancestors | Long unbroken tokens (IDs, URLs, chip labels) blow layout horizontally; chip rows stay on one line and overflow | Paste a long ID/URL or many chips into a detail row → container must wrap / wrap chips, not widen the page or modal | 🟡 |
+| **TURBO-VALID-01** | HTML `maxlength` + model `length: { maximum: N }` | Browser blocks paste → never hits server 422 / error UI path | Know both layers exist; for QA of server errors temporarily omit `maxlength` or remove via DevTools | 🟡 |
+| **TURBO-STREAM-HOOK-01** | Listener on `turbo:after-stream-render` to re-wire buttons/UI after stream | Hook **never fires** on Turbo 8.0.x → UI stuck disabled after status/memo stream | Save status/memo → replace buttons must re-enable; use `turbo:before-stream-render` and wrap `event.detail.render` (chain existing wrappers) | 🟠 |
+| **TURBO-AUTOSAVE-01** | Checkbox/field `change` → immediate PATCH without debounce/coalesce | Abort storms; last selection lost; race with status submit | Rapid-toggle options → Network one-in-flight; final DB matches last UI | 🟠 |
+| **TURBO-AUTOSAVE-02** | Field-only PATCH always `turbo_stream.replace` whole detail modal | Scroll jumps to top on every toggle | Toggle option mid-scroll → scroll position preserved (`204` or history-only streams) | 🟠 |
+| **TURBO-AUTOSAVE-03** | Autosave `fetch` ignores `!response.ok` / network errors | UI checked, DB unchanged; user thinks saved | DevTools Offline → toggle → toast or revert (or documented Manual QA gap → 🟡) | 🟡 |
+| **TURBO-AUTOSAVE-04** | Status/memo submit while option autosave in flight (or pending debounce) | Older PATCH acquires lock after submit → persisted choices revert to stale set | Toggle A → wait for Network in-flight → change to B → save status → DB choices = B | 🟠 |
+| **TURBO-LIVE-CTX-01** | History/detail open without `live_context` (or equivalent) when replace/options must stay editable | After Turbo refresh, change-house/land stay disabled / options read-only | Open in-meeting history row → edit options + replace still available after status PATCH | 🟠 |
+| **CSS-BTN-HOVER-01** | Feature footer overrides `.ahm-modal-button-*:hover` to **same** colors as default | No visible hover; feels broken | Hover 編集/閉じる/キャンセル — bg must change; prefer tokens (`--ahm-color-surface` / `--ahm-color-text-heading`) | 🟡 |
+| **TURBO-MODAL-URL-01** | Canonical deep-link full-page `show` reuses detail-modal `.includes` / Preloader | Bullet `AVOID eager loading`; wasted queries; alert storm on paste URL | Paste `/index/:id` → no Bullet unused-include alerts; modal still opens via frame request | 🟠 |
+| **TURBO-MODAL-URL-02** | `load_index_collection` overwrites detail ivar (`@house_series`) before `*_detail_path(@record)` | `detail_url` becomes Relation/`#<…>` garbage; paste URL never auto-opens modal | Capture `detail = @record` before load collection; assert shell `data-modal-detail-url-detail-url-value` equals real path | 🟠 |
+| **TURBO-MODAL-URL-03** | Row/card builds `indexUrl` from `filter_params` but list desktop/mobile never passes that local | Close modal restores bare index path — filters/`page` vanish from address bar | Search → open detail → close → URL still has `q`/filters (desktop + mobile) | 🟠 |
+| **TURBO-MODAL-URL-04** | Request spec only `expect(body).to include(member_path(record))` for deep-link | False PASS — list rows already embed that path while shell `detail-url` is wrong | Assert exact `data-modal-detail-url-detail-url-value="…"` / row `data-row-link-index-url-value` with filters | 🟠 |
+| **TURBO-MODAL-URL-05** | Controller A `render 'b/index'` with relative partials (`render "tabs"`) | `Missing partial a/_tabs` — deep-link 500 | `render_with_lookup_prefix('b', …)` or absolute `"b/tabs"` | 🟠 |
+| **TURBO-MODAL-URL-06** | `tag.attributes({ controller:, foo_value: })` without nested `data:` | Attributes lack `data-` prefix; Stimulus never connects; auto-open no-op | View source: must see `data-controller` / `data-*-value` | 🟠 |
 
-> Pagination overflow, search+page param bugs → use **`paginated-list-patterns.mdc`** (PAGE-*, PAGE-SEARCH-*), not duplicated here.
+> Pagination overflow, search+page param bugs → use **`paginated-list-patterns.mdc`** (PAGE-*, PAGE-SEARCH-*), not duplicated here.  
+> Serializer share + API parity while coding → `architecture/anti-patterns.mdc` §9, `implementation/controllers.mdc`.  
+> Autosave detail → `.agents/skills/stimulus-turbo-autosave/SKILL.md`.  
+> Canonical detail modal URLs → `.agents/skills/modal-detail-canonical-url/SKILL.md`.  
+> Request specs: **never** assert modal copy/BEM — DB/HTTP + **URL-contract data attrs** only when testing deep-link (`ai-housemaker-rspec`).
 
 ---
 
@@ -51,6 +77,29 @@ Use this table during `/review-staged` **regression sweep**. Each row: trace cod
 | I18N-TEMPLATE-01 | Align template string with `*_with_selected_count` key |
 | CSS-LINEHEIGHT-01 | Single `--*-line-height` token for both `min-height` calc and `line-height` |
 | STIMULUS-REG-01 | Register in `app/javascript/controllers/index.js` |
+| TURBO-TEMP-01 | Defer DOM commit until `turbo:frame-load` (or restore previous node on `frame-missing`) |
+| TURBO-TEMP-02 | Error path: status/toast only — do not clear unrelated result lists |
+| API-PAR-01 | One shared serializer/concern; labels for display; parity of FE-consumed fields |
+| PRELINE-NEST-01 | Teleport nested overlay to `document.body`; host in parent frame removes it on frame disconnect |
+| PRELINE-STALE-01 | Unique overlay id per record; clear teleported orphans **before** opening another detail; host `disconnect` must **not** delete body overlays (races with post-save frame replace → dead open button) |
+| PRELINE-BACKDROP-01 | Dedicated backdrop class (e.g. `.proposal-memo-modal-backdrop`); strip orphans before `open` and on host/modal `disconnect` |
+| TURBO-MODAL-01 | On validation fail, `turbo_stream.replace` the **teleported modal id** (not the whole parent detail frame) |
+| STIMULUS-BOOL-01 | Always emit `'true'`/`'false'` (`flag ? 'true' : 'false'`) or omit attribute; coerce with `flag == true` in locals |
+| CSS-OVERFLOW-01 | `min-width: 0` + `overflow-wrap: anywhere` (or `word-break: break-word`) on the value cell **and** shrinkable ancestors (`minmax(0, …)` grid tracks, flex children). Chip/tag rows: `flex-wrap` + `max-width: 100%` on chips. Prefer CSS-only; do not change data mapping to “fix” overflow. After editing source CSS, rebuild the compiled stylesheet if the app serves a build artifact. |
+| TURBO-VALID-01 | Keep model validation; document that `maxlength` is UX-only and blocks server-error QA |
+| TURBO-STREAM-HOOK-01 | Prefer `turbo:before-stream-render`; wrap `event.detail.render` and call previous render — do not rely on `turbo:after-stream-render` (Turbo 8) |
+| TURBO-AUTOSAVE-01 | Debounce + serial coalesce (one in-flight; flush latest DOM) — see `stimulus-turbo-autosave` |
+| TURBO-AUTOSAVE-02 | Field-only success: `head :no_content` or streams that **exclude** detail-frame replace |
+| TURBO-AUTOSAVE-03 | Surface failure (toast / revert); if deferred, Manual QA + 🟡 |
+| TURBO-AUTOSAVE-04 | On status/memo submit: clear debounce; if in-flight → await then `requestSubmit` once (do not abort-only) |
+| TURBO-LIVE-CTX-01 | Pass `live_context=1` (or DDD equivalent) on history→detail links and re-submit on status/memo forms |
+| CSS-BTN-HOVER-01 | Do not override shared button `:hover` to identical colors; use surface/heading tokens; additive `cursor: pointer` on shared `.ahm-modal-button` is OK if defaults unchanged otherwise |
+| TURBO-MODAL-URL-01 | Lean find on canonical full-page; `.includes` only when `Turbo-Frame` == detail frame |
+| TURBO-MODAL-URL-02 | `detail = @record` before `load_index_collection` if ivars collide |
+| TURBO-MODAL-URL-03 | Pass `filter_params` / index filter locals into **every** row and card partial (desktop + mobile) |
+| TURBO-MODAL-URL-04 | Spec the shell/row `data-*-url-value` attribute, not bare `include(path)` |
+| TURBO-MODAL-URL-05 | Lookup prefix or absolute partial names when rendering another controller's index |
+| TURBO-MODAL-URL-06 | Always `tag.attributes(data: { … })` for Stimulus |
 
 ---
 
@@ -63,6 +112,29 @@ Use this table during `/review-staged` **regression sweep**. Each row: trace cod
 |---------|--------|----------|
 | TURBO-URL-01 | PASS / FAIL / N/A | … |
 | TURBO-SYNC-01 | … | … |
+| TURBO-TEMP-01 | … | … |
+| TURBO-TEMP-02 | … | … |
+| API-PAR-01 | … | … |
+| PRELINE-NEST-01 | … | … |
+| PRELINE-STALE-01 | … | … |
+| PRELINE-BACKDROP-01 | … | … |
+| TURBO-MODAL-01 | … | … |
+| STIMULUS-BOOL-01 | … | … |
+| CSS-OVERFLOW-01 | … | … |
+| TURBO-VALID-01 | … | … |
+| TURBO-STREAM-HOOK-01 | … | … |
+| TURBO-AUTOSAVE-01 | … | … |
+| TURBO-AUTOSAVE-02 | … | … |
+| TURBO-AUTOSAVE-03 | … | … |
+| TURBO-AUTOSAVE-04 | … | … |
+| TURBO-LIVE-CTX-01 | … | … |
+| CSS-BTN-HOVER-01 | … | … |
+| TURBO-MODAL-URL-01 | … | … |
+| TURBO-MODAL-URL-02 | … | … |
+| TURBO-MODAL-URL-03 | … | … |
+| TURBO-MODAL-URL-04 | … | … |
+| TURBO-MODAL-URL-05 | … | … |
+| TURBO-MODAL-URL-06 | … | … |
 ```
 
 Any **FAIL** on 🟠 row → open finding with full reproduction (integration-regression-review Phase D).
@@ -73,4 +145,8 @@ Any **FAIL** on 🟠 row → open finding with full reproduction (integration-re
 
 After each production bug fix: add one row (ID, trigger, repro, severity). Keep IDs stable for team reference.
 
-**Source examples:** house series — `b08b690` (bugs) → `d8319dd` (turbo sync/locale) → `25da272` (pagination + delete context).
+**Source examples:**
+- house series — `b08b690` (bugs) → `d8319dd` (turbo sync/locale) → `25da272` (pagination + delete context)
+- proposal nested memo modal (Jul 2026) — PRELINE-NEST/BACKDROP, TURBO-MODAL, STIMULUS-BOOL, CSS-OVERFLOW (`proposal_memo_modal*_controller.js`)
+- proposal viewed lifecycle / option autosave (Jul 2026) — TURBO-STREAM-HOOK-01, TURBO-AUTOSAVE-*, TURBO-LIVE-CTX-01, CSS-BTN-HOVER-01 (`meeting_proposal_search_controller.js`, `proposal_option_selection_controller.js`)
+- detail modal canonical URLs No.139 (Jul–Aug 2026) — TURBO-MODAL-URL-01..06 (`ModalDetailDeepLink`, `modal_detail_url_controller.js`, properties list row `filter_params`)

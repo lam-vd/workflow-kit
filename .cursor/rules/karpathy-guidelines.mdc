@@ -31,6 +31,32 @@ Before implementing:
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
+## 2.5. Search Before Implement
+
+**Before writing any new function, helper, service, or module — grep the codebase first.**
+
+- Search for existing methods, helpers, concerns, services with similar name/purpose.
+- Reuse > New implementation > Refactor existing.
+- If you find something similar, adapt it. Don't create a parallel copy.
+
+Mandatory before creating:
+- A helper method → grep the helpers, concerns, presenters, model methods.
+- A service/use-case → grep `services/`, `jobs/`, `queries/`, controller actions.
+- A UI partial → grep `views/` and `components/` for same content.
+- A query scope → grep model scopes and existing query objects.
+- A controller action, model method, Stimulus controller, CSS block, locale key, enum/constant → grep its own layer **and** the layer above it.
+
+**Signals that duplication is happening:**
+- Two functions do the same thing with different names.
+- A helper wraps a one-line model method already defined.
+- A new service delegates entirely to an existing one.
+
+Ask: "Does this logic already exist somewhere I haven't looked?" If not sure → grep first, then implement.
+
+**Evidence rule:** no new symbol without a recorded search (command + terms + hits). ≥3 layers searched with zero hits ⇒ genuinely new.
+
+Canonical per-layer scan matrix + reuse decision table: `.agents/skills/dry-duplication-scan/SKILL.md` (Stage 1 and Stage 7).
+
 ## 3. Surgical Changes
 
 **Touch only what you must. Clean up only your own mess.**
@@ -46,6 +72,16 @@ When your changes create orphans:
 - Don't remove pre-existing dead code unless asked.
 
 The test: Every changed line should trace directly to the user's request.
+
+## 3.5. Shared Surface Blast Radius
+
+**Do not fix one screen by changing shared code used by many screens.**
+
+- Shared controllers/helpers/utilities inherit every consumer — a feature-specific side effect becomes a cross-screen regression.
+- Prefer **call-site** fixes (that page's view/params/controller). If the shared API must change, use **opt-in** with unchanged defaults.
+- Before editing shared code: grep consumers; verify at least one other call site still behaves correctly.
+
+Canonical detail: `.cursor/rules/shared-abstraction-safety.mdc`.
 
 ## 4. Goal-Driven Execution
 

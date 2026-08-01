@@ -7,8 +7,9 @@ description: "Skill for performing self or peer code/PR review at Stage 8 of the
 
 ## When to commit / Khi nào commit
 
-- **`/review-staged` only** — after READY verdict (no 🔴/🟠). See `.cursor/rules/git-commit-policy.mdc`.
-- Never commit during spec phases or inside `/start-coding` (stage there, commit here).
+- **`/review-staged` READY** — agent prints commit command; **user** runs `git commit` in terminal. See `.cursor/rules/git-commit-policy.mdc`.
+- **Agent never** runs `git commit` or `git push`.
+- Never commit during spec phases or inside `/start-coding` (stage there; user commits after review).
 
 ## Mindset / Tư duy
 
@@ -38,10 +39,21 @@ Use the **8 dimensions table** below. Dimensions #2–#3 defer to rules (loaded 
 - Read `.agents/skills/integration-regression-review/SKILL.md` — trace cross-layer flows, regression sweep.
 - ai-housemaker: `.cursor/rules/hotwire-integration-patterns.mdc`
 - Paginated index + search/filter: `.cursor/rules/paginated-list-patterns.mdc` (PAGE-*, PAGE-SEARCH-*)
+- Multi-step / second JSON for same UI / early DOM commit: **Phase C3** in `integration-regression-review` (API-PAR-01, TURBO-TEMP-*)
+
+**Deadcode / UI migration supplement** — when PR deletes views or claims “modal-only / old screen unused”:
+- Read `.agents/skills/deadcode-ui-migration-review/SKILL.md` — call-site matrix + Dead-sure vs Fallback-only vs Shared-keep.
 
 **Functional supplement** (controllers / services / routes / behavior change):
 - Read `.agents/skills/functional-verification-review/SKILL.md` — run mapped tests, Manual QA script.
 - Scope: `git diff --cached` **and** `git diff <base>...HEAD` for PR branch context.
+
+**Edge case & boundary supplement** (mandatory unless the diff is copy/CSS/locale-text only):
+- Read `.agents/skills/edge-case-boundary-review/SKILL.md` — Boundary inventory (inside `B-1` / at `B` / outside `B+1`), enforcement consistency across DB↔model↔controller↔JS, `EDGE-*` catalog sweep.
+- Emit **§1d** in the report. Findings tagged `[edge-case]`.
+
+**DRY reverse supplement** (diff introduces new classes / methods / partials / Stimulus controllers / CSS blocks / locale keys):
+- Read `.agents/skills/dry-duplication-scan/SKILL.md` Phase 2 + Phase 4 — did the diff re-implement something that already exists? Cite `DUP-*`. Findings tagged `[dry]`.
 
 Static diff review alone is **insufficient** for Turbo frame boundaries, URL/history state, and action-level regressions.
 
@@ -72,13 +84,13 @@ Xác định xem PR có cần thêm review từ chuyên gia không:
 | 1 | Spec compliance | FINAL DDD + sub-task DoD; flag out-of-scope |
 | 2 | Clean code | `.cursor/rules/clean-code.mdc` |
 | 3 | Architecture | `.cursor/rules/architecture.mdc` |
-| 4 | Error handling | Boundaries, typed errors, no swallowed exceptions |
+| 4 | Error handling & boundaries | Typed errors, no swallowed exceptions; boundary behavior → `edge-case-boundary-review` (`EDGE-*`) |
 | 5 | Security | Authz, validation, secrets, OWASP — flag 🔴 on injection/IDOR |
 | 6 | Performance | N+1, big-O, blocking I/O |
-| 7 | Tests | Happy + edge + error; ai-housemaker → `ai-housemaker-rspec` skill |
+| 7 | Tests | Happy + boundary (inside/at/outside) + error; ai-housemaker → `ai-housemaker-rspec` (**HARD BAN** UI in `spec/requests/**`) |
 | 8 | Backward compat | Migrations, API versioning |
 
-**Lean gates (review pass):** YAGNI/bloat, dead code, DRY — see `karpathy-guidelines.mdc` §2–§3. Spot-check tags: `[typo]` `[naming]` `[syntax]` `[security]` `[anti-pattern]`.
+**Lean gates (review pass):** YAGNI/bloat, dead code, DRY — see `karpathy-guidelines.mdc` §2–§3; duplication introduced by the diff → `dry-duplication-scan` (`DUP-*`). Spot-check tags: `[typo]` `[naming]` `[syntax]` `[security]` `[anti-pattern]` `[edge-case]` `[dry]`.
 
 ---
 
@@ -113,7 +125,7 @@ Mỗi finding PHẢI có đủ 5 phần (theo mẫu PR review thực tế):
 - **Gợi ý / Fix**: <Đề xuất cụ thể, actionable — code approach hoặc direction>
 ```
 
-Tags: `[typo]` `[naming]` `[syntax]` `[security]` `[anti-pattern]` `[functional]` `[integration]`
+Tags: `[typo]` `[naming]` `[syntax]` `[security]` `[anti-pattern]` `[functional]` `[integration]` `[edge-case]` `[dry]`
 
 > **VI**: Không bao giờ chỉ nói "có bug" mà không chỉ ra hiện tượng + cách fix. Không bao giờ chỉ nói "nên refactor" mà không giải thích impact.
 
@@ -133,6 +145,19 @@ Output report PHẢI theo cấu trúc sau (linters: `common/checklists/review-li
 | Base | <base branch> |
 | Files reviewed | <N> |
 | Spec ref | docs/ddd/<file>.md |
+
+---
+
+## TL Summary (ai-housemaker — when `rails-tl-review` ran)
+
+### 🚨 Critical Issues
+- … (or *None*) — must also appear as 🔴/🟠 Findings below
+
+### 💡 Suggestions & Refactoring
+- … architecture/perf only (or *None*) — typically 🟡
+
+### ✅ Praise
+- …
 
 ---
 
@@ -157,6 +182,24 @@ Output report PHẢI theo cấu trúc sau (linters: `common/checklists/review-li
 ### Manual QA script
 | # | Action | Preconditions | Steps | Expected | Result |
 |---|--------|---------------|-------|----------|--------|
+
+---
+
+## 1d. Edge case & boundary sweep
+
+### Boundary inventory
+| # | Value | Limit | Inside (`B-1`) | At (`B`) | Outside (`B+1`) | Enforced at |
+|---|-------|-------|----------------|----------|-----------------|-------------|
+
+### Enforcement consistency
+| Layer | Value | Match |
+|-------|-------|-------|
+
+### Catalog sweep (`EDGE-*`)
+| ID | Case | Result | Evidence |
+|----|------|--------|----------|
+
+Deferred: `PAGE-*` (paginated-list-patterns), `CSS-OVERFLOW-01`.
 
 ---
 
@@ -203,7 +246,7 @@ Scan staged diff for spot-check categories (see table above). Gom vào Spot-chec
 
 ## Domain supplements / Checklist theo project
 
-**ai-housemaker** (profile active): `common/profiles/ai-housemaker.md` §8 + `ai-housemaker-review-checklist` skill only — **do not** also load `ai-housemaker-review-patterns.mdc` body.
+**ai-housemaker** (profile active): `common/profiles/ai-housemaker.md` §8 + `ai-housemaker-review-checklist` + **`rails-tl-review`** (TL Summary) — **do not** also load `ai-housemaker-review-patterns.mdc` body.
 
 ---
 

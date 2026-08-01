@@ -1,0 +1,65 @@
+---
+description: >-
+  Protect shared helpers/controllers/utilities from feature-specific behavior that
+  can break other screens. Prefer call-site or opt-in fixes over changing shared defaults.
+alwaysApply: true
+---
+
+# Shared Abstraction Safety
+
+**Goal:** Do not "fix one screen" by changing code used by many screens — that creates regressions elsewhere (self-inflicted bugs).
+
+## Shared surface (examples)
+
+Treat as **shared** when many features depend on it:
+
+- Shared Stimulus / JS controllers (e.g. auto-submit, tabs, confirm-delete)
+- Shared view helpers / presenters used across list/index pages
+- Shared concerns, base controllers, middleware, layout partials
+- Shared CSS utilities / design-system classes
+- Shared query/pagination helpers
+
+If unsure: **grep call sites**. More than one consumer ⇒ shared.
+
+## Hard rules
+
+1. **Call-site first** — Prefer fixing the feature's view/controller/query (pass params, local options, feature-specific partial).
+2. **No silent default behavior for one feature** — Do not add feature-only side effects to a shared method/controller that every consumer inherits.
+3. **Opt-in if shared must change** — Use an explicit flag/value (e.g. Stimulus value, kwargs defaulting to current behavior). Default = **unchanged** for existing callers.
+4. **Preserve contracts** — Shared APIs keep backward-compatible defaults; document any behavior change and list affected call sites.
+5. **Blast-radius check before edit** — Grep consumers; if ≥2 screens/features, stop and choose call-site or opt-in.
+
+## Anti-patterns (do not)
+
+| Anti-pattern | Why it breaks |
+|---|---|
+| Add feature-specific cleanup/guard inside a shared submit/helper | Every form/page suddenly changes |
+| Change shared pagination helper defaults for one index | Other lists lose filters or page state |
+| "While here" extend shared CSS/controller for one modal | Visual/behavior regressions elsewhere |
+| Copy-paste a second shared helper instead of call-site fix | Drift and duplicate bugs |
+| Feature footer sets `.ahm-modal-button-*:hover` to **identical** default colors | Shared hover looks “broken” on that screen only — fix with real hover tokens or remove override |
+| Feature-only side effect inside shared `turbo:before-stream-render` without chaining | Other listeners (Preline, replace-buttons) stop working |
+
+## Preferred patterns
+
+| Need | Prefer |
+|---|---|
+| Keep filters on pagination links | Pass `q` / `status` / … in **that** list's `pagination` params |
+| Reset page when filters change | Omit `page` from the filter form (GET only sends form fields), or clear page **only** in that form |
+| One-off DOM behavior | Feature controller / local `data-action`, not shared controller |
+| Rare shared enhancement | Opt-in value/flag; default off |
+| Pointer + hover on modal buttons | Additive `cursor: pointer` on shared `.ahm-modal-button` OK; hover colors via tokens (`surface` / `text-heading`). Fix no-op feature footer `:hover` overrides at **call-site CSS** |
+| Re-enable UI after Turbo stream | Feature `turbo:before-stream-render` wrap that **chains** prior `event.detail.render` |
+
+## Review checklist
+
+Before merging a change to shared code:
+
+- [ ] Grepped consumers (count / list)
+- [ ] Default behavior unchanged for existing callers **or** explicitly opt-in
+- [ ] Fix verified on **at least one other** consumer screen, not only the target feature
+- [ ] No feature name / one-off business rule embedded in the shared module
+
+## Severity
+
+Violations that change shared defaults without opt-in → treat as **🟠 High** (cross-screen regression risk).

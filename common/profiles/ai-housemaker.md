@@ -74,9 +74,11 @@ Templates: `docs/ddd/_TEMPLATE-ai-housemaker.md`, `docs/ddd/_TEMPLATE-ai-housema
 
 1. `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc`
 2. `.agents/skills/ai-housemaker-review-checklist/SKILL.md`
-3. `ai-housemaker/.agents/skills/rspec-patterns/SKILL.md` — if `spec/**` changes
+3. `ai-housemaker/.agents/skills/rspec-patterns/SKILL.md` — if `spec/**` changes (**HARD BAN** UI in request)
 4. `.cursor/rules/quality/erb-rubocop-lint.mdc`, `rspec-best-practices.mdc`, `implementation/views.mdc`
 5. Domain rules if touched: `audited-active-storage`, `stimulus-file-input-preview`, `security/brakeman`
+6. PATCH-on-change autosave → `.agents/skills/stimulus-turbo-autosave/SKILL.md`
+7. List detail modal with canonical `/{index}/:id` → `.agents/skills/modal-detail-canonical-url/SKILL.md`
 
 **Extra hard rules:**
 
@@ -92,7 +94,16 @@ docker compose exec -T app bundle exec rubocop --force-exclusion <paths>
 
 **UI layout sub-tasks:** Read `.agents/skills/rails-ui-layouts/SKILL.md` — decision tree: dashboard vs auth vs super_admin; shell → page → styles → controller → i18n → Stimulus → request specs.
 
-**Pre-flight (forms/modals/upload):** ActiveStorage + scalar in one transaction; Stimulus 削除 clears `input.value`; request spec status/DB only.
+**Figma SVG handoff (existing ERB):**
+
+| Situation | Skill (kit canonical) |
+|-----------|------------------------|
+| Align DOM hierarchy with grouped Figma SVG export | `.agents/skills/figma-svg-html-structure/SKILL.md` |
+| Audit / fix styling vs Figma SVG (only if real diff) | `.agents/skills/figma-erb-styling-audit/SKILL.md` |
+
+Before editing markup + CSS: read `.cursor/rules/bem-css-html.mdc` (ai-housemaker symlinks under `.cursor/rules/quality/`).
+
+**Pre-flight (forms/modals/upload):** ActiveStorage + scalar in one transaction; Stimulus 削除 clears `input.value`; request spec = status/DB/`media_type` only (**HARD BAN** body UI); nested Preline → teleport + 422 replaces modal id + backdrop cleanup + explicit `'true'`/`'false'` Stimulus bools (`hotwire-integration-patterns` PRELINE-*/TURBO-MODAL/STIMULUS-BOOL); field autosave → debounce/coalesce + option-only streams (`stimulus-turbo-autosave`, TURBO-AUTOSAVE-*); canonical detail modal URLs → lean load + filter locals on rows + no detail-frame `advance` (`modal-detail-canonical-url`, TURBO-MODAL-URL-*).
 
 **Output add-on:**
 
@@ -110,10 +121,14 @@ docker compose exec -T app bundle exec rubocop --force-exclusion <paths>
 
 | Skill | When |
 |-------|------|
-| `ai-housemaker-review-checklist` | Always — P0/P1 for staged areas |
+| `ai-housemaker-review-checklist` | Always — P0/P1 for staged areas (ActiveStorage, Stimulus file, request-spec scope, …) |
+| `deadcode-ui-migration-review` | UI migration / deleted show→modal / orphaned partials — call-site audit before delete |
+| `rails-tl-review` | Always — TL checklist (architecture / tenant / N+1 / Hotwire / RSpec); skip architecture-irrelevant nitpicks; emit **TL Summary** |
 | `integration-regression-review` | views / Stimulus / locales / CSS |
 | `functional-verification-review` | behavior may change |
-| `ai-housemaker-rspec` | `spec/**` staged → use **`ai-housemaker/.agents/skills/rspec-patterns/SKILL.md`** |
+| `ai-housemaker-rspec` | `spec/**` staged → use **`ai-housemaker/.agents/skills/rspec-patterns/SKILL.md`** (**HARD BAN** UI in request) |
+| `stimulus-turbo-autosave` | Checkbox/field PATCH-on-change, debounce/coalesce, option-only streams |
+| `modal-detail-canonical-url` | List detail modal gets `/{index}/:id` deep-link, filter restore, lean load |
 | `hotwire-integration-patterns.mdc` | UI integration — local symlink at `ai-housemaker/.cursor/rules/quality/` |
 | `paginated-list-patterns.mdc` | list/search/pagination — local symlink at `ai-housemaker/.cursor/rules/quality/` |
 
@@ -128,11 +143,13 @@ docker compose exec -T app bundle exec rspec <related_specs>
 
 Stimulus/CSS staged → `docker compose exec -T app yarn build`
 
-**READY:** No 🔴/🟠; Brakeman exit 0; staged-related specs pass; no Hotwire / PAGE-* P1 FAIL.
+**READY:** No 🔴/🟠; Brakeman exit 0; staged-related specs pass; no Hotwire / PAGE-* / TURBO-AUTOSAVE / TURBO-STREAM-HOOK P1 FAIL; **no UI asserts in request specs**.
 
-**BLOCKED:** Brakeman warning; related spec fail; TURBO-URL/SYNC/HIST or PAGE-SEARCH/OVERFLOW FAIL; Manual QA FAIL.
+**Commit:** Agent **never** runs `git commit` or `git push`. On READY → print copy-ready commit command; user runs in terminal (preserves author). See `git-commit-policy.mdc`. Multi-phase format: `feat(property-ui): part <N>: <area> - <summary>`.
 
-**P0/P1 summary:** Audited ActiveStorage + scalar = one transaction; file input clear on 削除; Brakeman exit 0; no UI assertions in request spec.
+**BLOCKED:** Brakeman warning; related spec fail; TURBO-URL/SYNC/HIST or PAGE-SEARCH/OVERFLOW FAIL; UI-in-request-spec; Manual QA FAIL.
+
+**P0/P1 summary:** Audited ActiveStorage + scalar = one transaction; file input clear on 削除; Brakeman exit 0; **HARD BAN** UI assertions in request spec.
 
 ---
 
@@ -167,4 +184,4 @@ Every row needs concrete repro steps, not "fixed pagination".
 
 **Output:** (1) English title (2) English squash commit (3) Japanese PR body per skill (概要 Before/After, 仕様, 対応内容, レビュワー確認項目, タスクリンク, 備考) (4) Save draft to `ai-housemaker/docs/pr/<type>-<scope>-no<NN>.md`
 
-**Hard rules:** No fabricated Notion/Figma links; Before = user pain, After = outcomes; nested details → 備考 only.
+**Hard rules:** No fabricated Notion/Figma links; Before = user pain, After = outcomes; nested details → 備考 only; **never `git push`** — generate PR text only.

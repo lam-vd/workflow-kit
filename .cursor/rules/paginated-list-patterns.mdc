@@ -76,6 +76,7 @@ streams << index_history_replace_stream(repaged_to) if repaged_to
 | **PAGE-SEARCH-06** | `no_results` vs `no_records` wrong when overflow vs truly empty filter | `q=zzz` on page 5 vs no data at all | 🟡 |
 | **PAGE-SEARCH-07** | Delete destroy URL missing `q` / `page` → repage wrong scope | Delete from detail modal while filtered | 🟠 |
 | **PAGE-SEARCH-08** | Auto-submit search debounce: rapid typing leaves URL with old `q` and new list | Fast type + paginate before debounce fires | 🟡 |
+| **PAGE-SHARED-01** | Feature-specific page/filter logic added to a **shared** auto-submit (or similar) controller → other forms/lists regress | Change shared submit helper “for one index” without opt-in | 🟠 |
 | **PAGE-CTX-01** | DELETE from modal/detail: `params[:page]` / `q` absent on request | Delete on `?q=foo&page=5` opened from modal | 🟠 |
 | **PAGE-COERCE-01** | `page` nil/0/abc coerced wrong: repage never runs or always page 1 | `Pagination::PageParam.coerce(page, default: nil)` vs `default: 1` | 🟡 |
 
@@ -92,7 +93,8 @@ streams << index_history_replace_stream(repaged_to) if repaged_to
 ### Filter form checklist
 
 - [ ] Filter form must **not** include hidden `page` unless it resets to `1` on `q` change  
-- [ ] OR explicitly reset page via Stimulus on `input->auto-submit`  
+- [ ] Prefer reset via **omitting `page` from the filter form** (GET only sends form fields) — not a new default in a shared auto-submit controller (**PAGE-SHARED-01**; see `shared-abstraction-safety.mdc`)  
+- [ ] OR explicitly reset page via Stimulus **opt-in** / feature-scoped controller — not silent shared default  
 - [ ] `paginate(..., params:)` must **merge** route params **and** `permit(q:, status:, published:, …)` — not only `{ controller:, action:, id: nil }`  
 - [ ] `redirect_to` / `history-replace` URL built from **same helper** as delete links (`index_list_url`)  
 - [ ] DELETE without query params: fallback **`request.referer`** parse OR Stimulus `window.location.search` for `q`/`page` (`confirm_delete`)  

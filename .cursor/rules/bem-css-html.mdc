@@ -1,0 +1,75 @@
+---
+description: BEM naming for custom CSS and matching HTML/ERB class names
+globs: "{app/assets/stylesheets/**/*.css,app/views/**/*.{erb,haml,slim}}"
+alwaysApply: false
+---
+
+# BEM for HTML + custom CSS
+
+When adding or changing **feature-specific** markup and styles (not Tailwind utility layout in views), follow **BEM**. Use the project's existing feature CSS as the naming reference (e.g. `app/assets/stylesheets/auth.css`, `auth-entry.css`).
+
+**Canonical location:** `senior-workflow-kit/.cursor/rules/bem-css-html.mdc`. Consuming apps should **symlink** (e.g. `ai-housemaker/.cursor/rules/quality/bem-css-html.mdc` → kit), same pattern as `hotwire-integration-patterns.mdc`.
+
+## Naming
+
+| Part | Pattern | Example |
+|------|---------|---------|
+| Block | `{feature}-{component}` (kebab-case) | `auth-page`, `auth-card`, `auth-form` |
+| Element | `{block}__{element}` | `auth-page__main`, `auth-form__input` |
+| Modifier | `{block}__{element}--{variant}` or `{block}--{variant}` | `auth-entry__card--password-sent` |
+
+Rules:
+
+- Use **one block name per component**; do not chain elements (`block__el__sub` ❌).
+- Prefer **descriptive element names** (`auth-card__brand-icon`), not generic wrappers (`__wrapper`, `__inner`) unless layout-only.
+- Modifiers express **state or variant** only; keep base styles on the block/element.
+- HTML `class` values must **match CSS selectors exactly** — add/update both files in the same change.
+
+## CSS shape
+
+- One selector per rule; group rules by block (page → card → form).
+- Scope design tokens on the block when needed (`--auth-artboard-aspect-ratio` on `.auth-page`).
+- Prefer existing project tokens (e.g. `var(--ahm-color-*)`, `var(--text-primary)`) over hard-coded colors/spacing.
+- Nest only for **context** (child block inside parent), e.g. `.auth-password-field .auth-form__input`.
+- If styles are duplicated across bundles, keep a sync comment (e.g. `auth.css` ↔ `auth-critical.css.erb`).
+
+## HTML (ERB)
+
+- Root layout block on the outermost feature wrapper; elements inside use that block's `__` classes.
+- Multiple blocks on one node is OK when composing shared pieces: `class="auth-form auth-entry__form"`.
+- Do **not** encode behavior or copy in class names; use I18n for visible text (project i18n rule).
+
+## Examples
+
+```css
+/* ✅ Block + elements */
+.auth-card { /* ... */ }
+.auth-card__header { /* ... */ }
+.auth-form__input:focus { /* ... */ }
+
+/* ✅ Modifier on element */
+.auth-entry__card--password-sent { /* ... */ }
+.auth-entry__card--password-sent .auth-entry__card-title { /* ... */ }
+```
+
+```erb
+<%# ✅ Matching BEM classes %>
+<main class="auth-page__main auth-entry">
+  <div class="auth-entry__card auth-entry__card--password-sent">
+    <input class="auth-form__input" />
+  </div>
+</main>
+```
+
+```css
+/* ❌ Avoid */
+.auth-cardHeader { }           /* camelCase */
+.auth-card__header__title { }  /* chained element */
+.auth-card.is-active { }        /* non-BEM state class in custom CSS */
+```
+
+## When to use Tailwind instead
+
+- **Tailwind utilities**: one-off spacing, flex/grid, responsive tweaks in views.
+- **BEM + dedicated CSS file**: reusable feature UI, auth flows, multi-state components, Figma-aligned blocks.
+- Do not mix Tailwind `@apply` to recreate large BEM blocks; keep feature CSS in `app/assets/stylesheets/`.
