@@ -74,7 +74,7 @@ Templates: `docs/ddd/_TEMPLATE-ai-housemaker.md`, `docs/ddd/_TEMPLATE-ai-housema
 
 1. `ai-housemaker/.cursor/rules/workflow/development-guideline.mdc`
 2. `.agents/skills/ai-housemaker-review-checklist/SKILL.md`
-3. `ai-housemaker/.agents/skills/rspec-patterns/SKILL.md` — if `spec/**` changes (**HARD BAN** UI in request)
+3. `ai-housemaker/.agents/skills/rspec-patterns/SKILL.md` — if `spec/**` changes (**HARD BAN** UI in request; lean setup)
 4. `.cursor/rules/quality/erb-rubocop-lint.mdc`, `rspec-best-practices.mdc`, `implementation/views.mdc`
 5. Domain rules if touched: `audited-active-storage`, `stimulus-file-input-preview`, `security/brakeman`
 6. PATCH-on-change autosave → `.agents/skills/stimulus-turbo-autosave/SKILL.md`
@@ -124,9 +124,10 @@ Before editing markup + CSS: read `.cursor/rules/bem-css-html.mdc` (ai-housemake
 | `ai-housemaker-review-checklist` | Always — P0/P1 for staged areas (ActiveStorage, Stimulus file, request-spec scope, …) |
 | `deadcode-ui-migration-review` | UI migration / deleted show→modal / orphaned partials — call-site audit before delete |
 | `rails-tl-review` | Always — TL checklist (architecture / tenant / N+1 / Hotwire / RSpec); skip architecture-irrelevant nitpicks; emit **TL Summary** |
+| `pr-review-comments` | When user wants **paste-ready GitHub comments** (`must`/`should`/`suggestion`/`nit` + Repro/Suggestion) — complements Full report |
 | `integration-regression-review` | views / Stimulus / locales / CSS |
 | `functional-verification-review` | behavior may change |
-| `ai-housemaker-rspec` | `spec/**` staged → use **`ai-housemaker/.agents/skills/rspec-patterns/SKILL.md`** (**HARD BAN** UI in request) |
+| `ai-housemaker-rspec` | `spec/**` staged → use **`ai-housemaker/.agents/skills/rspec-patterns/SKILL.md`** (**HARD BAN** UI in request; **lean setup** `build_stubbed` / small `per:`) |
 | `stimulus-turbo-autosave` | Checkbox/field PATCH-on-change, debounce/coalesce, option-only streams |
 | `modal-detail-canonical-url` | List detail modal gets `/{index}/:id` deep-link, filter restore, lean load |
 | `hotwire-integration-patterns.mdc` | UI integration — local symlink at `ai-housemaker/.cursor/rules/quality/` |

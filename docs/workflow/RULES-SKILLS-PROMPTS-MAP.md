@@ -3,6 +3,8 @@
 > **EN**: Single index for context budget. Each concern has **one canonical source**; other files only **pointer + when to load**.
 > **VI**: Mỗi chủ đề một nguồn canonical — file khác chỉ trỏ tới, tránh đọc trùng.
 
+**Cross-project sync (Doogo ↔ kit ↔ ai-housemaker):** see [SHARED-BASELINE.md](./SHARED-BASELINE.md) — what to symlink into Doogo vs ahm-only Hotwire/Pundit/Figma artifacts.
+
 ## Layer model
 
 ```
@@ -23,7 +25,7 @@ common/                       → profiles, checklists, snippets (no logic dupli
 
 | Rule | Lines | Why always |
 |------|-------|------------|
-| `karpathy-guidelines.mdc` | ~67 | Behavioral baseline (assumptions, scope, verify) |
+| `karpathy-guidelines.mdc` | ~90 | Behavioral baseline (assumptions, scope, **§3.1 preserve existing logic**, verify) |
 | `git-commit-policy.mdc` | ~49 | Workflow gate — when commit is allowed |
 | `shared-abstraction-safety.mdc` | ~60 | Stop feature-only logic in shared helpers/controllers (cross-screen regressions) |
 

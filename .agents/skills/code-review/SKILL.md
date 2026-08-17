@@ -20,6 +20,9 @@ description: "Skill for performing self or peer code/PR review at Stage 8 of the
 - **Lean & pragmatic** — ghét code rác, thừa, rườm rà.
 - **Acknowledge good work** — ghi nhận điểm tốt, không chỉ tìm lỗi.
 
+**Paste-ready GitHub comments** (when user asks for PR comments / must·should·suggestion·nit):
+follow `.agents/skills/pr-review-comments/SKILL.md` — do not invent a different comment layout.
+
 ---
 
 ## Review Methodology / Phương pháp review

@@ -1,6 +1,6 @@
 ---
 name: ai-housemaker-rspec
-description: RSpec layer boundaries + assertion style for ai-housemaker — HARD BAN UI in request specs, interpolate subject attrs with %(), modal/proposal specs. Canonical detail in ai-housemaker/.agents/skills/rspec-patterns/SKILL.md.
+description: RSpec layer boundaries + assertion style + lean setup for ai-housemaker — HARD BAN UI in request specs, interpolate subject attrs with %(), small pagination per, build_stubbed vs create. Canonical detail in ai-housemaker/.agents/skills/rspec-patterns/SKILL.md.
 ---
 
 # ai-housemaker RSpec
@@ -60,6 +60,28 @@ expect(response.body).to include(%(value="#{customer.id}"))
 
 Hardcoded OK for stable tokens (BEM/`data-*-target` in **helper** specs, `aria-*`, form param names) or true derived outputs (initials).
 
+## Lean setup / performance (model + service)
+
+Full tables + anti-patterns: canonical **Lean setup / performance** in `rspec-patterns/SKILL.md`.
+
+| Need | Prefer |
+|------|--------|
+| Validations / pure predicates | `build` / `build_stubbed` |
+| `before_save` / SQL order / pagination | Minimal `create` |
+| Enum / constant alignment | Pure expect — **no** factory |
+| Pagination / load-more boundaries | Override `per: 2` (not production `PER=10/25`) |
+| Inactive assignee keep | Create while active → `update!(status: :inactive)` |
+
+```ruby
+# ✅ Pagination boundary without 11 inserts
+create_list(:schedule, 3, tenant: tenant, customer: customer)
+result = described_class.call(customer: customer, page: 1, per: 2)
+expect(result.schedules.size).to eq(2)
+expect(result.has_more).to be(true)
+```
+
+Drop unused `create` / `let!`, and expects implied by a stronger ordered `eq([...])`.
+
 ## Modal / Turbo smoke (houses / lands / proposals)
 
 ```ruby
@@ -79,6 +101,7 @@ Option autosave / ensure-on-open: assert **status + media_type/204 + DB** only.
 - [ ] Image limit / domain rules have model or service coverage
 - [ ] Helper/HTML `include` uses `%(..."#{record.attr}"...)` — not duplicated setup literals
 - [ ] UI polish (cursor/hover) covered by Manual QA, not request expects
+- [ ] **Lean setup** — small `per:` for pagination; `build_stubbed` when DB unused; no unused fixtures
 - [ ] `docker compose exec -e RAILS_ENV=test app bundle exec rspec <related>`
 
 ## Related

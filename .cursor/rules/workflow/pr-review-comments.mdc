@@ -1,0 +1,22 @@
+---
+description: >-
+  Paste-ready PR review comment format (must/should/suggestion/nit with Repro +
+  Suggestion). Use when reviewing PRs or summarizing findings for GitHub comments.
+alwaysApply: false
+---
+
+# PR Review Comments Format
+
+When the user asks for **PR comments**, **review comments to paste**, or
+**must/should/suggestion/nit** output for a PR/task review:
+
+1. Read and follow `.agents/skills/pr-review-comments/SKILL.md` (kit symlink).
+2. Emit **English** paste-ready blocks (unless user asks for Vietnamese).
+3. Each finding: emoji + number + title → `📍 File` → label line → optional code →
+   `**Repro:**` → `**Suggestion:**` → optional `Priority:`.
+4. Labels: `must` 🔴 · `should` 🟠 · `suggestion` 🟡 · `nit` 🔵.
+5. End with one-line **PR verdict** (BLOCKED / READY).
+
+This does **not** replace Stage-8 `code-review` Full report when `/review-staged`
+needs Intent & Coverage / boundary sweep — convert findings into this format when
+the deliverable is GitHub comments.

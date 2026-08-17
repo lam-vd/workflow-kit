@@ -40,3 +40,9 @@ alwaysApply: false
 ## Imports
 - Group: stdlib → third-party → internal absolute → relative.
 - NO circular imports.
+
+## Ruby
+- `# frozen_string_literal: true` is **context-dependent**:
+  - **Preserve** if the file already has it (do not drop when rewriting).
+  - **Add** on newly created `.rb` files.
+  - **Do not force-add** onto legacy files that never used it unless the task/DoD asks or you verified the file does not mutate string literals (otherwise `FrozenError` risk).

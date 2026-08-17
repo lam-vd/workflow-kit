@@ -73,6 +73,24 @@ When your changes create orphans:
 
 The test: Every changed line should trace directly to the user's request.
 
+## 3.1. Preserve existing logic (task-scoped only)
+
+**Implement the task DoD. Do not rewrite working legacy paths "while here".**
+
+Hard rules:
+- **Call-site / wire-in first** — Prefer stop calling a helper, add a guard at the call site, or add a parallel path. Do **not** hollow out a still-valid service body into a no-op/stub unless the task DoD explicitly requires deleting that capability.
+- **Keep control-flow idioms** — Do not rewrite `if A; if B` redirects, method signatures, find order, or argument lists for taste/clarity. Match the file's existing pattern unless DoD forces a behavior change.
+- **No prophylactic hardening** — Do not change helpers, decryptors, validators, or session keys "just in case" beyond the accepted plan. If a special case seems needed → **stop and ask the user before editing**.
+- **Diff discipline** — Before staging: every hunk must map to a DoD bullet. Hunks that only restyle, rename for style, or "simplify" unrelated logic → revert.
+- **Ask before exception** — If DoD seems to require changing working unrelated logic, report: what / why / blast radius / safer alternative — wait for approval.
+- **Orphan / dead-code check after call-site removal** — When you stop calling a method/service/partial, **grep remaining references immediately**. If zero call sites → tell the user explicitly: "X is now dead code — keep for now / delete in this PR / delete in a follow-up?" Do **not** silently leave orphans undocumented.
+
+Anti-patterns (from real rollbacks):
+- Rewriting `DecryptPassword` to always return `nil` instead of simply not calling it from edit actions.
+- Changing `handle_failed_login` signature or `sign_in_*` redirect style without DoD need.
+- Dropping project conventions (`# frozen_string_literal: true`) when the **file already had them** — preserve what was there. Do **not** force-add `frozen_string_literal` onto legacy files that never used it unless the task/DoD asks or you verified no literal mutation.
+- Removing all call sites of a helper/service without grepping leftovers or warning the user that it became dead code.
+
 ## 3.5. Shared Surface Blast Radius
 
 **Do not fix one screen by changing shared code used by many screens.**

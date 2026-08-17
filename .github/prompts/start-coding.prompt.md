@@ -115,6 +115,9 @@ Follow `karpathy-guidelines.mdc` + rules on edited files (`clean-code`, `archite
 - **NEVER run `git commit` or `git push`** — stage only (`git add`); user commits after `/review-staged` READY. / KHÔNG commit/push — user commit ở terminal.
 - **After completing a sub-task** → always remind: "Run `/review-staged` now." / Sau khi xong sub-task → nhắc chạy `/review-staged`.
 - **NEVER touch unrelated code** — only modify files/functions directly required by the current sub-task's DoD. / KHÔNG đụng vào code không liên quan — chỉ sửa file/function trực tiếp cần cho DoD của sub-task hiện tại.
+- **NEVER rewrite working legacy logic "while here"** — prefer call-site stop-calling / guards over hollowing helpers into no-ops; keep existing control-flow idioms (redirects, signatures, find order) unless DoD forces a behavior change. Special case needed → **ask user first**. See `karpathy-guidelines` §3.1. / KHÔNG sửa logic cũ còn đúng vì "tiện tay"; case đặc biệt → hỏi user trước.
+- **After removing call sites** — grep the symbol; if orphaned → **warn the user** (dead code: keep / delete in this PR / follow-up). Do not leave silent dead code. / Sau khi gỡ call-site: grep; nếu 0 hit → cảnh báo dead code, hỏi giữ/xóa.
+- **Ruby `frozen_string_literal`** — context-dependent: **preserve** if the file already had it; **add** on new files; **do not force-add** onto legacy files that never used it unless DoD/user asks or you verified no literal mutation (`FrozenError` risk). / Magic comment phụ thuộc ngữ cảnh file — không thêm mù quáng vào file legacy.
 - **NEVER introduce a new symbol without a Reuse Scan row** — a search that failed to find an existing one is the justification. / KHÔNG tạo symbol mới nếu chưa có dòng Reuse Scan chứng minh đã tìm mà không có sẵn.
 
 ## 📤 Output structure

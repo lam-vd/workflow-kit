@@ -34,6 +34,16 @@ Full rule (auto-applied in Cursor): `.cursor/rules/karpathy-guidelines.mdc`
 - Match existing style.
 - Remove only orphans YOUR changes created.
 
+## 3.1. Preserve existing logic (task-scoped only)
+
+- DoD only — do not rewrite working legacy paths "while here".
+- Prefer stop-calling / call-site guard over hollowing a service into a no-op.
+- After removing call sites: **grep leftovers**; if zero hits → warn user (dead code: keep / delete now / follow-up).
+- Keep control-flow idioms (redirects, signatures, find order) unless DoD forces change.
+- No prophylactic hardening — if a special case seems needed, **ask the user first**.
+- Every staged hunk must map to a DoD bullet; revert taste-only diffs.
+- On Ruby files: **preserve** existing `# frozen_string_literal: true` if present. Add on **new** files. Do not force-add onto legacy files without verifying no string-literal mutation (or user/DoD asks).
+
 ## 3.5. Shared Surface Blast Radius
 
 - Do not fix one screen by changing shared helpers/controllers used by many.
