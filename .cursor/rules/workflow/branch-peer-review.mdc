@@ -1,0 +1,18 @@
+---
+description: >-
+  Peer-review another developer's branch: Task lock from spec+diff, then
+  paste-ready GitHub comments. Use when reviewing someone else's PR/branch —
+  not /review-staged of own work.
+alwaysApply: false
+---
+
+# Branch peer review
+
+When the user asks to review **another developer’s branch/PR/task** (or `/review-branch`):
+
+1. Read `.agents/skills/branch-peer-review/SKILL.md`.
+2. Follow `.github/prompts/review-branch.prompt.md`.
+3. Human copy-paste prompt: `docs/prompts/branch-peer-review.md`.
+4. Comment blocks: `.agents/skills/pr-review-comments/SKILL.md`.
+
+This is **not** Stage 8 `/review-staged` (own staged diff + commit gate).

@@ -1,0 +1,128 @@
+# =============================================================================
+# CURSORIGNORE.master — bản mẫu dùng chung mọi dự án
+# =============================================================================
+# Mục đích: chặn Cursor index/đọc secrets, key, dump PII, dependency/build ồn.
+#
+# Cách dùng:
+#   1. Copy file này thành `.cursorignore` ở ROOT repo (cạnh .gitignore)
+#      cp /path/to/CURSORIGNORE.master /path/to/repo/.cursorignore
+#   2. Tuỳ project: bỏ comment / thêm dòng ở cuối (section PROJECT-SPECIFIC)
+#   3. Reload Cursor window (Developer: Reload Window)
+#
+# Cú pháp = gitignore. Dòng `!` (un-ignore) phải nằm SAU pattern chặn.
+# Giữ template an toàn: .env.sample / .env.example / .env.default / *.yml.enc
+#
+# Canonical:
+#   senior-workflow-kit/templates/CURSORIGNORE.master
+# Mirrors (cùng nội dung):
+#   port_jp/CURSORIGNORE.master
+#   Documents/workspace/CURSORIGNORE.master
+#   Documents/workspaces/CURSORIGNORE.master
+# =============================================================================
+
+# --- Env / dotenv / direnv ---
+.env
+.env.*
+!.env.sample
+!.env.example
+!.env.default
+.envrc
+.envrc.*
+!.envrc.example
+!.envrc.development
+
+# --- Rails / encrypted credentials ---
+**/config/master.key
+**/master.key
+**/config/credentials/*.key
+**/config/credentials/*.yml
+!**/config/credentials/*.yml.enc
+**/config/credentials.yml.enc
+**/secrets.yml
+**/config/secrets.yml
+
+# --- Private keys / certs / cloud IAM ---
+**/*.pem
+**/*.p12
+**/*.pfx
+**/*_rsa
+**/id_rsa
+**/id_ed25519
+**/*.keystore
+**/service-account*.json
+**/*-service-account.json
+**/google-credentials.json
+**/application_default_credentials.json
+**/firebase-adminsdk*.json
+**/.aws/credentials
+**/keys.txt
+**/age/keys.txt
+**/*.agekey
+
+# --- Local Docker / Compose overrides (machine ports) ---
+docker-compose.override.yml
+compose.override.yml
+compose.*.override.yml
+
+# --- DB dumps / local DB files (often PII) ---
+**/*.sql
+**/*.sql.gz
+**/*.dump
+**/*.sqlite3
+**/*.sqlite3-journal
+
+# --- Runtime / uploads / logs ---
+**/storage/**
+**/public/uploads/**
+**/public/system/**
+**/log/**
+**/tmp/**
+**/uploads/**
+
+# --- Dependencies / build / caches ---
+**/node_modules/**
+**/vendor/bundle/**
+**/vendor/cache/**
+**/.bundle/**
+**/public/packs/**
+**/public/assets/**
+**/coverage/**
+**/.next/**
+**/dist/**
+**/build/**
+**/out/**
+**/.turbo/**
+**/.cache/**
+**/__pycache__/**
+**/.venv/**
+**/venv/**
+**/target/**
+**/.terraform/**
+**/.terragrunt-cache/**
+
+# --- Mobile / native (optional noise) ---
+**/Pods/**
+**/*.xcuserdata/**
+**/DerivedData/**
+
+# --- VCS / OS / editor junk ---
+**/.git/**
+**/.svn/**
+**/.DS_Store
+**/Thumbs.db
+**/*.swp
+**/*~
+
+# =============================================================================
+# PROJECT-SPECIFIC (bỏ comment / thêm dưới đây theo repo)
+# =============================================================================
+# # Large fixtures / recorded traffic
+# # **/fixtures/cassettes/**
+# # **/spec/vcr_cassettes/**
+#
+# # Data science / notebooks output
+# # **/*.ipynb_checkpoints/**
+# # **/data/raw/**
+#
+# # Un-ignore a template you need agent to read
+# # !.envrc.something

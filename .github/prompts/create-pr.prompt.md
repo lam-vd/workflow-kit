@@ -15,6 +15,18 @@ You are at **Stage 9b: Create PR**.
 
 If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → follow `common/profiles/ai-housemaker.md` §9b for **Japanese PR body** + draft path. Title and squash commit remain English.
 
+If **telemedease** (auto: `telemedease/`; override: `(telemedease)`) → follow `common/profiles/telemedease.md` §9b + skill `teleme-pr` for **English** PR sections (Description / Root Cause / Solution / Impact / Risk / Testing). Title and commits remain English.
+
+If **skal** (auto: `skal/` or `port_jp/skal`; override: `(skal)`) → follow `common/profiles/skal.md` §9b + skill `skal-pr` for **English** PR sections. Title and commits remain English.
+
+If **manet-adwords-ocv** (auto: `manet-adwords` / `manet-adwords-analysis--offline-cv`; override: `(ocv)`) → follow `common/profiles/manet-adwords-ocv.md` §9b + skill `ocv-pr` for **English** PR sections.
+
+If **manet** (auto: `manet/` / `port_jp/manet` but **not** `manet-adwords`; override: `(manet)`) → follow `common/profiles/manet.md` §9b + skill `manet-pr` for **English** PR sections. Title and commits remain English.
+
+If **thira** (auto: `thira/` or `port_jp/thira`; override: `(thira)`) → follow `common/profiles/thira.md` §9b + skill `thira-pr` for **English** PR sections (+ A/B checklist when ads).
+
+If **evekatsu** (auto: `evekatsu/` or `port_jp/evekatsu`; override: `(evekatsu)`) → follow `common/profiles/evekatsu.md` §9b + skill `eve-pr` for **English** PR sections.
+
 ## Task
 
 Produce **3 copy-ready blocks**:
@@ -42,6 +54,12 @@ Produce **3 copy-ready blocks**:
 1. Get commit summary: `git log <base>..HEAD --oneline` and `git diff --stat <base>...HEAD`
 2. Read FINAL spec in `docs/specs/` and `docs/ddd/`.
 3. **If ai-housemaker profile** → follow `common/profiles/ai-housemaker.md` §9b + `ai-housemaker-pr-description` skill + `common/snippets/pr-description.ai-housemaker.ja.md`. **Stop** — do not use tri-lingual template below.
+3b. **If telemedease profile** → follow `common/profiles/telemedease.md` §9b + `teleme-pr` skill (EN sections). **Stop** — do not use JA ahm body; tri-lingual optional only if user asks.
+3c. **If skal profile** → follow `common/profiles/skal.md` §9b + `skal-pr` skill (EN sections). **Stop** — do not use JA ahm body.
+3d. **If manet-adwords-ocv profile** → follow `common/profiles/manet-adwords-ocv.md` §9b + `ocv-pr` skill (EN sections). **Stop**.
+3e. **If manet profile** → follow `common/profiles/manet.md` §9b + `manet-pr` skill (EN sections). **Stop** — do not use JA ahm body.
+3f. **If thira profile** → follow `common/profiles/thira.md` §9b + `thira-pr` skill (EN sections). **Stop**.
+3g. **If evekatsu profile** → follow `common/profiles/evekatsu.md` §9b + `eve-pr` skill (EN sections). **Stop**.
 4. **Default (tri-lingual):** Read `.agents/skills/pr-conventions/SKILL.md` and fill `common/snippets/pr-description.trilingual.md`.
 5. Output three copy-ready blocks: `### 1. Title`, `### 2. Commit msg`, `### 3. Description`.
 

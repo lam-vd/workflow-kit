@@ -42,6 +42,9 @@ Use this table during `/review-staged` **regression sweep**. Each row: trace cod
 | **STIMULUS-BOOL-01** | `data-*-open-value="<%= @flag %>"` when `@flag` is `nil` | Empty attribute → Stimulus Boolean = **true** → modal auto-opens | Open parent only → child must stay closed until explicit open or intentional `open=true` | 🟠 |
 | **CSS-OVERFLOW-01** | Text / preview / label–value rows / chips without `overflow-wrap` or `min-width: 0` on the value cell and ancestors | Long unbroken tokens (IDs, URLs, chip labels) blow layout horizontally; chip rows stay on one line and overflow | Paste a long ID/URL or many chips into a detail row → container must wrap / wrap chips, not widen the page or modal | 🟡 |
 | **TURBO-VALID-01** | HTML `maxlength` + model `length: { maximum: N }` | Browser blocks paste → never hits server 422 / error UI path | Know both layers exist; for QA of server errors temporarily omit `maxlength` or remove via DevTools | 🟡 |
+| **TURBO-VALID-02** | `datetime-local` / date input without server parse guard | Malformed or out-of-range year accepted → silent blank error or wrong DB value | Enter year > 4 digits or invalid string → toast shows dedicated `invalid_*` locale, not generic blank | 🟠 |
+| **TURBO-SCROLL-01** | Cumulative load-more replaces turbo frame list while capped height | After load-more, `main` scroll jumps to top; list expands to full N rows | Panel with >PER items → load-more twice → scroll position + capped height preserved | 🟠 |
+| **TURBO-SCROLL-02** | CRUD success `turbo_stream.replace` of same capped list panel | Save/delete resets scroll same as load-more (only frame hook wired) | Create/update/delete schedule → list stays scrolled; no jump to page top | 🟠 |
 | **TURBO-STREAM-HOOK-01** | Listener on `turbo:after-stream-render` to re-wire buttons/UI after stream | Hook **never fires** on Turbo 8.0.x → UI stuck disabled after status/memo stream | Save status/memo → replace buttons must re-enable; use `turbo:before-stream-render` and wrap `event.detail.render` (chain existing wrappers) | 🟠 |
 | **TURBO-AUTOSAVE-01** | Checkbox/field `change` → immediate PATCH without debounce/coalesce | Abort storms; last selection lost; race with status submit | Rapid-toggle options → Network one-in-flight; final DB matches last UI | 🟠 |
 | **TURBO-AUTOSAVE-02** | Field-only PATCH always `turbo_stream.replace` whole detail modal | Scroll jumps to top on every toggle | Toggle option mid-scroll → scroll position preserved (`204` or history-only streams) | 🟠 |
@@ -87,6 +90,9 @@ Use this table during `/review-staged` **regression sweep**. Each row: trace cod
 | STIMULUS-BOOL-01 | Always emit `'true'`/`'false'` (`flag ? 'true' : 'false'`) or omit attribute; coerce with `flag == true` in locals |
 | CSS-OVERFLOW-01 | `min-width: 0` + `overflow-wrap: anywhere` (or `word-break: break-word`) on the value cell **and** shrinkable ancestors (`minmax(0, …)` grid tracks, flex children). Chip/tag rows: `flex-wrap` + `max-width: 100%` on chips. Prefer CSS-only; do not change data mapping to “fix” overflow. After editing source CSS, rebuild the compiled stylesheet if the app serves a build artifact. |
 | TURBO-VALID-01 | Keep model validation; document that `maxlength` is UX-only and blocks server-error QA |
+| TURBO-VALID-02 | HTML `min`/`max` + JS `setCustomValidity` + model regex/range + controller early reject with dedicated locale (not `nil` → blank) |
+| TURBO-SCROLL-01 | On `turbo:before-frame-render` for panel frame: capture `list.clientHeight` + `list.scrollTop` + `main.scrollTop` → chain `event.detail.render` → restore in `requestAnimationFrame`; cap height to first PER items only when count > PER |
+| TURBO-SCROLL-02 | Same capture/restore on `turbo:before-stream-render` when stream target is the panel id; guard by target id — do not affect unrelated streams |
 | TURBO-STREAM-HOOK-01 | Prefer `turbo:before-stream-render`; wrap `event.detail.render` and call previous render — do not rely on `turbo:after-stream-render` (Turbo 8) |
 | TURBO-AUTOSAVE-01 | Debounce + serial coalesce (one in-flight; flush latest DOM) — see `stimulus-turbo-autosave` |
 | TURBO-AUTOSAVE-02 | Field-only success: `head :no_content` or streams that **exclude** detail-frame replace |
@@ -122,6 +128,9 @@ Use this table during `/review-staged` **regression sweep**. Each row: trace cod
 | STIMULUS-BOOL-01 | … | … |
 | CSS-OVERFLOW-01 | … | … |
 | TURBO-VALID-01 | … | … |
+| TURBO-VALID-02 | … | … |
+| TURBO-SCROLL-01 | … | … |
+| TURBO-SCROLL-02 | … | … |
 | TURBO-STREAM-HOOK-01 | … | … |
 | TURBO-AUTOSAVE-01 | … | … |
 | TURBO-AUTOSAVE-02 | … | … |
@@ -150,3 +159,4 @@ After each production bug fix: add one row (ID, trigger, repro, severity). Keep 
 - proposal nested memo modal (Jul 2026) — PRELINE-NEST/BACKDROP, TURBO-MODAL, STIMULUS-BOOL, CSS-OVERFLOW (`proposal_memo_modal*_controller.js`)
 - proposal viewed lifecycle / option autosave (Jul 2026) — TURBO-STREAM-HOOK-01, TURBO-AUTOSAVE-*, TURBO-LIVE-CTX-01, CSS-BTN-HOVER-01 (`meeting_proposal_search_controller.js`, `proposal_option_selection_controller.js`)
 - detail modal canonical URLs No.139 (Jul–Aug 2026) — TURBO-MODAL-URL-01..06 (`ModalDetailDeepLink`, `modal_detail_url_controller.js`, properties list row `filter_params`)
+- customer schedules No.146 (Aug 2026) — TURBO-SCROLL-01/02, TURBO-VALID-02 (`customer_schedules_controller.js`, cumulative panel load-more + stream replace) — see `docs/lessons/customer-schedules-no146-review-learnings.md`

@@ -1,0 +1,19 @@
+---
+description: >-
+  Stop and require explicit user OK before commands that hit servers, ad/ASP
+  platforms, Sheets, Slack/GChat/Airbrake, deploys, or destructive DB ops.
+  Primary for manet / manet-ads OCV / thira — symlink with alwaysApply in those repos.
+alwaysApply: false
+---
+
+# External side-effect confirm (kit)
+
+**Full procedure:** skill `external-side-effect-confirm`.
+
+Before any CONFIRM-REQUIRED action (ASP crawl, Ads/Sheets write, Slack/GChat/Airbrake,
+`docker build` that RUNs OCV jobs, `gh workflow run`, Thira deploy/reg-suit S3,
+`db:drop`/`db:reset`, prod credentials): print the confirm block and **wait** for
+`OK` / `confirm` / `được` in the user reply. Do not run on implied consent.
+
+**OCV caveat:** `DRY_RUN=1` ≠ offline — crawlers still hit ASP. Prefer
+`DISABLE_NOTIFICATIONS=1` / empty webhooks when user has not allowed alerts.

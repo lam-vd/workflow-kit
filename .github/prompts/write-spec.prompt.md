@@ -16,6 +16,18 @@ You are at **Stage 3: Write Spec**.
 
 If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` Sec. 3 for DDD format, `.vi.md` output, Rails UI conventions, and templates `_TEMPLATE-ai-housemaker*`.
 
+If **telemedease** (auto: `telemedease/`; override: `(telemedease)`) → read `common/profiles/telemedease.md` §3 (EN spec; portals/PayJP/Diagnosis; **no** Hotwire templates). If OAuth/consent/files/signed URLs/parallel provider/composite send → also `writing-ddd-integrations`.
+
+If **skal** (auto: `skal/` or `port_jp/skal`; override: `(skal)`) → read `common/profiles/skal.md` §3 (EN spec; ads CTR / Handsaw / Pundit; **no** Hotwire / teleme portals).
+
+If **manet-adwords-ocv** (auto: `manet-adwords` / `manet-adwords-analysis--offline-cv`; override: `(ocv)`) → read `common/profiles/manet-adwords-ocv.md` §3 (batch OCV; build-time jobs; **no** Rails).
+
+If **manet** (auto: `manet/` / `port_jp/manet` but **not** `manet-adwords`; override: `(manet)`) → read `common/profiles/manet.md` §3 (EN spec; card_loan / Super / Handsaw; FX out; **no** Hotwire / teleme).
+
+If **thira** (auto: `thira/` or `port_jp/thira`; override: `(thira)`) → read `common/profiles/thira.md` §3 (EN spec; `kw_id` / pages; **no** Rails).
+
+If **evekatsu** (auto: `evekatsu/` or `port_jp/evekatsu`; override: `(evekatsu)`) → read `common/profiles/evekatsu.md` §3 (EN spec; route matrix / cache / PC-SP).
+
 ## Task / Nhiệm vụ
 
 Generate **two files** from templates:

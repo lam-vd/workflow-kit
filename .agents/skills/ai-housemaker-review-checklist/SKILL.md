@@ -5,7 +5,8 @@ description: "Pre-merge checklist from real ai-housemaker PR reviews (profile UI
 
 # ai-housemaker Review Checklist
 
-> Condensed from PR #92 profile feedback **+** proposal nested-memo / Hotwire incidents **+** proposal viewed lifecycle / option autosave (Jul 2026) **+** detail modal canonical URLs No.139 (Jul–Aug 2026). **Implement + self-review** before `/review-staged`.
+> Condensed from PR #92 profile feedback **+** proposal nested-memo / Hotwire incidents **+** proposal viewed lifecycle / option autosave (Jul 2026) **+** detail modal canonical URLs No.139 (Jul–Aug 2026) **+** customer schedules No.146 (Aug 2026). **Implement + self-review** before `/review-staged`.  
+> Incident write-up: `docs/lessons/customer-schedules-no146-review-learnings.md` (kit).
 
 ## When to use
 
@@ -53,6 +54,15 @@ Canonical detail modal URLs: `.agents/skills/modal-detail-canonical-url/SKILL.md
 | **Blob preview `alt`** | No `alt=""` on `createObjectURL` preview; server img uses `full_name \|\| email` | Empty alt on dynamic preview |
 | **Dead services** | Delete orphan services/specs after consolidating into one path | `PurgeAvatar` / `UpdateAvatar` with no callers |
 | **Dead UI after migration** | After full-page→modal (or equivalent), run `deadcode-ui-migration-review`: grep call sites; classify Dead-sure / Fallback-only / Soft-dead payload / Shared-keep; modal-only gate + redirect before deleting show stack | Delete `show` partials while non-frame GET still renders them; delete shared query used by another tab |
+| **Feature cutover orphans** | CRUD UI removed / domain kept → run `feature-cutover-orphan-review`: Dead-sure / Ops-only (rake) / Soft-dead / Shared-keep; document ops path | Enqueue helper with 0 `app/` callers and no rake; Policy only for deleted CRUD |
+| **Cable/WS authz parity** | Mutating channel actions use same authorize/policy_scope as HTTP for that record | Channel finds by id alone → IDOR vs HTTP scope (CONTRACT-AUTHZ-01) |
+| **Async stop vs server phases** | Client polling/stop must not fire before required secondary work finishes; prefer job + UI refresh over naive reorder | Stop on `completed` while AI/eval still running → empty panel (CONTRACT-ASYNC-01) |
+| **Schema vs producer** | Live schema/enum ⊆ what generators actually emit | Schema allows labels prompt never produces (CONTRACT-SCHEMA-01) |
+| **Dual stub / live flags** | Document when ≥2 env flags must both be set for live provider path | One flag false still hits SDK stub (CONTRACT-ENV-01) |
+| **FE URL template unused** | `data-*-url-value` / index URL template must be read by JS or removed with unwired controller | Template set; Stimulus never reads; POST `#create` dead |
+| **I18n `default:` vs locale keys** | Grep locales before “missing i18n”; drop hard-coded `default:` when key exists (EN+JA) | `I18n.t(..., default: "【…】")` masks missing key — see `lean-facade-review` |
+| **Thin JSON / column facades** | View-facing passthrough getters OK; keep methods with Array()/I18n fallback; don’t push `content['k']` into ERB | Demand Presenter for 2 partials; delete getters used only by views |
+| **UI predicates vs helper map** | One place for badge/icon/label by column; delete `source_foo?` with zero `app/` callers | Model `foo?` + helper `MAP.fetch(source)` for same concern |
 | **Orphan CSS after view delete** | After deleting ERB, grep BEM/custom classes in `app/assets/stylesheets`; remove feature CSS + `@import` or document Tailwind-only | Left `proposals-show.css` / unused BEM after HTML gone; deleted modal CSS still used by `_detail_modal_frame` |
 | **Dead auth guard** | No `signed_in?` branch after global `authenticate_*!` unless `skip_before_action` | Unreachable error path |
 | **Form normalize** | `before_validation` strip/downcase email (mirror `ProfileForm`) | Format validator runs on raw `"  A@B.com  "` |
@@ -62,6 +72,12 @@ Canonical detail modal URLs: `.agents/skills/modal-detail-canonical-url/SKILL.md
 | **Canonical detail modal URL** | Lean load on full-page deep-link; heavy includes only on detail Turbo-Frame; capture detail record before `load_index_collection` if ivar shared; pass `filter_params` into every row/card; shell/row `data-*-url-value` asserted exactly | Bullet unused includes; garbage `detail_url`; close modal drops filters (TURBO-MODAL-URL-01..03) — see `modal-detail-canonical-url` skill |
 | **Nullable enum / blank status** | `allow_nil`, blank → `nil` in params/services; UI/filter/label cover unselected | Forced `candidate` fallback; memo gated on “save status first” |
 | **DRY display** | Call model/class method (`TenantUser.format_phone_for_display`) — no thin helper wrapper | One-line delegate helper |
+| **Thin query service** | Status filter + order → model scope; delete orphan `*Query` after grep zero callers | `AssigneeOptionsQuery`-style 1-line wrapper (No.146) |
+| **Status gate under lock** | Mutate after `actions_locked?` check → `record.with_lock { re-check; mutate }` | Check-then-act race on concurrent status change (No.146) |
+| **Datetime business rule** | Time-sensitive rules use `Time.zone.now`, not date-only compare | Inactive assignee blocked for “today + past time” when comparing calendar day only |
+| **Cumulative panel scroll** | ≤PER natural height; >PER cap + inner scroll; frame **and** stream preserve scroll | Load-more or CRUD stream jumps to page top (TURBO-SCROLL-01/02, PAGE-SCROLL-*) |
+| **due_at / datetime-local** | HTML min/max + JS validity + model parse + controller early reject with locale | Year >4 digits accepted; invalid parse → blank error (TURBO-VALID-02) |
+| **Dropdown scope vs DDD** | Assignee/options list matches Decision Log (tenant-wide vs feature-scoped) | Inactive users limited to prior assignees on this customer only |
 
 ---
 
@@ -117,7 +133,11 @@ docker compose exec -T app yarn build   # if Stimulus changed
 | Brakeman warning | 🟠 |
 | 422 replaces wrong target / backdrop stack / Stimulus bool auto-open | 🟠 |
 | UI assertions in request spec (**HARD BAN**), dead services, remove_avatar lost on 422 | 🟠 |
+| Cable/WS mutate authz weaker than HTTP; client stop before required server phase | 🟠 |
 | Spec `include` hardcodes setup literals (`'alt="ao@..."'`) instead of `%(alt="#{record.email})")` | 🟡 |
+| Schema/enum drift, dual stub flags undocumented, FE URL template never read | 🟡 |
+| Ops-only enqueue after rake verified; unused locale/Stimulus target | 🟢 |
+| `I18n.t` `default:` when locale keys exist; thin `source_foo?` / optional store_accessor | 🟢 |
 | Wrong cancel preview behavior, missing normalize, missing turbo partial | 🟡 |
 | Silent autosave failure UX, memo overflow wrap, maxlength vs server QA note | 🟡 |
 | Echo CSS comments, deferrable route split | 🟢 |
@@ -132,3 +152,6 @@ docker compose exec -T app yarn build   # if Stimulus changed
 | Proposal memo Jul 2026 | Auto-open memo; 422 no error UI; screen darkens; layout blowout | STIMULUS-BOOL-01, TURBO-MODAL-01, PRELINE-BACKDROP-01, CSS-OVERFLOW-01 | Teleport + replace modal id + strip backdrops + explicit bool strings |
 | Proposal viewed + options Jul 2026 | Replace stuck after stream; option toggle scroll jump; hover no-op | TURBO-STREAM-HOOK-01, TURBO-AUTOSAVE-01/02, TURBO-LIVE-CTX-01, CSS-BTN-HOVER-01 | `before-stream-render` wrap; debounce+coalesce; option-only no frame replace; `live_context`; real hover tokens — verify UI via Manual QA not request body |
 | Detail modal URL No.139 Jul–Aug 2026 | Bullet unused includes on paste URL; house-series modal never opens; close loses filters on houses/lands | TURBO-MODAL-URL-01..06 | Lean load on canonical; capture detail before collection overwrite; pass `filter_params` to rows; assert exact `data-*-url-value` |
+| Customer schedules No.146 Aug 2026 | Lock race; wrong assignee scope; date-only inactive rule; scroll jump on load-more/stream; due_at year validation | TURBO-SCROLL-01/02, TURBO-VALID-02, PAGE-CUMULATIVE-*, EDGE-CONC-02, TIME-CMP-01 | `with_lock` + re-check; `assignable_for_schedules` scope; `due_at < Time.zone.now`; preserve scroll on frame **and** stream; 3-layer datetime validation |
+| Realtime AI assist No.148 Aug 2026 | FAQ CRUD cutover orphans; Cable dismiss authz; polling stop before AI; dual stubs; schema enum drift; unwired POST | CONTRACT-AUTHZ/ASYNC/SCHEMA/ENV; cutover Ops-only | `feature-cutover-orphan-review`; ops rake ≠ dead; channel auth = HTTP policy; don’t reorder without UI refresh |
+| No.148 model facade follow-up | JSON getters / `I18n.t` `default:` / thin `source_foo?` | lean-facade | Keep view APIs; grep locales before “missing i18n”; consolidate UI in helper |

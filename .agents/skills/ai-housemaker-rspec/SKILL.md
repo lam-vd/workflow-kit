@@ -38,6 +38,15 @@ expect(proposal.reload.status).to be_nil
 
 Canonical tables + proposal examples: **HARD BAN** + **Proposal / meeting modal** in `rspec-patterns/SKILL.md`.
 
+### No.146 add-on (customer schedules)
+
+| Behavior | Spec layer |
+|----------|------------|
+| Load-more keeps cumulative page | Request: spy/stub query call includes `page:` (e.g. `page: 2`) |
+| Invalid `due_at` rejected | Request: `422` + no DB mutation; avoid full-panel HTML scan |
+| Toast/error wording | Prefer service/model error contract; allow at most one targeted request example if needed |
+| Scroll/cap-height after frame/stream replace | Manual QA only (Stimulus/DOM behavior) |
+
 ## Assertion style (senior)
 
 Bind expects to the **setup object** — do not hardcode the same email/name/id again.

@@ -14,6 +14,14 @@ description: "Skill for authoring Detail Design Documents (DDD) at Stage 3 of th
 - **Answers**: How will we implement? API contract? Schema? Errors? Tests? Rollout?
 - DDD is the **single source of truth** for implementation. Code drift from DDD → bug or DDD needs update.
 
+## Related skills (load when triggered)
+
+| Skill | Load when DDD touches… |
+|-------|-------------------------|
+| `writing-ddd-integrations` | External identity/consent, file upload/download + retention, signed URLs, parallel provider copy, one-action save+partner-send |
+
+Do **not** skip `writing-ddd-integrations` checklist IDs (CUR/PAR/CON/FILE/CMP/AUTHZ/SEC) when those triggers apply — fill them or open a Decision Log / Open Question.
+
 ## Required structure
 
 ### 1. Header
@@ -89,6 +97,7 @@ Derive the case list from `.agents/skills/edge-case-boundary-review/SKILL.md` (`
 - Input validation rules.
 - PII handling.
 - Rate limiting.
+- For integrations/files: separate **access controls in scope** from **residual policy** (object retention, signed-URL window, MIME trust). See `writing-ddd-integrations` SEC-01 — do not write “no security concern” without residuals.
 
 ### 9. Test Plan
 | Layer | # tests | Coverage target | Notes |
@@ -125,5 +134,7 @@ Carry over from Stage 2 grooming + new risks discovered while writing DDD.
 - DDD without sequence diagrams.
 - DDD without error codes table.
 - DDD without rollback plan.
-- DDD containing "TBD" / "I'm not sure" — must resolve before FINAL.
+- Vague TBD / "I'm not sure" with no owner — must resolve or become an Open Question before FINAL.
+- **Exception:** partner API hosts/secrets marked **CONTRACT-LEVEL + TBD** (shape, auth grant, retry policy written; credentials filled when vendor delivers) — allowed per `writing-ddd-integrations` CMP-05.
 - API contract without examples.
+- Conflating **download-link expiry** with **object retention** (stakeholders will misread).

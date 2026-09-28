@@ -21,6 +21,7 @@ Canonical incident (ai-housemaker, Jul 2026): `GET /proposals/:id` full-page sta
 ## Do NOT use alone when
 
 - Pure domain refactor with no UI surface change → `structural-change-analysis`
+- CRUD UI removed / domain data kept / job·enqueue·channel orphans → **also** run `feature-cutover-orphan-review` (stack-agnostic cutover; this skill stays UI-migration focused)
 - Diff-only style review → `code-review`
 - Hotwire wiring bugs (stale frame, backdrop) → `integration-regression-review`
 

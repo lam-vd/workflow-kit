@@ -208,8 +208,44 @@ When BD/DDD describes a searchable paginated list, **Non-goals** must not skip:
 
 ---
 
+## I. Cumulative load-more (sidebar panel / append)
+
+Distinct from **offset index pagination** (§A–H). Used when each “page” **appends** to the same list (`limit = page × PER`), e.g. customer detail schedule panel.
+
+| ID | What breaks | Repro | Sev |
+|----|-------------|-------|-----|
+| **PAGE-CUMULATIVE-01** | Load-more drops earlier rows or uses offset replace | Click load-more twice → row count grows, order stable | 🟠 |
+| **PAGE-CUMULATIVE-02** | `has_more` wrong — no peek or off-by-one | Exactly PER rows → load-more still shown (or hidden when more exist) | 🟡 |
+| **PAGE-CUMULATIVE-03** | Create/update/delete resets cumulative `page` | Mutate item on page 2 → panel shrinks to page 1 only | 🟠 |
+| **PAGE-SCROLL-01** | Fixed `max-height: Nrem` when ≤PER items | 3 rows with 10rem cap → large empty gap | 🟡 |
+| **PAGE-SCROLL-02** | Cap cleared on every turbo replace → layout reflow → scroll jump | Load-more or stream replace → page scrolls to top | 🟠 |
+
+**Fix patterns:**
+
+| ID | Typical fix |
+|----|-------------|
+| PAGE-CUMULATIVE-01 | Query `limit(page * PER)` + order; frame replaces **whole** panel with accumulated rows |
+| PAGE-CUMULATIVE-02 | Fetch `limit + 1`, set `has_more` from extra row, render only `limit` |
+| PAGE-CUMULATIVE-03 | Hidden `page` field on mutate forms; controller passes current panel page to query |
+| PAGE-SCROLL-01 | ≤PER items: **natural height** (no cap); >PER: measure first PER item heights, set `maxHeight`, inner `overflow-y: auto` |
+| PAGE-SCROLL-02 | `TURBO-SCROLL-01` (frame) **and** `TURBO-SCROLL-02` (stream) in `hotwire-integration-patterns.mdc` |
+
+**Request spec (lean):**
+
+| ✅ | ❌ |
+|----|-----|
+| Spy `ForCustomerQuery.call(..., page: 2)` | Assert `data-page="2"` in response body |
+| `create_list` count = `per + 1` with `let(:per) { 2 }` | `create_list(..., ProductionConst::PER + 1)` when PER=10 |
+| DB row count after load-more action | Scan panel HTML for scroll class |
+
+**Manual QA:** seed >PER rows → load-more preserves scroll → save/delete preserves scroll → ≤PER rows no empty cap gap.
+
+**Source:** customer schedules No.146 — `docs/lessons/customer-schedules-no146-review-learnings.md`
+
+---
+
 ## Accumulate patterns
 
-Add rows with stable IDs after each production bug. Cross-link Hotwire patterns when overlap (e.g. TURBO-SYNC-01 ↔ PAGE-SEARCH-03).
+Add rows with stable IDs after each production bug. Cross-link Hotwire patterns when overlap (e.g. TURBO-SYNC-01 ↔ PAGE-SEARCH-03; PAGE-SCROLL-02 ↔ TURBO-SCROLL-01/02).
 
 **Sources:** house series `b08b690` → `d8319dd` → `25da272`; properties `redirect_to_last_page_if_overflow!` + `spec/requests/properties/index_spec.rb`.

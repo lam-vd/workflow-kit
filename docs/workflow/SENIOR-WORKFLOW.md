@@ -233,6 +233,12 @@ Scope:
 - Supports language mode: `/create-release (vi)` or `/create-release (en)`.
 - Keep section keywords in English for scanability; explanation follows selected mode.
 
+### Utility. `/review-branch` — Peer review another developer’s branch
+- Reconstruct **Task lock** from *this* spec+diff. Do not reuse another feature’s product rules.
+- Output: paste-ready GitHub comments (`pr-review-comments`). **No** commit command.
+- Skill: `branch-peer-review`. Human copy-paste: `docs/prompts/branch-peer-review.md`.
+- Own staged work before commit → `/review-staged`, not this command.
+
 ---
 
 ## 🔁 When to revert
@@ -261,6 +267,7 @@ Scope:
 | 9 | `/recheck-release` | 9a | Kiểm tra release readiness | `.github/prompts/recheck-release.prompt.md` |
 | 10 | `/create-pr` | 9b | Tạo PR (tri-lingual hoặc JA qua profile) | `.github/prompts/create-pr.prompt.md` |
 | 11 | `/create-release` | 9c (utility) | Tạo release summary cho deploy handoff | `.github/prompts/create-release.prompt.md` |
+| 12 | `/review-branch` | 8+ (utility) | Peer-review branch/PR của dev khác; comment GitHub; không commit | `.github/prompts/review-branch.prompt.md` |
 
 **ai-housemaker:** `common/profiles/ai-housemaker.md` — auto-detect hoặc flag `(ai-housemaker)` trên mọi stage prompt.
 

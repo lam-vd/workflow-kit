@@ -46,3 +46,5 @@ alwaysApply: false
   - **Preserve** if the file already has it (do not drop when rewriting).
   - **Add** on newly created `.rb` files.
   - **Do not force-add** onto legacy files that never used it unless the task/DoD asks or you verified the file does not mutate string literals (otherwise `FrozenError` risk).
+- **JSON/hash facades:** view-facing passthrough getters are OK; prefer them over `hash['key']` in templates. Methods with `Array()` / I18n / fallback are not “redundant.” Review thinness with `.agents/skills/lean-facade-review/SKILL.md`.
+- **`I18n.t(..., default:)`:** if the key already exists in required locale files, omit hard-coded `default:` copy (it masks missing keys). Grep locales before claiming “missing i18n.”

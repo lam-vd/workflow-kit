@@ -36,6 +36,21 @@ description: >-
 
 ai-housemaker: request-spec UI asserts, tenant leaks, missing authz, broken Turbo contracts → **must** (🔴). Prefer `should` only when behavior is wrong but workaround exists.
 
+Cutover / contract findings (any stack — see `feature-cutover-orphan-review`):
+- Mutating transport auth weaker than HTTP for same resource → **must**
+- Client stop/polling before required server phase (empty/wrong UI) → **must** / **should**
+- Public route with zero product callers → **should**
+- Ops-only enqueue (rake/CLI verified) → **nit** / resolve — not **must**
+- Schema allow-list drift / unused locale·Stimulus target → **suggestion** / **nit**
+- Missing prod backfill on stub/pre-deploy DoD → do **not** inflate to **must**
+
+Lean facade findings (any stack — see `lean-facade-review`):
+- `I18n.t` key missing in a required locale → **should** / **must** if EN/JA UX breaks
+- `I18n.t(..., default: "…")` when key **already exists** → **nit** (drop `default:`) — not “add i18n”
+- View-facing JSON passthrough getters → **skip** or optional store-accessor **nit**; do not demand raw hash in ERB
+- Thin `col == CONST` predicates duplicated by helper UI map → **nit**
+- Predicate with zero `app/` callers → **nit** Soft-dead
+
 ## Output template (verbatim structure)
 
 Emit a numbered list. Each item:
@@ -110,6 +125,7 @@ End with a one-line verdict for the commenter:
 | `code-review` | Full Stage-8 report (findings structure, coverage, verdict) |
 | `rails-tl-review` | TL Summary (Critical / Suggestions / Praise) |
 | `pr-review-comments` | **Paste-ready GitHub comments** (this file) |
+| `branch-peer-review` | Peer/other-branch protocol + Task lock; uses this comment format |
 | `ai-housemaker-review-checklist` | ahm P0/P1 gates (HARD BAN, Turbo, etc.) |
 
 When profile **ai-housemaker** is active: HARD BAN UI-in-request-spec findings are always 🔴 `must`.

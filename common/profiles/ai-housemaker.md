@@ -123,6 +123,8 @@ Before editing markup + CSS: read `.cursor/rules/bem-css-html.mdc` (ai-housemake
 |-------|------|
 | `ai-housemaker-review-checklist` | Always — P0/P1 for staged areas (ActiveStorage, Stimulus file, request-spec scope, …) |
 | `deadcode-ui-migration-review` | UI migration / deleted show→modal / orphaned partials — call-site audit before delete |
+| `feature-cutover-orphan-review` | CRUD UI removed / domain kept; enqueue·job·Cable with unclear callers; FE `data-*-url` never read; async stop vs server phases |
+| `lean-facade-review` | JSON/`content` passthrough getters; thin knowledge-source predicates; `I18n.t` `default:` when keys exist |
 | `rails-tl-review` | Always — TL checklist (architecture / tenant / N+1 / Hotwire / RSpec); skip architecture-irrelevant nitpicks; emit **TL Summary** |
 | `pr-review-comments` | When user wants **paste-ready GitHub comments** (`must`/`should`/`suggestion`/`nit` + Repro/Suggestion) — complements Full report |
 | `integration-regression-review` | views / Stimulus / locales / CSS |
@@ -132,6 +134,11 @@ Before editing markup + CSS: read `.cursor/rules/bem-css-html.mdc` (ai-housemake
 | `modal-detail-canonical-url` | List detail modal gets `/{index}/:id` deep-link, filter restore, lean load |
 | `hotwire-integration-patterns.mdc` | UI integration — local symlink at `ai-housemaker/.cursor/rules/quality/` |
 | `paginated-list-patterns.mdc` | list/search/pagination — local symlink at `ai-housemaker/.cursor/rules/quality/` |
+| `edge-case-boundary-review` | datetime/timezone (`TIME-JST-01`, `TIME-CMP-01`), enforcement table |
+
+**Incident learnings (reference):**
+- `senior-workflow-kit/docs/lessons/customer-schedules-no146-review-learnings.md` — cumulative panel, scroll, lock race, thin query
+- `senior-workflow-kit/docs/lessons/realtime-ai-assist-no148-review-learnings.md` — cutover orphans, Cable authz, async stop, dual stubs, schema drift
 
 **Docker gates (repo root):**
 

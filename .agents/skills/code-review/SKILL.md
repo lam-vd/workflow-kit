@@ -47,6 +47,12 @@ Use the **8 dimensions table** below. Dimensions #2–#3 defer to rules (loaded 
 **Deadcode / UI migration supplement** — when PR deletes views or claims “modal-only / old screen unused”:
 - Read `.agents/skills/deadcode-ui-migration-review/SKILL.md` — call-site matrix + Dead-sure vs Fallback-only vs Shared-keep.
 
+**Feature cutover / partial-ship supplement** — when PR removes CRUD UI but keeps domain data, adds enqueue/jobs/channels with unclear callers, or ships async + client polling:
+- Read `.agents/skills/feature-cutover-orphan-review/SKILL.md` — orphan matrix (Dead-sure / Ops-only / Soft-dead / Shared-keep) + contract sweep (`CONTRACT-AUTHZ-*`, `CONTRACT-ASYNC-*`, `CONTRACT-SCHEMA-*`, …). Findings tagged `[cutover]` / `[contract]`.
+
+**Lean facade / thin API supplement** — when PR adds JSON passthrough getters, `col == CONST` predicates, or `I18n.t(..., default: "…")`:
+- Read `.agents/skills/lean-facade-review/SKILL.md` — keep view APIs; grep locales before “missing i18n”; consolidate UI maps; severity ceiling 🔵/🟡. Findings tagged `[facade]`.
+
 **Functional supplement** (controllers / services / routes / behavior change):
 - Read `.agents/skills/functional-verification-review/SKILL.md` — run mapped tests, Manual QA script.
 - Scope: `git diff --cached` **and** `git diff <base>...HEAD` for PR branch context.
@@ -93,7 +99,7 @@ Xác định xem PR có cần thêm review từ chuyên gia không:
 | 7 | Tests | Happy + boundary (inside/at/outside) + error; ai-housemaker → `ai-housemaker-rspec` (**HARD BAN** UI in `spec/requests/**`) |
 | 8 | Backward compat | Migrations, API versioning |
 
-**Lean gates (review pass):** YAGNI/bloat, dead code, DRY — see `karpathy-guidelines.mdc` §2–§3; duplication introduced by the diff → `dry-duplication-scan` (`DUP-*`). Spot-check tags: `[typo]` `[naming]` `[syntax]` `[security]` `[anti-pattern]` `[edge-case]` `[dry]`.
+**Lean gates (review pass):** YAGNI/bloat, dead code, DRY — see `karpathy-guidelines.mdc` §2–§3; duplication introduced by the diff → `dry-duplication-scan` (`DUP-*`); thin JSON getters / predicates / `I18n.t` `default:` → `lean-facade-review` (`[facade]`). Spot-check tags: `[typo]` `[naming]` `[syntax]` `[security]` `[anti-pattern]` `[edge-case]` `[dry]` `[facade]`.
 
 ---
 

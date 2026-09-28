@@ -135,6 +135,7 @@ PR5  optional cleanup (move folders, rename) — never block features
 - **One scaffold PR** for shared hotspots; never 3 devs editing the same dispatcher.
 - **Stable turbo/dom ids** across scaffold — changing `properties-list-desktop` id breaks inline delete streams.
 - If uncertainty on Figma → **Open Question**, not delete.
+- **Partial ship / CRUD UI cutover** — if keeping domain data while removing writers/UI, classify each leftover as Dead-sure / Ops-only / Soft-dead / Shared-keep (`feature-cutover-orphan-review`) and decide the ops refresh path **before** deleting web callers.
 
 ## Red flags (push back)
 
@@ -197,6 +198,7 @@ PR5  optional cleanup (move folders, rename) — never block features
 | Skill | When |
 |-------|------|
 | `field-impact-analysis` | Schema / new columns / API fields |
+| `feature-cutover-orphan-review` | Remove CRUD UI / keep domain; enqueue·job·channel with unclear callers |
 | `karpathy-guidelines` | Keep scaffold minimal |
 | `writing-ddd` | Lock routes + file tree in spec §Affected Components |
 | `code-review` | Verify PR respects ownership matrix |

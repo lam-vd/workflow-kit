@@ -139,6 +139,10 @@ Cross-reference: if the diff added a second copy of an existing rule → `DUP-VA
 | `EDGE-TIME-05` | Expiry exactly at the boundary instant | `>` vs `>=` decides valid/expired |
 | `EDGE-TIME-06` | `Date` compared to `Time`/`DateTime` | Implicit midnight shifts the comparison |
 | `EDGE-TIME-07` | Past/future values, clock skew, DST | Negative duration; scheduled job fires twice or never |
+| `TIME-JST-01` | Dev QA outside Japan vs prod `Asia/Tokyo` | Browser `datetime-local` uses OS TZ; server uses `Time.zone` — inactive/past rules look “wrong” in VN dev |
+| `TIME-CMP-01` | Business rule needs **datetime** but code compares **date only** | “Today 10:00” treated as future when now is 14:00 same calendar day — use `due_at < Time.zone.now`, not `due_date < Date.current` |
+
+> **Cumulative load-more scroll / panel height** → `paginated-list-patterns.mdc` PAGE-SCROLL-* + `hotwire-integration-patterns.mdc` TURBO-SCROLL-*.
 
 ### Concurrency & idempotency — `EDGE-CONC-*`
 

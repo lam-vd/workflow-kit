@@ -102,6 +102,7 @@ Never choose **Extend** on a shared symbol without reading `.cursor/rules/shared
 | `DUP-WRAP-01` | New helper wraps a one-line model/AR method | Indirection with zero value |
 | `DUP-DELEG-01` | New service delegates entirely to an existing one | Extra layer, same logic |
 | `DUP-QUERY-01` | Same WHERE/scope inlined in 2+ controllers | Scope drift, N+1 hidden in one copy |
+| `DUP-QUERY-02` | New `*Query` service = single relation filter + order, one consumer | Prefer model scope (`TenantUser.assignable_for_schedules`) — No.146 |
 | `DUP-VIEW-01` | New partial ≈ existing partial with 1–2 differences | Design drift between screens |
 | `DUP-I18N-01` | New locale key with text identical to an existing key | Two texts to update, one gets missed |
 | `DUP-CSS-01` | New class re-declaring an existing BEM block / token value | Visual drift, dead CSS |

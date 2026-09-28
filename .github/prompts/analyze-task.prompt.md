@@ -26,6 +26,18 @@ Language behavior:
 
 If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` §1 before analysis.
 
+If **telemedease** (auto: paths contain `telemedease/`; override: `(telemedease)`) → read `common/profiles/telemedease.md` §1 — **not** ai-housemaker.
+
+If **skal** (auto: paths contain `skal/` or `port_jp/skal`; override: `(skal)`) → read `common/profiles/skal.md` §1 — **not** ai-housemaker / telemedease.
+
+If **manet-adwords-ocv** (auto: paths contain `manet-adwords` or `manet-adwords-analysis--offline-cv`; override: `(ocv)` / `(manet-adwords-ocv)`) → read `common/profiles/manet-adwords-ocv.md` §1 — **not** `manet.md` / Rails profiles.
+
+If **manet** (auto: paths contain `manet/` or `port_jp/manet` but **not** `manet-adwords`; override: `(manet)`) → read `common/profiles/manet.md` §1 — **not** ai-housemaker / telemedease / skal.
+
+If **thira** (auto: paths contain `thira/` or `port_jp/thira`; override: `(thira)`) → read `common/profiles/thira.md` §1 — Vue LP / `kw_id`; **not** `manet.md` Rails.
+
+If **evekatsu** (auto: paths contain `evekatsu/` or `port_jp/evekatsu`; override: `(evekatsu)`) → read `common/profiles/evekatsu.md` §1 — event portal / routes / PC-SP; **not** Hotwire.
+
 ## Must read first (every task that adds behavior)
 
 - `.agents/skills/dry-duplication-scan/SKILL.md`

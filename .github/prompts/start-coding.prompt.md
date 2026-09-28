@@ -22,6 +22,18 @@ Implement the **next sub-task** (or the one user specifies) following the FINAL 
 
 If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/profiles/ai-housemaker.md` §7 (lint gates, autocomplete, UI layout via `rails-ui-layouts`, Figma SVG handoff via `figma-svg-html-structure` / `figma-erb-styling-audit`, pre-flight checklist).
 
+If **telemedease** (auto: `telemedease/`; override: `(telemedease)`) → read `common/profiles/telemedease.md` §7 (`teleme-*` skills, portal/PayJP, Docker rubocop/rspec) — **not** Hotwire/Pundit.
+
+If **skal** (auto: `skal/` or `port_jp/skal`; override: `(skal)`) → read `common/profiles/skal.md` §7 (`skal-*` skills, ads CTR, Handsaw, Pundit, Minitest) — **not** Hotwire / teleme Grape.
+
+If **manet-adwords-ocv** (auto: `manet-adwords` / `manet-adwords-analysis--offline-cv`; override: `(ocv)`) → read `common/profiles/manet-adwords-ocv.md` §7 (`ocv-*` skills, build-time Docker jobs, SOPS) — **not** Rails / `manet.md`.
+
+If **manet** (auto: `manet/` / `port_jp/manet` but **not** `manet-adwords`; override: `(manet)`) → read `common/profiles/manet.md` §7 (`manet-*` skills, Super/Pundit, Handsaw, RSpec) — **not** Hotwire / teleme / skal AS.
+
+If **thira** (auto: `thira/` or `port_jp/thira`; override: `(thira)`) → read `common/profiles/thira.md` §7 (`thira-*` skills, Vue/Webpack, `kw_id`) — **not** Rails.
+
+If **evekatsu** (auto: `evekatsu/` or `port_jp/evekatsu`; override: `(evekatsu)`) → read `common/profiles/evekatsu.md` §7 (`eve-*` skills, routing/cache, RSpec) — **not** Hotwire.
+
 ## Steps
 
 ### 1. Load context (do this EVERY time)
@@ -30,7 +42,7 @@ If **ai-housemaker** (auto-detect or `(ai-housemaker)` flag) → read `common/pr
 2. Sub-task list from Stage 6 → current DoD
 3. .agents/skills/dry-duplication-scan/SKILL.md (mandatory before writing new code)
 4. .agents/skills/design-patterns/SKILL.md (if patterns needed)
-5. Project profile — if ai-housemaker → common/profiles/ai-housemaker.md §7
+5. Project profile — if ai-housemaker → common/profiles/ai-housemaker.md §7; if telemedease → common/profiles/telemedease.md §7; if skal → common/profiles/skal.md §7; if manet-adwords-ocv → common/profiles/manet-adwords-ocv.md §7; if manet → common/profiles/manet.md §7; if thira → common/profiles/thira.md §7; if evekatsu → common/profiles/evekatsu.md §7
 ```
 Code style / layering: `clean-code.mdc` and `architecture.mdc` apply via **globs** on files you edit — do not load manually unless linter fails.
 
